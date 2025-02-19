@@ -517,7 +517,21 @@
     display: none !important;
   }
 }
-@layer utilities;
+@layer utilities {
+  .h-16 {
+    height: calc(var(--spacing) * 16);
+  }
+  .bg-amber-700 {
+    background-color: var(--color-amber-700);
+  }
+  .p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+  .text-5xl {
+    font-size: var(--text-5xl);
+    line-height: var(--tw-leading, var(--text-5xl--line-height));
+  }
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
