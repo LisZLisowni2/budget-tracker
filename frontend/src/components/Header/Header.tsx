@@ -1,6 +1,6 @@
 export default function Header() {
     return (
-        <div className="h-auto text-white p-5 flex justify-between bg-violet-800">
+        <div className="h-auto p-5 flex justify-between bg-violet-800">
             <h1 className="text-2xl md:text-3xl lg:text-5xl">BudgetTracker</h1>
             <div className="flex justify-center *:mx-3">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 lg:size-12">
