@@ -1,6 +1,7 @@
 // import { useState } from 'react'
 import Header from './components/Header/Header'
 import Content from './components/Content/Content'
+import Main from './components/Main/Main'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 
@@ -10,7 +11,9 @@ function App() {
   return (
     <section className="h-screen flex text-white flex-col">
       <Header />
-      <Content />
+      <Content>
+        <Main />
+      </Content>
     </section>
   )
 }
