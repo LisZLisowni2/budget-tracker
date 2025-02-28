@@ -6,7 +6,7 @@ interface IChildren {
 
 export default function Content({ children }: IChildren ) {
     return (
-        <div className="flex justify-center items-center flex-1 bg-violet-900">
+        <div className="flex justify-center items-center flex-1">
             { children }
         </div>
     )
