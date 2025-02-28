@@ -11,7 +11,7 @@ function App() {
 
   return (
     <Router>
-      <section className="h-screen flex text-white flex-col">
+      <section className="min-h-screen flex text-white flex-col bg-gray-200">
         <Header />
         <Routes>
           <Route path='/' element={<Content>
