@@ -13,12 +13,16 @@ const config = {
     Port: PORT,
     Address: ADDRESS
 }
+
+const userRouter = require('./routers/user')(config)
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     origin: ["*"], // Temporary
     credentials: true
 }))
+app.use('/users', userRouter)
 
 app.listen(PORT, ADDRESS, () => {
     console.log(`Server running at http://${ADDRESS}:${PORT}`)
