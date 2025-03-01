@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
-const ADDRESS = '0.0.0.0';
+const PORT = process.env.Port || 3000;
+const ADDRESS = proccess.env.Address || '0.0.0.0';
 const config = {
     MongoDB_URI: process.env.MongoURI,
     RedisDB_URI: process.env.RedisURI,
