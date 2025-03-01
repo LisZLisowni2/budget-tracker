@@ -10,8 +10,9 @@ const ADDRESS = proccess.env.Address || '0.0.0.0';
 const config = {
     MongoDB_URI: process.env.MongoURI,
     RedisDB_URI: process.env.RedisURI,
+    JWT_Secret: proccess.env.JWTSecret,
     Port: PORT,
-    Address: ADDRESS
+    Address: ADDRESS,
 }
 
 const userRouter = require('./routers/user')(config)

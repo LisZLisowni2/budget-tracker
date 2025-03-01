@@ -1,9 +1,9 @@
 const express = require('express')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const router = express.Router();
 
 module.exports = (config) => {
+    const authorization = require('../utils/authorization')(config)
+
     return router;
 }
