@@ -7,7 +7,7 @@ const secretRead = require('./utils/secret')
 
 const app = express();
 const PORT = process.env.Port || 3000;
-const ADDRESS = proccess.env.Address || '0.0.0.0';
+const ADDRESS = process.env.Address || '0.0.0.0';
 const JWT_Secret = secretRead('jwt_token');
 const MongoDBPassword = secretRead('db_password');
 const RedisDBPassword = secretRead('redis_password');
