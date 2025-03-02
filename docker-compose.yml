@@ -16,8 +16,6 @@ services:
       - "3000:3000"
     networks:
       - overlayNet
-    env_file:
-      - ./backend/.env
     secrets:
       - redis_password
       - db_password
