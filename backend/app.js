@@ -9,8 +9,10 @@ const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = proccess.env.Address || '0.0.0.0';
 const JWT_Secret = secretRead('jwt_token');
+const MongoDBPassword = secretRead('db_password');
+const RedisDBPassword = secretRead('redis_password');
 const config = {
-    MongoDB_URI: 'mongodb://database:27017/',
+    MongoDB_URI: `mongodb://root:${MongoDBPassword}@database:27017/myapp`,
     RedisDB_URI: 'redis://redis:6379',
     JWT_Secret: JWT_Secret,
     Port: PORT,
@@ -21,7 +23,8 @@ let redisClient
 
 (async () => {
     redisClient = redis.createClient({
-        url: config.RedisDB_URI
+        url: config.RedisDB_URI,
+        password: RedisDBPassword
     })
 
     redisClient.on('error', (error) => {
@@ -33,7 +36,9 @@ let redisClient
     console.log("Connected to Redis DB");
 })
 
-mongoose.connect(config.MongoDB_URI);
+mongoose.connect(config.MongoDB_URI, {
+    pass
+});
 
 const mongoClient = mongoose.connection
 mongoClient.on('error', () => {
