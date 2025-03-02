@@ -31,8 +31,13 @@ services:
       - db_data:/data/db
     secrets:
       - db_password
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD_FILE=/run/secrets/db_password
     ports:
       - "27017:27017"
+    networks:
+      - overlayNet
 
   redis:
     image: redis:7.4.2
@@ -42,6 +47,9 @@ services:
       - "6379:6379"
     secrets:
       - redis_password
+    command: "redis-server --requirepass $(cat /run/secrets/redis_password)"
+    networks:
+      - overlayNet
 
   nginx:
     build: /nginx
