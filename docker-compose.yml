@@ -3,17 +3,38 @@ version: '3.8'
 services:
   frontend:
     build: ./frontend
-
+    networks:
+      - overlayNet
 
   backend:
     build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - overlayNet
     env_file:
       - ./backend/.env
 
+  database:
+    image: mongo:8.0.5
+    volumes:
+      - db_data:/data/db
+
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6379:6379"
+
   nginx:
     build: /nginx
-    
+    ports:
+      - "80:80"
+    networks:
+      - overlayNet
 
 networks:
   overlayNet:
     driver: overlay
+
+volumes:
+  db_data:
