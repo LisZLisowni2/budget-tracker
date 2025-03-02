@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   frontend:
-    build: ./frontend
+    image: 127.0.0.1:5000/budget-tracker-frontend
     deploy:
       replicas: 1
     networks:
       - overlayNet
 
   backend:
-    build: ./backend
+    image: 127.0.0.1:5000/budget-tracker-backend
     deploy:
       replicas: 1
     ports:
@@ -43,18 +43,13 @@ services:
       replicas: 1
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD_FILE=/run/secrets/redis_password
     secrets:
       - redis_password
-    command: "redis-server --requirepass $(cat /run/secrets/redis_password)"
-    networks:
-      - overlayNet
-
-  nginx:
-    build: /nginx
-    deploy:
-      replicas: 1
-    ports:
-      - "80:80"
+    command: [
+      "bash", "-c", 'docker-entrypoint.sh --requirepass "$$(cat $$REDIS_PASSWORD_FILE)"'
+    ]
     networks:
       - overlayNet
 
