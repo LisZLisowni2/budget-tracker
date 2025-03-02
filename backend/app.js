@@ -1,18 +1,18 @@
-require('dotenv').config();
-
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 const mongoose = require('mongoose')
 const redis = require('redis')
+const secretRead = require('./utils/secret')
 
 const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = proccess.env.Address || '0.0.0.0';
+const JWT_Secret = secretRead('jwt_token');
 const config = {
     MongoDB_URI: 'mongodb://database:27017/',
     RedisDB_URI: 'redis://redis:6379',
-    JWT_Secret: proccess.env.JWTSecret,
+    JWT_Secret: JWT_Secret,
     Port: PORT,
     Address: ADDRESS,
 }
