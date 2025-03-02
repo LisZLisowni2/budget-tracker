@@ -21,6 +21,7 @@ services:
     secrets:
       - redis_password
       - db_password
+      - jwt_token
 
   database:
     image: mongo:8.0.5
@@ -62,4 +63,6 @@ secrets:
   db_password:
     external: true
   redis_password:
+    external: true
+  jwt_token:
     external: true
