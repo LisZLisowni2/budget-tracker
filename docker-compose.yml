@@ -3,30 +3,47 @@ version: '3.8'
 services:
   frontend:
     build: ./frontend
+    deploy:
+      replicas: 1
     networks:
       - overlayNet
 
   backend:
     build: ./backend
+    deploy:
+      replicas: 1
     ports:
       - "3000:3000"
     networks:
       - overlayNet
     env_file:
       - ./backend/.env
+    secrets:
+      - redis_password
+      - db_password
 
   database:
     image: mongo:8.0.5
+    deploy:
+      replicas: 1
     volumes:
       - db_data:/data/db
+    secrets:
+      - db_password
 
   redis:
     image: redis:7.4.2
+    deploy:
+      replicas: 1
     ports:
       - "6379:6379"
+    secrets:
+      - redis_password
 
   nginx:
     build: /nginx
+    deploy:
+      replicas: 1
     ports:
       - "80:80"
     networks:
@@ -38,3 +55,9 @@ networks:
 
 volumes:
   db_data:
+
+secrets:
+  db_password:
+    external: true
+  redis_password:
+    external: true
