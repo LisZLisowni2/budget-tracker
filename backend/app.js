@@ -5,21 +5,43 @@ const mongoose = require('mongoose')
 const redis = require('redis')
 const secretRead = require('./utils/secret')
 
+let MongoDBPassword
+let RedisDBPassword
+let JWT_Secret
+let redisClient
+
+secretRead('db_password')
+.then((res) => {
+    MongoDBPassword = res
+}).catch((err) => {
+    console.error.bind(err, "Error: ")
+})
+
+secretRead('redis_password')
+.then((res) => {
+    RedisDBPassword = res
+}).catch((err) => {
+    console.error.bind(err, "Error: ")
+})
+
+secretRead('jwt_token')
+.then((res) => {
+    JWT_Secret = res;
+}).catch((err) => {
+    console.error.bind(err, "Error: ")
+})
+
 const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || '0.0.0.0';
-const JWT_Secret = secretRead('jwt_token');
-const MongoDBPassword = secretRead('db_password');
-const RedisDBPassword = secretRead('redis_password');
+
 const config = {
     MongoDB_URI: `mongodb://root:${MongoDBPassword}@database:27017/myapp`,
     RedisDB_URI: 'redis://redis:6379',
     JWT_Secret: JWT_Secret,
     Port: PORT,
     Address: ADDRESS,
-}
-
-let redisClient
+};
 
 (async () => {
     redisClient = redis.createClient({
@@ -34,11 +56,9 @@ let redisClient
     await redisClient.connect();
 
     console.log("Connected to Redis DB");
-})
+})()
 
-mongoose.connect(config.MongoDB_URI, {
-    pass
-});
+mongoose.connect(config.MongoDB_URI);
 
 const mongoClient = mongoose.connection
 mongoClient.on('error', () => {
