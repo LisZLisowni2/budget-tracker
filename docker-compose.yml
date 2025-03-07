@@ -7,6 +7,8 @@ services:
       replicas: 1
     networks:
       - overlayNet
+    ports:
+      - "80:80"
 
   backend:
     image: 127.0.0.1:5000/budget-tracker-backend
@@ -32,6 +34,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD_FILE=/run/secrets/db_password
+      - MONGO_INITDB_DATABASE: myapp
     ports:
       - "27017:27017"
     networks:

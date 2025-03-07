@@ -5,14 +5,14 @@ const mongoose = require('mongoose')
 const redis = require('redis')
 const secretRead = require('./utils/secret')
 
-let MongoDBPassword
-let RedisDBPassword
+const RedisDB_URI = 'redis://redis:6379'
+let MongoDB_URI
 let JWT_Secret
 let redisClient
 
 secretRead('db_password')
 .then((res) => {
-    MongoDBPassword = res
+    MongoDB_URI = `mongodb://root:${res}@database:27017/myapp`
 }).catch((err) => {
     console.error.bind(err, "Error: ")
 })
@@ -36,8 +36,6 @@ const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || '0.0.0.0';
 
 const config = {
-    MongoDB_URI: `mongodb://root:${MongoDBPassword}@database:27017/myapp`,
-    RedisDB_URI: 'redis://redis:6379',
     JWT_Secret: JWT_Secret,
     Port: PORT,
     Address: ADDRESS,
