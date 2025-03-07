@@ -8,7 +8,7 @@ services:
     networks:
       - overlayNet
     ports:
-      - "80:80"
+      - "80:443"
 
   backend:
     image: 127.0.0.1:5000/budget-tracker-backend
@@ -34,7 +34,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD_FILE=/run/secrets/db_password
-      - MONGO_INITDB_DATABASE: myapp
+      - MONGO_INITDB_DATABASE=myapp
     ports:
       - "27017:27017"
     networks:
@@ -46,12 +46,10 @@ services:
       replicas: 1
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_PASSWORD_FILE=/run/secrets/redis_password
     secrets:
       - redis_password
     command: [
-      "bash", "-c", 'docker-entrypoint.sh --requirepass "$$(cat $$REDIS_PASSWORD_FILE)"'
+      "bash", "-c", 'docker-entrypoint.sh --requirepass "$$(cat /run/secrets/redis_password)"'
     ]
     networks:
       - overlayNet

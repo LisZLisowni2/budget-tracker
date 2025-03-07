@@ -5,24 +5,10 @@ const mongoose = require('mongoose')
 const redis = require('redis')
 const secretRead = require('./utils/secret')
 
-const RedisDB_URI = 'redis://redis:6379'
+let RedisDB_URI = 'redis://redis:6379'
 let MongoDB_URI
 let JWT_Secret
 let redisClient
-
-secretRead('db_password')
-.then((res) => {
-    MongoDB_URI = `mongodb://root:${res}@database:27017/myapp`
-}).catch((err) => {
-    console.error.bind(err, "Error: ")
-})
-
-secretRead('redis_password')
-.then((res) => {
-    RedisDBPassword = res
-}).catch((err) => {
-    console.error.bind(err, "Error: ")
-})
 
 secretRead('jwt_token')
 .then((res) => {
@@ -39,12 +25,35 @@ const config = {
     JWT_Secret: JWT_Secret,
     Port: PORT,
     Address: ADDRESS,
-};
+}
 
-(async () => {
+secretRead('db_password')
+.then((res) => {
+    MongoDB_URI = `mongodb://root:${res}@database:27017/myapp?authSource=admin`
+    console.log(MongoDB_URI)
+    mongoose.connect(MongoDB_URI)
+    const db = mongoose.connection
+    db.on('error', (error) => {
+        console.error.bind(error, "Error: ")
+    })
+    db.on('open', () => {
+        console.log("Connected to MongoDB")
+    })
+    db.on('disconnected', () => {
+        console.log("Disconnected from MongoDB")
+    })
+}).catch((err) => {
+    console.error.bind(err, "Error: ")
+})
+
+secretRead('redis_password')
+.then(async (res) => {
+    console.log(`Redis password: ${res}`)
+    RedisDB_URI = `redis://redis:6379`
     redisClient = redis.createClient({
-        url: config.RedisDB_URI,
-        password: RedisDBPassword
+        url: RedisDB_URI,
+        password: res.trim(),
+        username: 'default'
     })
 
     redisClient.on('error', (error) => {
@@ -53,17 +62,9 @@ const config = {
 
     await redisClient.connect();
 
-    console.log("Connected to Redis DB");
-})()
-
-mongoose.connect(config.MongoDB_URI);
-
-const mongoClient = mongoose.connection
-mongoClient.on('error', () => {
-    console.error.bind(console, ("Connection error: "))
-})
-mongoClient.once('open', () => {
-    console.log("Connected to MongoDB");
+    console.log("Connected to RedisDB");
+}).catch((err) => {
+    console.error.bind(err, "Error: ")
 })
 
 const userRouter = require('./routers/user')(config)
