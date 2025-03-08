@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const router = express.Router();
 
 module.exports = (config, redis) => {
-    const Auth = require('../utils/authorization')(config)
+    const Auth = require('../utils/authorization')(config, redis)
 
     router.post('/login', async (req, res) => {
         try {
