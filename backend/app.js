@@ -67,7 +67,7 @@ secretRead('redis_password')
     console.error.bind(err, "Error: ")
 })
 
-const userRouter = require('./routers/user')(config)
+const userRouter = require('./routers/user')(config, redisClient)
 
 app.use(express.json());
 app.use(cookieParser());
