@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const router = express.Router();
 
 module.exports = (config) => {
-    const authorization = require('../utils/authorization')(config)
+    const Auth = require('../utils/authorization')(config)
 
     router.post('/login', async (req, res) => {
         try {
@@ -27,7 +27,32 @@ module.exports = (config) => {
             })
             res.json({ 'message': 'Login successful', token })
         } catch (err) {
-            res.status(500).status({ 'message': 'Internal server error' })
+            res.status(500).json({ 'message': 'Internal server error' })
+        }
+    })
+
+    router.post('/register', async (req, res) => {
+        try {
+            const { username, email, password } = req.body
+            if (!username || !email || !password) {
+                res.status(400).json({ 'message': 'Useername, email or password not present' })
+            }
+            const hashedPassword = bcrypt.hash(password, 10)
+            const newUser = new User({ username: username, email: email, password: hashedPassword })
+            await newUser.save()
+            res.status(201).json({ 'message': 'Account created' })
+        } catch (err) {
+            res.status(500).json({ 'message': 'Internal server error' })
+        }
+    })
+
+    router.get('/me', Auth.authenticateToken, async (req, res) => {
+        try {
+            const { username } = req.user
+            const userData = User.findOne({ username: username }).select("-v -_id -password")
+            res.json(userData)
+        } catch {
+            res.status(500).json({ 'message': 'Internal server error' })
         }
     })
 
