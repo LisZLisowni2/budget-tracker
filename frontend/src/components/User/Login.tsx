@@ -27,6 +27,7 @@ export default function Login() {
     const [username, setUsername] = useState<string | null>("")
     const [password, setPassword] = useState<string | null>("")
     const navigate = useNavigate();
+    const { handleUserLogin } = useUser();
 
     const handlePasswordView = () => {
         setPasswordView(!passwordView)
@@ -49,6 +50,7 @@ export default function Login() {
             withCredentials: true
         }).then((res) => {
             localStorage.setItem("token", res.data.token)
+            handleUserLogin()
             navigate("/")
         }).catch((err) => {
             console.error(err)
