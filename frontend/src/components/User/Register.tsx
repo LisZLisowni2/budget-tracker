@@ -1,8 +1,6 @@
 import Button from "../Button/Button"
 import { ReactNode, useState, ChangeEventHandler, MouseEvent, ChangeEvent } from "react"
-import { useUser } from "../../context/UserContext"
 import api from "../../api"
-import { useNavigate } from "react-router"
 import { Link } from "react-router"
 
 interface IFormLabel {
@@ -23,40 +21,44 @@ function FormField({ label, type, id, onChange, children }: IFormLabel) {
     )
 }
 
-export default function Login() {
+export default function Register() {
     const [passwordView, setPasswordView] = useState(false)
     const [username, setUsername] = useState<string | null>("")
+    const [email, setEmail] = useState<string | null>("")
     const [password, setPassword] = useState<string | null>("")
+    const [passwordVerify, setPasswordVerify] = useState<string | null>("")
     const [error, setError] = useState<string | null>("")
-    const navigate = useNavigate();
-    const { handleUserLogin } = useUser();
 
     const handlePasswordView = () => {
         setPasswordView(!passwordView)
     }
 
-    const handleLogin = async (event: MouseEvent<HTMLButtonElement>) => {
+    const handleRegister = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setError("")
-        if (!username || !password) {
-            setError("Username or password not present")
+        if (!username || !password || !email || !passwordVerify) {
+            setError("Username, email, password or second password not present")
+            return;
+        }
+
+        if (password != passwordVerify) {
+            setError("Passwords are not the same")
             return;
         }
 
         const obj = {
             username: username,
+            email: email,
             password: password
         }
 
-        await api.post('/users/login', obj, {
+        await api.post('/users/register', obj, {
             withCredentials: true
-        }).then((res) => {
-            localStorage.setItem("token", res.data.token)
-            handleUserLogin()
-            navigate("/")
+        }).then(() => {
+            setError("Account has created")
         }).catch((err) => {
             console.error(err)
-            setError(`Error while logging: ${err.message}`)
+            setError(`Error while registering: ${err.message}`)
         })
     }
 
@@ -74,15 +76,19 @@ export default function Login() {
 
     return (
         <div>
-            <form className="relative bg-rose-300 p-16 lg:p-32 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
-                <h1 className="text-3xl lg:text-5xl font-bold mb-8">Login form</h1>
+            <form className="relative bg-rose-300 p-12 lg:p-20 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
+                <h1 className="text-3xl lg:text-5xl font-bold mb-8">Register form</h1>
                 <FormField label="Username:" type="text" id="login" onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
+                <FormField label="Email:" type="text" id="email" onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}/>
                 <FormField label="Password:" type={ (passwordView) ? "text" : "password" } id="password" onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}>
                     <span className="self-end relative bottom-8.5 right-1.5">{ passwordIcon }</span>
                 </FormField>
-                <p className="flex my-4 flex-col"><Button text="Login" onClick={async (event) => await handleLogin(event)}/></p>
-                <p className="text-red-600 font-bold text-2xl">{ error }</p>
-                <p><Link to="/register" className="font-bold text-2xl hover:text-gray-300 transition">If you don't have an account, register</Link></p>
+                <FormField label="Password Verify:" type={ (passwordView) ? "text" : "password" } id="passwordSecond" onChange={(e: ChangeEvent<HTMLInputElement>) => setPasswordVerify(e.target.value)}>
+                    <span className="self-end relative bottom-8.5 right-1.5">{ passwordIcon }</span>
+                </FormField>
+                <p className="flex my-4 flex-col"><Button text="Register" onClick={async (event) => await handleRegister(event)}/></p>
+                <p className="text-red-600 font-bold lg:text-xl">{ error }</p>
+                <p><Link to="/login" className="font-bold lg:text-xl hover:text-gray-300 transition">If you have an account, login</Link></p>
             </form>
         </div>
     )
