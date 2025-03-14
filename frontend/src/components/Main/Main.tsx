@@ -1,4 +1,5 @@
 import Button from "../Button/Button"
+import { Link } from "react-router"
 
 export default function Main() {
     return (
@@ -6,6 +7,7 @@ export default function Main() {
             <h2 className="text-xl lg:text-4xl mb-4">Take control over your budget with BudgetTracker!</h2>
             <p className="text-sm lg:text-1xl">Easy to use, functional UI, no ads, account system for multiple spheres (home, business)</p>
             <p><Button text="Get Started" /></p>
+            <p><Link to="/register"><Button text="Get Started" /></Link></p>
         </div>
     )
 }
