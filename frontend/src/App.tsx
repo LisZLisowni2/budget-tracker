@@ -3,9 +3,28 @@ import Header from './components/Header/Header'
 import Content from './components/Content/Content'
 import Main from './components/Main/Main'
 import Login from './components/Login/Login'
+import Dashboard from './components/Dashboard/Dashboard'
 import { BrowserRouter as Router, Routes, Route } from 'react-router'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
+
+function DashboardLayout() {
+  return (
+      <div className='flex justify-center flex-1'>
+        <Dashboard>
+          <Routes>
+            <Route path='/' element={<p className='text-2xl'>Welcome to dashboard!</p>} />
+            <Route path='/overall' element={<p className='text-2xl'>Welcome to overall!</p>} />
+            <Route path='/transactions' element={<p className='text-2xl'>Welcome to transactions!</p>} />
+            <Route path='/investments' element={<p className='text-2xl'>Welcome to investments!</p>} />
+            <Route path='/notes' element={<p className='text-2xl'>Welcome to notes!</p>} />
+            <Route path='/trends' element={<p className='text-2xl'>Welcome to trends!</p>} />
+            <Route path='/profile' element={<p className='text-2xl'>Welcome to profile!</p>} />
+          </Routes>
+        </Dashboard>
+      </div>
+  )
+}
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -21,6 +40,7 @@ function App() {
           <Route path='/login' element={<Content>
             <Login />
           </Content>}/>
+          <Route path='/dashboard/*' element={<DashboardLayout />} />
           </Routes>
       </section>
     </Router>
