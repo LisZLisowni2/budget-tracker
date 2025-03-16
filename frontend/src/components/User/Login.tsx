@@ -1,5 +1,5 @@
 import Button from "../Button/Button"
-import { ReactNode, useState, ChangeEventHandler, MouseEvent, ChangeEvent } from "react"
+import { ReactNode, useState, ChangeEventHandler, ChangeEvent, FormEvent } from "react"
 import { useUser } from "../../context/UserContext"
 import api from "../../api"
 import { useNavigate } from "react-router"
@@ -35,7 +35,7 @@ export default function Login() {
         setPasswordView(!passwordView)
     }
 
-    const handleLogin = async (event: MouseEvent<HTMLButtonElement>) => {
+    const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError("")
         if (!username || !password) {
@@ -48,9 +48,8 @@ export default function Login() {
             password: password
         }
 
-        await api.post('/users/login', obj, {
-            withCredentials: true
-        }).then((res) => {
+        await api.post('/users/login', obj)
+        .then((res) => {
             localStorage.setItem("token", res.data.token)
             handleUserLogin()
             navigate("/")
@@ -74,13 +73,13 @@ export default function Login() {
 
     return (
         <div>
-            <form className="relative bg-rose-300 p-16 lg:p-32 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
+            <form onSubmit={async (event) => await handleLogin(event)} className="relative bg-rose-300 p-16 lg:p-32 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
                 <h1 className="text-3xl lg:text-5xl font-bold mb-8">Login form</h1>
                 <FormField label="Username:" type="text" id="login" onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
                 <FormField label="Password:" type={ (passwordView) ? "text" : "password" } id="password" onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}>
                     <span className="self-end relative bottom-8.5 right-1.5">{ passwordIcon }</span>
                 </FormField>
-                <p className="flex my-4 flex-col"><Button text="Login" onClick={async (event) => await handleLogin(event)}/></p>
+                <p className="flex my-4 flex-col"><Button text="Login" /></p>
                 <p className="text-red-600 font-bold text-2xl">{ error }</p>
                 <p><Link to="/register" className="font-bold text-2xl hover:text-gray-300 transition">If you don't have an account, register</Link></p>
             </form>

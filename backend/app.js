@@ -9,6 +9,7 @@ const https = require('https')
 
 let RedisDB_URI = 'redis://redis:6379'
 let MongoDB_URI
+let mongodbClient
 let JWT_Secret
 let redisClient
 
@@ -32,7 +33,6 @@ const config = {
 secretRead('db_password')
 .then((res) => {
     MongoDB_URI = `mongodb://root:${res}@database:27017/myapp?authSource=admin`
-    console.log(MongoDB_URI)
     mongoose.connect(MongoDB_URI)
     const db = mongoose.connection
     db.on('error', (error) => {
@@ -44,13 +44,14 @@ secretRead('db_password')
     db.on('disconnected', () => {
         console.log("Disconnected from MongoDB")
     })
+
+    mongodbClient = db
 }).catch((err) => {
     console.error.bind(err, "Error: ")
 })
 
 secretRead('redis_password')
 .then(async (res) => {
-    console.log(`Redis password: ${res}`)
     RedisDB_URI = `redis://redis:6379`
     redisClient = redis.createClient({
         url: RedisDB_URI,
@@ -65,11 +66,27 @@ secretRead('redis_password')
     await redisClient.connect();
 
     console.log("Connected to RedisDB");
+    
 }).catch((err) => {
     console.error.bind(err, "Error: ")
 })
 
-const userRouter = require('./routers/user')(config, redisClient)
+let attempts = 60;
+const intervalUserRouter = setInterval(() => {
+    if (attempts < 0) {
+        clearInterval(intervalUserRouter)
+        throw new Error("Failed to connect")
+    }
+    if (redisClient && JWT_Secret && mongodbClient) {
+        const userRouter = require('./routers/user')(config, redisClient)
+        app.use('/users', userRouter)
+        clearInterval(intervalUserRouter)
+        console.log("Attach the user router")
+    } else {
+        console.log(`RedisClient, MongoDB or JWT Secret not present. Retry, remaining attempts: ${attempts}`)
+    }
+    attempts -= 1
+}, 1000)
 
 app.use(express.json());
 app.use(cookieParser());
@@ -77,7 +94,6 @@ app.use(cors({
     origin: "*",
     credentials: true
 }))
-app.use('/users', userRouter)
 
 const options = {
     key: fs.readFileSync("./cert/backend.key"),

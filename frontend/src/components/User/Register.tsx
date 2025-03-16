@@ -1,5 +1,5 @@
 import Button from "../Button/Button"
-import { ReactNode, useState, ChangeEventHandler, MouseEvent, ChangeEvent } from "react"
+import { ReactNode, useState, ChangeEventHandler, ChangeEvent, FormEvent } from "react"
 import api from "../../api"
 import { Link } from "react-router"
 
@@ -33,7 +33,7 @@ export default function Register() {
         setPasswordView(!passwordView)
     }
 
-    const handleRegister = async (event: MouseEvent<HTMLButtonElement>) => {
+    const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError("")
         if (!username || !password || !email || !passwordVerify) {
@@ -75,7 +75,7 @@ export default function Register() {
 
     return (
         <div>
-            <form className="relative bg-rose-300 p-12 lg:p-20 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
+            <form onSubmit={async (event) => await handleRegister(event)} className="relative bg-rose-300 p-12 lg:p-20 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
                 <h1 className="text-3xl lg:text-5xl font-bold mb-8">Register form</h1>
                 <FormField label="Username:" type="text" id="login" onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
                 <FormField label="Email:" type="text" id="email" onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}/>
@@ -85,7 +85,7 @@ export default function Register() {
                 <FormField label="Password Verify:" type={ (passwordView) ? "text" : "password" } id="passwordSecond" onChange={(e: ChangeEvent<HTMLInputElement>) => setPasswordVerify(e.target.value)}>
                     <span className="self-end relative bottom-8.5 right-1.5">{ passwordIcon }</span>
                 </FormField>
-                <p className="flex my-4 flex-col"><Button text="Register" onClick={async (event) => await handleRegister(event)}/></p>
+                <p className="flex my-4 flex-col"><Button text="Register" /></p>
                 <p className="text-red-600 font-bold lg:text-xl">{ error }</p>
                 <p><Link to="/login" className="font-bold lg:text-xl hover:text-gray-300 transition">If you have an account, login</Link></p>
             </form>
