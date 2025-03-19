@@ -12,16 +12,12 @@ export function UserProvide({ children }: IChildren) {
     const [loading, setLoading] = useState<boolean>(true)
 
     const handleUserLogin = async () => {
-        const user = await api.get('/users/me', {
-            withCredentials: true
-        })
+        const user = await api.get('/users/me')
         setUser(user)
     }
 
     const handleUserLogout = async () => {
-        await api.get('/users/me', {
-            withCredentials: true
-        })
+        await api.get('/users/me')
         setUser(null)
     }
 

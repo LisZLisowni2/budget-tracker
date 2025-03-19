@@ -39,16 +39,16 @@ function App() {
       <section className="min-h-screen flex text-white flex-col bg-gray-200">
         <Header />
         <Routes>
-        <Route path='/' element={<Content>
-          <Main />
-        </Content>} />
-        <Route path='/login' element={<Content>
-          <Login />
-        </Content>}/>
-        <Route path='/dashboard/*' element={<DashboardLayout />} />
-        <Route path='/register' element={<Content>
-          <Register />
-        </Content>}/>
+          <Route path='/' element={<Content>
+            <Main />
+          </Content>} />
+          <Route path='/login' element={<Content>
+            <Login />
+          </Content>}/>
+          <Route path='/dashboard/*' element={<DashboardLayout />} />
+          <Route path='/register' element={<Content>
+            <Register />
+          </Content>}/>
         </Routes>
       </section>
     </Router>

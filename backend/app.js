@@ -4,6 +4,8 @@ const cors = require('cors');
 const mongoose = require('mongoose')
 const redis = require('redis')
 const secretRead = require('./utils/secret')
+const fs = require('fs')
+const https = require('https')
 
 let RedisDB_URI = 'redis://redis:6379'
 let MongoDB_URI
@@ -24,7 +26,7 @@ const ADDRESS = process.env.Address || '0.0.0.0';
 const config = {
     JWT_Secret: JWT_Secret,
     Port: PORT,
-    Address: ADDRESS,
+    Address: ADDRESS
 }
 
 secretRead('db_password')
@@ -72,11 +74,18 @@ const userRouter = require('./routers/user')(config, redisClient)
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ["*"], // Temporary
+    origin: "*",
     credentials: true
 }))
 app.use('/users', userRouter)
 
-app.listen(PORT, ADDRESS, () => {
-    console.log(`Server running at http://${ADDRESS}:${PORT}`)
+const options = {
+    key: fs.readFileSync("./cert/backend.key"),
+    cert: fs.readFileSync("./cert/backend.crt")
+}
+
+const httpsServer = https.createServer(options, app)
+
+httpsServer.listen(PORT, ADDRESS, () => {
+    console.log(`App listening on https://${ADDRESS}:${PORT}`)
 })
