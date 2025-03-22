@@ -14,7 +14,7 @@ import Overall from './components/Dashboard/Overall'
 
 function DashboardLayout() {
   return (
-      <div className='flex justify-center flex-1'>
+      <div className='flex flex-1'>
         <Dashboard>
           <Routes>
             <Route path='/overall' element={<Overall />} />

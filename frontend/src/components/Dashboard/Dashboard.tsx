@@ -20,7 +20,7 @@ function NavOption({ text, route, active, onClick }: INavOption) {
 export default function Dashboard({ children }: IChildren ) {
     const [selected, setSelected] = useState<number>(5) // TODO: Selected item highlight
     return (
-        <section className="w-4/5 h-auto m-16 lg:max-sm:flex-col lg:flex border-8 rounded-4xl bg-orange-400 text-center z-10 shadow-2xl backdrop-blur-3xl overflow-hidden">
+        <section className="w-full lg:max-sm:flex-col lg:flex border-t-8 text-center z-10">
             <nav className="flex flex-col lg:w-1/3 bg-rose-500 max-md:overflow-auto">
                 <NavOption text="Overall" route="overall" active={ (selected == 0) ? true : false } onClick={() => setSelected(0)}/>
                 <NavOption text="Transactions" route="transactions" active={ (selected == 1) ? true : false } onClick={() => setSelected(1)}/>
@@ -29,7 +29,7 @@ export default function Dashboard({ children }: IChildren ) {
                 <NavOption text="Trends" route="trends" active={ (selected == 4) ? true : false } onClick={() => setSelected(4)}/>
                 <NavOption text="Profile" route="profile" active={ (selected == 5) ? true : false } onClick={() => setSelected(5)}/>
             </nav>
-            <div className="lg:w-2/3 text-center">
+            <div className="lg:w-2/3 text-center text-black">
                 { children }
             </div>
         </section>
