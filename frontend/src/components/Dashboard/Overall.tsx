@@ -45,31 +45,26 @@ export default function Overall() {
                 <StatsItem title="Total income" value={ 6250 } currency="zł" weekDiff={ -1 } monthDiff={ 2 } />
                 <StatsItem title="Total costs" value={ 2000 } currency="zł" weekDiff={ 3 } monthDiff={ -4 } />
             </div>
-                {/* <div className="flex max-md:flex-col justify-between items-center text-center m-4">
-                    <h3 className="text-xl lg:text-2xl font-bold">Difference: 4250 zł</h3>
-                    <div className="flex max-md:flex-col justify-evenly lg:w-full">
-                        <h3 className="text-xl lg:text-2xl text-green-300 font-bold">Income: 6550 zł</h3>
-                        <h3 className="text-xl lg:text-2xl text-red-500 font-bold">Costs: 2300 zł</h3>
-                    </div>
-                </div> */}
             <div className="flex max-sm:flex-col justify-evenly lg:w-full *:bg-white">
-                <div className="text-xl lg:text-2xl h-80 overflow-auto p-8 m-2 shadow-2xl lg:w-1/3 rounded-3xl">
-                    <h2 className="text-3xl lg:text-4xl">Latest notes</h2>
-                    <hr />
-                    <ul className="*:p-2">
-                        <li>Note 1</li>
-                        <li>Note 2</li>
-                        <li>Note 3</li>
-                    </ul>
-                </div>
-                <div className="text-xl lg:text-2xl h-80 overflow-auto p-8 m-2 shadow-2xl lg:w-1/3 rounded-3xl">
-                    <h2 className="text-3xl lg:text-4xl">Starred notes</h2>
-                    <hr />
-                    <ul className="*:p-2">
-                        <li>Note 1</li>
-                        <li>Note 2</li>
-                        <li>Note 3</li>
-                    </ul>
+                <div className="text-xl lg:text-2xl h-80 p-8 m-2 shadow-2xl lg:w-1/2 rounded-3xl flex justify-between">
+                    <div className="overflow-auto">
+                        <h2 className="text-3xl lg:text-4xl">Latest notes</h2>
+                        <hr />
+                        <ul className="*:p-2">
+                            <li>Note 1</li>
+                            <li>Note 2</li>
+                            <li>Note 3</li>
+                        </ul>
+                    </div>
+                    <div className="overflow-auto">
+                        <h2 className="text-3xl lg:text-4xl">Starred notes</h2>
+                        <hr />
+                        <ul className="*:p-2">
+                            <li>Note 1</li>
+                            <li>Note 2</li>
+                            <li>Note 3</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
