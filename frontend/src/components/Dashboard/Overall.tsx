@@ -46,20 +46,20 @@ export default function Overall() {
                 <StatsItem title="Total costs" value={ 2000 } currency="zł" weekDiff={ 3 } monthDiff={ -4 } />
             </div>
             <div className="flex max-sm:flex-col justify-evenly lg:w-full *:bg-white">
-                <div className="text-xl lg:text-2xl h-80 p-8 m-2 shadow-2xl lg:w-1/2 rounded-3xl flex justify-between">
-                    <div className="overflow-auto">
+                <div className="text-xl lg:text-2xl h-80 p-8 m-2 shadow-2xl lg:w-1/2 rounded-3xl flex justify-between overflow-hidden">
+                    <div className="overflow-auto w-1/2 mx-2 h-80">
                         <h2 className="text-3xl lg:text-4xl">Latest notes</h2>
                         <hr />
-                        <ul className="*:p-2">
+                        <ul className="*:p-2 text-xl">
                             <li>Note 1</li>
                             <li>Note 2</li>
                             <li>Note 3</li>
                         </ul>
                     </div>
-                    <div className="overflow-auto">
+                    <div className="overflow-auto w-1/2 mx-2 h-80">
                         <h2 className="text-3xl lg:text-4xl">Starred notes</h2>
                         <hr />
-                        <ul className="*:p-2">
+                        <ul className="*:p-2 text-xl">
                             <li>Note 1</li>
                             <li>Note 2</li>
                             <li>Note 3</li>
