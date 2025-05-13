@@ -10,6 +10,11 @@ interface IStatsItem {
     monthDiff: number
 }
 
+interface INotes {
+    title: string,
+    notes: string[]
+}
+
 function StatsItem({ title, value, currency, weekDiff, monthDiff }: IStatsItem) {
     return (
         <div className="w-full rounded-xl shadow-2xl bg-white">
@@ -21,6 +26,18 @@ function StatsItem({ title, value, currency, weekDiff, monthDiff }: IStatsItem) 
                 <h3>Weekly: <span className="font-bold">{ weekDiff }%</span></h3>
                 <h3>Monthly: <span className="font-bold">{ monthDiff }%</span></h3>
             </div>
+        </div>
+    )
+}
+
+function Notes({ title, notes }: INotes) {
+    return (
+        <div className="overflow-auto w-1/2 mx-2 h-80">
+            <h2 className="text-3xl lg:text-4xl">{ title }</h2>
+            <hr />
+            <ul className="*:p-2 text-xl">
+                { notes.map((note) => <li>{ note }</li>) }
+            </ul>
         </div>
     )
 }
@@ -47,24 +64,8 @@ export default function Overall() {
             </div>
             <div className="flex max-sm:flex-col justify-evenly lg:w-full *:bg-white">
                 <div className="text-xl lg:text-2xl h-80 p-8 m-2 shadow-2xl lg:w-1/2 rounded-3xl flex justify-between overflow-hidden">
-                    <div className="overflow-auto w-1/2 mx-2 h-80">
-                        <h2 className="text-3xl lg:text-4xl">Latest notes</h2>
-                        <hr />
-                        <ul className="*:p-2 text-xl">
-                            <li>Note 1</li>
-                            <li>Note 2</li>
-                            <li>Note 3</li>
-                        </ul>
-                    </div>
-                    <div className="overflow-auto w-1/2 mx-2 h-80">
-                        <h2 className="text-3xl lg:text-4xl">Starred notes</h2>
-                        <hr />
-                        <ul className="*:p-2 text-xl">
-                            <li>Note 1</li>
-                            <li>Note 2</li>
-                            <li>Note 3</li>
-                        </ul>
-                    </div>
+                    <Notes title="Latest Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
+                    <Notes title="Favourite Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
                 </div>
             </div>
         </div>
