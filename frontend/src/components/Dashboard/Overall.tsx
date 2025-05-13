@@ -38,7 +38,7 @@ export default function Overall() {
     
     return (
         <div className="flex justify-center items-center flex-col h-full *:p-4 max-lg:overflow-auto">
-            <h1 className="text-3xl lg:text-5xl">Finanse status</h1>
+            <h1 className="text-3xl lg:text-5xl">Financial Overview</h1>
             <hr className="w-full" />
             <div className="max-sm:flex-col flex flex-row w-full *:p-8 max-sm:*:my-3 md:*:m-8">
                 <StatsItem title="Total difference" value={ 4250 } currency="zł" weekDiff={ 9 } monthDiff={ -5 } />
@@ -53,7 +53,7 @@ export default function Overall() {
                     </div>
                 </div> */}
             <div className="flex max-sm:flex-col justify-evenly lg:w-full *:bg-white">
-                <div className="text-xl lg:text-2xl h-80 overflow-auto p-8 m-2 border-4 shadow-2xl lg:w-1/3 rounded-3xl">
+                <div className="text-xl lg:text-2xl h-80 overflow-auto p-8 m-2 shadow-2xl lg:w-1/3 rounded-3xl">
                     <h2 className="text-3xl lg:text-4xl">Latest notes</h2>
                     <hr />
                     <ul className="*:p-2">
@@ -62,7 +62,7 @@ export default function Overall() {
                         <li>Note 3</li>
                     </ul>
                 </div>
-                <div className="text-xl lg:text-2xl h-80 overflow-auto p-8 m-2 border-4 shadow-2xl lg:w-1/3 rounded-3xl">
+                <div className="text-xl lg:text-2xl h-80 overflow-auto p-8 m-2 shadow-2xl lg:w-1/3 rounded-3xl">
                     <h2 className="text-3xl lg:text-4xl">Starred notes</h2>
                     <hr />
                     <ul className="*:p-2">
