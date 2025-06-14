@@ -3,15 +3,15 @@
 import { useUser } from "../../context/UserContext";
 
 export default function Profile() {
-    // const { user, loading } = useUser()
+    const { user, loading } = useUser()
 
-    // if (loading) {
-    //     return (<p>
-    //         Loading profile...
-    //     </p>)
-    // }
+    if (loading) {
+        return (<p>
+            Loading profile...
+        </p>)
+    }
 
-    // console.log(user)
+    console.log(user)
     
     return (
         <div className="flex justify-center items-center flex-col h-full *:p-4">

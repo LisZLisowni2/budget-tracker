@@ -43,15 +43,15 @@ function Notes({ title, notes }: INotes) {
 }
 
 export default function Overall() {
-    // const { user, loading } = useUser()
+    const { user, loading } = useUser()
 
-    // if (loading) {
-    //     return (<p>
-    //         Loading profile...
-    //     </p>)
-    // }
+    if (loading) {
+        return (<p>
+            Loading profile...
+        </p>)
+    }
 
-    // console.log(user)
+    console.log(user)
     
     return (
         <div className="flex justify-center items-center flex-col h-full *:p-4 max-lg:overflow-auto">
@@ -63,7 +63,7 @@ export default function Overall() {
                 <StatsItem title="Total costs" value={ 2000 } currency="zł" weekDiff={ 3 } monthDiff={ -4 } />
             </div>
             <div className="flex max-sm:flex-col justify-evenly lg:w-full *:bg-white">
-                <div className="text-xl lg:text-2xl h-80 p-8 m-2 shadow-2xl lg:w-1/2 rounded-3xl flex justify-between overflow-hidden">
+                <div className="text-xl lg:text-2xl h-80 p-8 m-2 shadow-2xl lg:w-3/5 rounded-3xl flex justify-between overflow-hidden">
                     <Notes title="Latest Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
                     <Notes title="Favourite Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
                 </div>

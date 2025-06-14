@@ -5,14 +5,29 @@ interface IChildren {
     children?: ReactNode
 }
 
-const UserContext = createContext<any | null>(null);
+interface IUser {
+    username: string,
+    email: string,
+    password?: string,
+    scope?: string
+}
+
+interface IUserContext {
+	user: IUser | null,
+	loading: boolean,
+	handleUserLogin: () => Promise<void>,
+	handleUserLogout: () => Promise<void>
+}
+
+const UserContext = createContext<IUserContext | null>(null);
 
 export function UserProvide({ children }: IChildren) {
-    const [user, setUser] = useState<any | null>(null)
+    const [user, setUser] = useState<IUser | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
 
     const handleUserLogin = async () => {
-        const user = await api.get('/users/me')
+        const res = await api.get('/users/me')
+        const user: IUser = { username: res.data.username, email: res.data.email, password: res.data.password, scope: res.data.scope }
         setUser(user)
     }
 
@@ -35,12 +50,16 @@ export function UserProvide({ children }: IChildren) {
     }, [])
 
     return (
-        <UserContext.Provider value={{user, handleUserLogin, handleUserLogout, loading}}>
+        <UserContext.Provider value={{ user, handleUserLogin, handleUserLogout, loading }}>
             { children }
         </UserContext.Provider>
     )
 }
 
 export function useUser() {
-    return useContext(UserContext)
+    const context = useContext(UserContext)
+    if (!context) {
+    	throw new Error("useUser must be used within an UserProvide")
+    }
+    return context
 }
