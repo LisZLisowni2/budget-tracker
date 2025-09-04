@@ -1,17 +1,18 @@
-version: '3.8'
-
 services:
   frontend:
-    image: 127.0.0.1:5000/budget-tracker-frontend
+    image: 127.0.0.1:5000/budget-tracker-frontend:latest
     deploy:
       replicas: 1
     networks:
       - overlayNet
     ports:
-      - "443:443"
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
 
   backend:
-    image: 127.0.0.1:5000/budget-tracker-backend
+    image: 127.0.0.1:5000/budget-tracker-backend:latest
     deploy:
       replicas: 1
     ports:
@@ -63,8 +64,8 @@ volumes:
 
 secrets:
   db_password:
-    external: true
+    file: dbPassword.local
   redis_password:
-    external: true
+    file: redisPassword.local
   jwt_token:
-    external: true
+    file: JWTToken.local
