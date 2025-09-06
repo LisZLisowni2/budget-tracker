@@ -1,7 +1,7 @@
 // import { useState } from 'react'
 import Header from './components/Header/Header'
 import Content from './components/Content/Content'
-import Main from './components/Main/Main'
+import HeroBox from './components/Main/HeroBox'
 import Login from './components/User/Login'
 import Register from './components/User/Register'
 import Dashboard from './components/Dashboard/Dashboard'
@@ -36,12 +36,13 @@ function App() {
   return (
     <UserProvide>
     <Router>
-      <section className="min-h-screen flex text-white flex-col bg-gray-200">
+      <section className="min-h-screen flex text-white flex-col bg-gradient-to-r from-gray-100 to-gray-200">
         <Header />
         <Routes>
-          <Route path='/' element={<Content>
-            <Main />
-          </Content>} />
+          <Route path='/' element={
+            <Content>
+              <HeroBox />
+            </Content>} />
           <Route path='/login' element={<Content>
             <Login />
           </Content>}/>

@@ -2,7 +2,7 @@ import { Link } from "react-router"
 
 export default function Header() {
     return (
-        <div className="h-auto p-5 flex justify-between bg-gradient-to-r from-yellow-500 to-orange-500">
+        <div className="h-auto p-5 flex justify-between bg-gradient-to-r from-yellow-500 to-orange-500 shadow-xl">
             <h1 className="text-2xl md:text-3xl lg:text-5xl">BudgetTracker</h1>
             <div className="flex items-center justify-center *:mx-3 cursor-pointer transition hover:text-gray-300">
                 <Link to="/login">
