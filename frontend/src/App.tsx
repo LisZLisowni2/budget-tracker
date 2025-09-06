@@ -3,6 +3,7 @@ import Header from './components/Header/Header'
 import Content from './components/Content/Content'
 import HeroBox from './components/Main/HeroBox'
 import ReasonsBox from './components/Main/ReasonsBox'
+import WhyBox from './components/Main/WhyBox'
 import Login from './components/User/Login'
 import Register from './components/User/Register'
 import Dashboard from './components/Dashboard/Dashboard'
@@ -44,9 +45,9 @@ function App() {
               <div className='flex justify-center p-60'>
                 <HeroBox />
               </div>
-              <div className='flex justify-between bg-white shadow-2xl'>
+              <div className='max-md:flex-col flex lg justify-between bg-white shadow-2xl'>
                 <ReasonsBox />
-                <ReasonsBox />
+                <WhyBox />
               </div>
             </div>} />
           <Route path='/login' element={<Content>
