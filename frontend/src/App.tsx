@@ -2,6 +2,7 @@
 import Header from './components/Header/Header'
 import Content from './components/Content/Content'
 import HeroBox from './components/Main/HeroBox'
+import ReasonsBox from './components/Main/ReasonsBox'
 import Login from './components/User/Login'
 import Register from './components/User/Register'
 import Dashboard from './components/Dashboard/Dashboard'
@@ -39,10 +40,15 @@ function App() {
       <section className="min-h-screen flex text-white flex-col bg-gradient-to-r from-gray-100 to-gray-200">
         <Header />
         <Routes>
-          <Route path='/' element={
-            <Content>
-              <HeroBox />
-            </Content>} />
+          <Route path='/' element={<div className='flex-col justify-center items-center'>
+              <div className='flex justify-center p-60'>
+                <HeroBox />
+              </div>
+              <div className='flex justify-between bg-white shadow-2xl'>
+                <ReasonsBox />
+                <ReasonsBox />
+              </div>
+            </div>} />
           <Route path='/login' element={<Content>
             <Login />
           </Content>}/>
