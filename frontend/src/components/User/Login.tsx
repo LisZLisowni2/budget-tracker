@@ -1,27 +1,10 @@
 import Button from "../Button/Button"
-import { ReactNode, useState, ChangeEventHandler, ChangeEvent, FormEvent } from "react"
+import { useState, ChangeEvent, FormEvent } from "react"
 import { useUser } from "../../context/UserContext"
 import api from "../../api"
 import { useNavigate } from "react-router"
 import { Link } from "react-router"
-
-interface IFormLabel {
-    label: string,
-    type: string,
-    id: string,
-    onChange?: ChangeEventHandler
-    children?: ReactNode
-}
-
-function FormField({ label, type, id, onChange, children }: IFormLabel) {
-    return (
-        <p className="flex my-4 flex-col">
-            <span className="lg:text-2xl">{label}</span>
-            <input type={type} id={id} className="p-2 font-extrabold border-white border-2 rounded-2xl" onChange={onChange}/>
-            { children }
-        </p>
-    )
-}
+import FormField from "../FormUtils/FormField"
 
 export default function Login() {
     const [passwordView, setPasswordView] = useState(false)
@@ -73,15 +56,15 @@ export default function Login() {
 
     return (
         <div>
-            <form onSubmit={async (event) => await handleLogin(event)} className="relative bg-rose-300 p-16 lg:p-32 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
-                <h1 className="text-3xl lg:text-5xl font-bold mb-8">Login form</h1>
+            <form onSubmit={async (event) => await handleLogin(event)} className="relative bg-gradient-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
+                <h1 className="text-2xl md:text-3xl font-bold mb-8">Login form</h1>
                 <FormField label="Username:" type="text" id="login" onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
                 <FormField label="Password:" type={ (passwordView) ? "text" : "password" } id="password" onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}>
                     <span className="self-end relative bottom-8.5 right-1.5">{ passwordIcon }</span>
                 </FormField>
                 <p className="flex my-4 flex-col"><Button text="Login" /></p>
                 <p className="text-red-600 font-bold text-2xl">{ error }</p>
-                <p><Link to="/register" className="font-bold text-2xl hover:text-gray-300 transition">If you don't have an account, register</Link></p>
+                <p><Link to="/register" className="font-bold lg:text-xl hover:text-gray-300 transition">If you don't have an account, register</Link></p>
             </form>
         </div>
     )
