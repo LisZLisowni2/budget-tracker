@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router'
 import { UserProvide } from './context/UserContext'
 import Profile from './components/Dashboard/Profile'
 import Overall from './components/Dashboard/Overall'
+import Footer from './components/Footer/Footer'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 
@@ -58,6 +59,7 @@ function App() {
             <Register />
           </Content>}/>
         </Routes>
+        <Footer />
       </section>
     </Router>
     </UserProvide>
