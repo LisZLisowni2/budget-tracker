@@ -1,6 +1,28 @@
 // TODO: UPDATE TO SERVE THE DATA FROM SERVER
 
 import { useUser } from "../../context/UserContext";
+import { Line } from "react-chartjs-2"
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    plugins
+} from "chart.js"
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+)
 
 interface IStatsItem {
     title: string,
@@ -54,6 +76,34 @@ export default function Overall() {
     }
 
     console.log(user)
+
+    const data = {
+        labels: ['jan', 'feb', 'mar', 'apr', 'may'],
+        datasets: [
+            {
+                label: "Sales",
+                data: [100, 300, 200, 100, 500],
+                borderColor: "blue",
+                backgroundColor: "lightblue",
+                fill: true
+            },
+            {
+                label: "Expenses",
+                data: [300, 200, 200, 100, 200],
+                borderColor: "red",
+                backgroundColor: "orange",
+                fill: true
+            }
+        ]
+    }
+
+    const options = {
+        responsive: true,
+        plugins: {
+            // legend: { position: "top" },
+            title: { display: true, text: "Monthly sales" }
+        }
+    }
     
     return (
         <div className="flex items-center justify-between flex-col h-full *:p-4 max-lg:overflow-auto">
@@ -69,8 +119,7 @@ export default function Overall() {
             </div>
             <div className="flex max-sm:flex-col justify-evenly lg:w-full *:bg-white">
                 <div className="text-lg lg:text-xl h-80 p-8 m-2 shadow-2xl lg:w-3/5 rounded-3xl flex justify-between overflow-hidden">
-                    <Notes title="Latest Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
-                    <Notes title="Favourite Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
+                    <Line data={data} options={options} style={{ width: "500px"}}/>
                 </div>
                 <div className="text-lg lg:text-xl h-80 p-8 m-2 shadow-2xl lg:w-3/5 rounded-3xl flex justify-between overflow-hidden">
                     <Notes title="Latest Notes" notes={["Note 1", "Note 1", "Note 1"]}/>
