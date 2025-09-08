@@ -14,14 +14,18 @@ interface IChildren {
 
 
 function NavOption({ text, route, active, onClick }: INavOption) {
-    return (active) ? (<Link to={`/dashboard/${route}`} onClick={onClick}><span className="block text-2xl p-2 lg:p-4 font-bold bg-rose-800 hover:bg-rose-700 transition">{ text }</span></Link>) : (<Link to={`/dashboard/${route}`} onClick={onClick}><span className="block text-2xl p-2 lg:p-4 bg-rose-500 hover:bg-rose-700 transition">{ text }</span></Link>)
+    return (active) ? (<Link to={`/dashboard/${route}`} onClick={onClick}>
+        <span className="block text-2xl p-2 lg:p-4 font-bold bg-rose-800 hover:bg-rose-700 transition">{ text }</span>
+    </Link>) : (<Link to={`/dashboard/${route}`} onClick={onClick}>
+    <span className="block text-2xl p-2 lg:p-4 bg-rose-500 hover:bg-rose-700 transition">{ text }</span>
+    </Link>)
 }
 
 export default function Dashboard({ children }: IChildren ) {
     const [selected, setSelected] = useState<number>(5) // TODO: Selected item highlight
     return (
         <section className="w-full lg:max-sm:flex-col lg:flex border-t-8 text-center z-10">
-            <nav className="flex flex-col lg:w-1/3 bg-rose-500 max-md:overflow-auto">
+            <nav className="flex flex-col lg:w-1/5 bg-rose-500 max-md:overflow-auto">
                 <NavOption text="Overall" route="overall" active={ (selected == 0) ? true : false } onClick={() => setSelected(0)}/>
                 <NavOption text="Transactions" route="transactions" active={ (selected == 1) ? true : false } onClick={() => setSelected(1)}/>
                 <NavOption text="Investments" route="investments" active={ (selected == 2) ? true : false } onClick={() => setSelected(2)}/>
@@ -29,7 +33,7 @@ export default function Dashboard({ children }: IChildren ) {
                 <NavOption text="Trends" route="trends" active={ (selected == 4) ? true : false } onClick={() => setSelected(4)}/>
                 <NavOption text="Profile" route="profile" active={ (selected == 5) ? true : false } onClick={() => setSelected(5)}/>
             </nav>
-            <div className="lg:w-2/3 text-center text-black">
+            <div className="lg:w-4/5 text-center text-black bg-white">
                 { children }
             </div>
         </section>
