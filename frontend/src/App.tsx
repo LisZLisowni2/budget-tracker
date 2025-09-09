@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router'
 import { UserProvide } from './context/UserContext'
 import Profile from './components/Dashboard/Profile'
 import Overall from './components/Dashboard/Overall'
+import Transactions from './components/Dashboard/Transaction'
 import Footer from './components/Footer/Footer'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
@@ -21,7 +22,7 @@ function DashboardLayout() {
         <Dashboard>
           <Routes>
             <Route path='/overall' element={<Overall />} />
-            <Route path='/transactions' element={<p className='text-2xl'>Welcome to transactions!</p>} />
+            <Route path='/transactions' element={<Transactions />} />
             <Route path='/investments' element={<p className='text-2xl'>Welcome to investments!</p>} />
             <Route path='/notes' element={<p className='text-2xl'>Welcome to notes!</p>} />
             <Route path='/trends' element={<p className='text-2xl'>Welcome to trends!</p>} />
