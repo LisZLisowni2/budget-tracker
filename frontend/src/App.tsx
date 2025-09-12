@@ -23,7 +23,7 @@ function DashboardLayout() {
           <Routes>
             <Route path='/overall' element={<Overall />} />
             <Route path='/transactions' element={<Transactions />} />
-            <Route path='/investments' element={<p className='text-2xl'>Welcome to investments!</p>} />
+            <Route path='/goals' element={<p className='text-2xl'>Welcome to goals!</p>} />
             <Route path='/notes' element={<p className='text-2xl'>Welcome to notes!</p>} />
             <Route path='/trends' element={<p className='text-2xl'>Welcome to trends!</p>} />
             <Route path='/profile' element={<Profile />} />
