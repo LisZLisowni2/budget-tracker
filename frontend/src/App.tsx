@@ -12,6 +12,8 @@ import { UserProvide } from './context/UserContext'
 import Profile from './components/Dashboard/Profile'
 import Overall from './components/Dashboard/Overall'
 import Transactions from './components/Dashboard/Transaction'
+import Goals from './components/Dashboard/Goals'
+import Notes from './components/Dashboard/Notes'
 import Footer from './components/Footer/Footer'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
@@ -23,9 +25,8 @@ function DashboardLayout() {
           <Routes>
             <Route path='/overall' element={<Overall />} />
             <Route path='/transactions' element={<Transactions />} />
-            <Route path='/goals' element={<p className='text-2xl'>Welcome to goals!</p>} />
-            <Route path='/notes' element={<p className='text-2xl'>Welcome to notes!</p>} />
-            <Route path='/trends' element={<p className='text-2xl'>Welcome to trends!</p>} />
+            <Route path='/goals' element={<Goals />} />
+            <Route path='/notes' element={<Notes />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/' element={<Profile />} />
           </Routes>
