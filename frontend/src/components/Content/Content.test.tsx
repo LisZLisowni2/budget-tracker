@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react"
-import { vi } from "vitest" 
 import { MemoryRouter } from "react-router"
 import "@testing-library/jest-dom"
 import Content from "./Content"

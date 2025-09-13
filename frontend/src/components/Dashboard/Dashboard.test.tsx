@@ -1,7 +1,6 @@
-import { screen, render, fireEvent, getByText } from "@testing-library/react";
+import { screen, render } from "@testing-library/react";
 import Dashboard from "./Dashboard";
 import { MemoryRouter } from "react-router";
-import { vi } from "vitest";
 
 describe("Dashboard component", () => {
     it("Dashboard render default", () => {

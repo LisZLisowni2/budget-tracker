@@ -1,5 +1,4 @@
 import { useUser } from "../../context/UserContext"
-import Button from "../Button/Button"
 
 interface INoteElement {
     id: number,
@@ -8,7 +7,7 @@ interface INoteElement {
     ownedBy?: string
 }
 
-function NoteElement({ id, title, content, ownedBy }: INoteElement) {
+function NoteElement({ id, title, content }: INoteElement) {
     return (
         <button id={`note${id}`} className="shadow-lg w-4/5 rounded-4xl mx-12 hover:scale-105 transition-all m-4">
             <div className="flex flex-col justify-start text-left p-2 m-4">
