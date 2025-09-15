@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it backend-bt-testing"
+    "test": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it backend-bt-testing",
+    "test:coverage": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it backend-bt-testing npx vitest --run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "redis": "^4.7.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
     "mongodb-memory-server": "^10.2.0",
     "supertest": "^7.1.4",
     "vitest": "^3.2.4"
