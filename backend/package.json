@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -20,5 +20,8 @@
     "mongodb": "^6.14.0",
     "mongoose": "^8.11.0",
     "redis": "^4.7.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }

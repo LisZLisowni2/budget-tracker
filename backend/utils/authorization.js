@@ -12,7 +12,7 @@ module.exports = (config, redis) => {
                 if (err) return res.status(403).json({ 'message': 'Invalid token' })
                 const sessionExist = await redis.get(decoded.sessionID)
                 if (!sessionExist) {
-                    res.status(401).json({ 'message': 'Sesja wygasła lub została unieważniona '})
+                    res.status(401).json({ 'message': 'Session expired or has invalided'})
                 }
                 req.user = decoded
                 next()
