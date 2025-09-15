@@ -1,0 +1,15 @@
+FROM node:24.0 AS base
+
+WORKDIR /app
+
+COPY package.json package-lock.json /app/
+
+RUN npm install
+
+FROM base AS final
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npx", "vitest", "--run"]

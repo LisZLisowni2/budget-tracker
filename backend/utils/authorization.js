@@ -22,7 +22,8 @@ module.exports = (config, redis) => {
             return async(req, res, next) => {
                 const { username } = req.user
                 const user = await User.findOne({ username: username }).select('scope')
-                if (user.scope !== requiredRole) return res.status(401).json({ 'message': 'Access denied' })
+                if (user === null) return res.status(404).json({ 'message': 'User not found' })
+                if (user.scope !== requiredRole) return res.status(403).json({ 'message': 'Access denied' })
                 return next()
             }
         }
