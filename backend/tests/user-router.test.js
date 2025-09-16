@@ -65,4 +65,11 @@ describe("User router", () => {
         expect(res.statusCode).toBe(200)
         expect(res.body).toStrictEqual({"__v": 0, "email": "abc123", "scope": "user", "username": "test"})
     })
+
+    it("Denied to access details of user", async () => {
+        const res = await request(app)
+            .get('/users/me')
+        
+        expect(res.statusCode).toBe(403)
+    })
 })
