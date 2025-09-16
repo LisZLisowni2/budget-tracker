@@ -1,4 +1,5 @@
-FROM node:24.0 AS base
+# mongodb-memory-server require node:24.0, not in alpine
+FROM node:24.0 AS base 
 
 WORKDIR /app
 

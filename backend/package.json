@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it backend-bt-testing",
-    "test:coverage": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it backend-bt-testing npx vitest --run --coverage"
+    "test": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it --rm backend-bt-testing",
+    "test:coverage": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it --rm backend-bt-testing npx vitest --run --coverage"
   },
   "keywords": [],
   "author": "",
