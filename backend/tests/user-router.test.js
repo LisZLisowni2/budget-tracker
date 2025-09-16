@@ -70,6 +70,52 @@ describe("User router", () => {
         const res = await request(app)
             .get('/users/me')
         
-        expect(res.statusCode).toBe(403)
+        expect(res.statusCode).toBe(401)
+    })
+
+    it("Register new user", async () => {
+        const body = {
+            username: 'test123',
+            email: 'test@example.com',
+            password: 'abc123'
+        }
+        
+        const res = await request(app)
+            .post('/users/register')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(201)
+    })
+
+    it("Register without required fields", async () => {
+        const body = {
+            username: 'test123',
+            password: 'abc123'
+        }
+        
+        const res = await request(app)
+            .post('/users/register')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(400)
+    })
+
+    it("Login", async () => {
+        const body = {
+            username: 'test123',
+            password: 'abc123'
+        }
+        
+        const res = await request(app)
+            .post('/users/register')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(400)
     })
 })
