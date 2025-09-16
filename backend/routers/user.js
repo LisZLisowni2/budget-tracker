@@ -63,7 +63,7 @@ module.exports = (config, redis) => {
     router.get('/me', Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user
-            const userData = User.findOne({ username: username }).select("-v -_id -password")
+            const userData = await User.findOne({ username: username }).select("-v -_id -password")
             res.json(userData)
         } catch {
             res.status(500).json({ 'message': 'Internal server error' })
