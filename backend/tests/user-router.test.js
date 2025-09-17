@@ -24,7 +24,8 @@ describe("User router", () => {
         app.use(express.json())
 
         redisMock = {
-            get: vi.fn()
+            get: vi.fn(),
+            setEx: vi.fn()
         }
         
         config = {
@@ -48,6 +49,7 @@ describe("User router", () => {
         const newUser = new User({
             username: 'test',
             email: 'abc123',
+            password: '$2a$12$hrBDpflcFtPsoT6lfUONj.cdcg1AMpxQ20bz6V2cS.LXH8PZu8O5.',
             scope: 'user'
         })
 
@@ -111,11 +113,54 @@ describe("User router", () => {
         }
         
         const res = await request(app)
-            .post('/users/register')
+            .post('/users/login')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send(body)
 
+        expect(res.statusCode).toBe(200)
+        expect(res.body.message).toMatch(/Login successful/)
+    })
+
+    it("Login without nothing", async () => {
+        const res = await request(app)
+            .post('/users/login')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+
         expect(res.statusCode).toBe(400)
+        expect(res.body.message).toMatch(/Username or password not present/)
+    })
+
+    it("Login when account not present", async () => {
+        const body = {
+            username: 'testNotPresent',
+            password: 'abc123'
+        }
+
+        const res = await request(app)
+            .post('/users/login')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(404)
+        expect(res.body.message).toMatch(/User not found/)
+    })
+
+    it("Login with wrong password", async () => {
+        const body = {
+            username: 'test',
+            password: 'abc124'
+        }
+
+        const res = await request(app)
+            .post('/users/login')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(401)
+        expect(res.body.message).toMatch(/Wrong password/)
     })
 })
