@@ -25,7 +25,7 @@ services:
       - jwt_token
 
   database:
-    image: mongo:4.4 # Version 4.4 on CPU without AVX support otherwise replace 4.4 with latest or another desired version
+    image: mongo:latest # Version 4.4 on CPU without AVX support otherwise replace 4.4 with latest or another desired version
     deploy:
       replicas: 1
     volumes:
