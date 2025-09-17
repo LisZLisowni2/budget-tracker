@@ -25,7 +25,8 @@ describe("User router", () => {
 
         redisMock = {
             get: vi.fn(),
-            setEx: vi.fn()
+            setEx: vi.fn(),
+            del: vi.fn()
         }
         
         config = {
@@ -162,5 +163,17 @@ describe("User router", () => {
 
         expect(res.statusCode).toBe(401)
         expect(res.body.message).toMatch(/Wrong password/)
+    })
+
+    it("Logout", async () => {
+        const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+        redisMock.get.mockResolvedValue('123')
+
+        const res = await request(app)
+            .get('/users/logout')
+            .set('Authorization', `Bearer ${token}`)
+        
+        expect(res.statusCode).toBe(200)
+        expect(res.body.message).toMatch(/Logout successful/)
     })
 })
