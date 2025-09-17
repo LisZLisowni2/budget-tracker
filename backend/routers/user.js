@@ -26,16 +26,13 @@ module.exports = (config, redis) => {
             const user = await User.findOne({ username: username }).select('password')
             if (!user) return res.status(404).json({ 'message': 'User not found' })
             
-            console.log(user)
             const passTest = await bcrypt.compare(password, user.password)
             if (!passTest) return res.status(401).json({ 'message': 'Wrong password'})
             
             generateSessionID()
             .then(async (sessionID) => {
                 await redis.setEx(sessionID, 60 * 60, username)
-                console.log("Redis set")
                 const token = jwt.sign({ username: username, sessionID: sessionID }, config.JWT_Secret, { expiresIn: '1h' })
-                console.log("Token created")
                 res.json({ 'message': 'Login successful', token })
             }).catch((err) => {
                 throw new Error(err)

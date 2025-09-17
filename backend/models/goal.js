@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
+const { Schema } = mongoose
 
 const goalSchema = new mongoose.Schema({
     'date-creation': {
         type: Date,
+        default: Date.now
     },
     'goalname': {
         type: String,

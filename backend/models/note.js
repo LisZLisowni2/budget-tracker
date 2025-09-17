@@ -1,16 +1,19 @@
 const mongoose = require('mongoose')
+const { Schema } = mongoose
 
-const noteSchema = new mongoose.Schema({
+const noteSchema = new Schema({
     'date-creation': {
         type: Date,
+        default: Date.now
     },
     'title': {
         type: String,
         require: true
     },
     'ownedBy': {
-        type: Schema.Types.ObjectID,
-        ref: 'User'
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        require: true
     },
     'content': {
         type: String,
@@ -18,6 +21,7 @@ const noteSchema = new mongoose.Schema({
     },
     'last-edit-date': {
         type: Date,
+        default: Date.now
     }
 })
 
