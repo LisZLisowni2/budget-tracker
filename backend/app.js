@@ -7,6 +7,7 @@ const secretRead = require('./utils/secret')
 const fs = require('fs')
 const https = require('https')
 
+// Beka
 let RedisDB_URI = 'redis://redis:6379'
 let MongoDB_URI
 let mongodbClient
@@ -79,7 +80,9 @@ const intervalUserRouter = setInterval(() => {
     }
     if (redisClient && JWT_Secret && mongodbClient) {
         const userRouter = require('./routers/user')(config, redisClient)
-        app.use('/users', userRouter)
+        const noteRouter = require('./routers/note')(config, redisClient)
+	app.use('/users', userRouter)
+	app.use('/notes', noteRouter)
         clearInterval(intervalUserRouter)
         console.log("Attach the user router")
     } else {
