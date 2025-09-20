@@ -20,6 +20,9 @@ module.exports = (config, redis) => {
 
     router.post('/login', async (req, res) => {
         try {
+            console.log(config)
+            console.log(config.JWT_Secret)
+
             const { username, password } = req.body
             if (!username || !password) return res.status(400).json({ 'message': 'Username or password not present'})
             
@@ -29,15 +32,12 @@ module.exports = (config, redis) => {
             const passTest = await bcrypt.compare(password, user.password)
             if (!passTest) return res.status(401).json({ 'message': 'Wrong password'})
             
-            generateSessionID()
-            .then(async (sessionID) => {
-                await redis.setEx(sessionID, 60 * 60, username)
-                const token = jwt.sign({ username: username, sessionID: sessionID }, config.JWT_Secret, { expiresIn: '1h' })
-                res.json({ 'message': 'Login successful', token })
-            }).catch((err) => {
-                throw new Error(err)
-            })
+            const sessionID = await generateSessionID()
+            await redis.setEx(sessionID, 60 * 60, username)
+            const token = jwt.sign({ username: username, sessionID: sessionID }, config.JWT_Secret, { expiresIn: '1h' })
+            res.json({ 'message': 'Login successful', token })
         } catch (err) {
+            console.error(err)
             res.status(500).json({ 'message': 'Internal server error', 'error': err })
         }
     })

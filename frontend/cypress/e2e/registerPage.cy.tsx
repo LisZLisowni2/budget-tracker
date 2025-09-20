@@ -13,7 +13,7 @@ describe("Register page", () => {
     it("Password visible", () => {
         cy.visit("/register")
         cy.get("#password").type("Hi!")
-        cy.get("#password + span[class=\"self-end relative bottom-7.5 md:bottom-8.5 right-1.5\"]").click()
+        cy.get("#password + span").click()
         cy.get("#password").should('have.attr', 'type', 'text')
     })
 

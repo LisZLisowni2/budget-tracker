@@ -7,31 +7,15 @@ const secretRead = require('./utils/secret')
 const fs = require('fs')
 const https = require('https')
 
-// Beka
 let RedisDB_URI = 'redis://redis:6379'
 let MongoDB_URI
 let mongodbClient
-let JWT_Secret
 let redisClient
-
-secretRead('jwt_token')
-.then((res) => {
-    JWT_Secret = res;
-}).catch((err) => {
-    console.error.bind(err, "Error: ")
-})
 
 const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || '0.0.0.0';
 const NODE_ENV = process.env.NODE_ENV || 'production';
-
-const config = {
-    JWT_Secret: JWT_Secret,
-    Port: PORT,
-    Address: ADDRESS,
-    NODE_ENV: NODE_ENV
-}
 
 secretRead('db_password')
 .then((res) => {
@@ -75,14 +59,21 @@ secretRead('redis_password')
 })
 
 let attempts = 60;
-const intervalUserRouter = setInterval(() => {
+const intervalUserRouter = setInterval(async () => {
     if (attempts < 0) {
         clearInterval(intervalUserRouter)
         throw new Error("Failed to connect")
     }
-    if (redisClient && JWT_Secret && mongodbClient) {
+    if (redisClient && mongodbClient) {
+        const JWTSECRET = await secretRead("jwt_token")
+        const config = {
+            JWT_Secret: JWTSECRET,
+            Port: PORT,
+            Address: ADDRESS,
+            NODE_ENV: NODE_ENV
+        }
+        console.log(config)
         console.log("Attaching routers")
-        console.log(config.NODE_ENV)
         const userRouter = require('./routers/user')(config, redisClient)
         const noteRouter = require('./routers/note')(config, redisClient)
         const goalRouter = require('./routers/goal')(config, redisClient)
