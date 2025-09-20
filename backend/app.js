@@ -24,11 +24,13 @@ secretRead('jwt_token')
 const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || '0.0.0.0';
+const NODE_ENV = process.env.NODE_ENV || 'production';
 
 const config = {
     JWT_Secret: JWT_Secret,
     Port: PORT,
-    Address: ADDRESS
+    Address: ADDRESS,
+    NODE_ENV: NODE_ENV
 }
 
 secretRead('db_password')
@@ -79,12 +81,22 @@ const intervalUserRouter = setInterval(() => {
         throw new Error("Failed to connect")
     }
     if (redisClient && JWT_Secret && mongodbClient) {
+        console.log("Attaching routers")
+        console.log(config.NODE_ENV)
         const userRouter = require('./routers/user')(config, redisClient)
         const noteRouter = require('./routers/note')(config, redisClient)
-	app.use('/users', userRouter)
-	app.use('/notes', noteRouter)
+        const goalRouter = require('./routers/goal')(config, redisClient)
+        const transactionRouter = require('./routers/transaction')(config, redisClient)
+        app.use('/users', userRouter)
+        app.use('/notes', noteRouter)
+        app.use('/goals', goalRouter)
+        app.use('/transactions', transactionRouter)
+        if (config.NODE_ENV === "test") {
+            console.log("Attaching test router")
+            const testRouter = require('./routers/test')()
+            app.use('/test', testRouter)
+        }
         clearInterval(intervalUserRouter)
-        console.log("Attach the user router")
     } else {
         console.log(`RedisClient, MongoDB or JWT Secret not present. Retry, remaining attempts: ${attempts}`)
     }

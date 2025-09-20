@@ -1,6 +1,10 @@
 /// <reference types="cypress"/>
 
 describe("Register page", () => {
+    after(() => {
+        cy.clearDB()
+    })
+
     it("Render register page", () => {
         cy.visit("/register")
         cy.get("h1").should('contain', /Register form/i)
@@ -8,9 +12,9 @@ describe("Register page", () => {
 
     it("Password visible", () => {
         cy.visit("/register")
-        cy.get("input[id=\"password\"]").type("Hi!")
-        cy.get("input[id=\"password\"] > span").click()
-        cy.get("input[id=\"password\"]").should('have.attr', 'type', 'text')
+        cy.get("#password").type("Hi!")
+        cy.get("#password + span[class=\"self-end relative bottom-7.5 md:bottom-8.5 right-1.5\"]").click()
+        cy.get("#password").should('have.attr', 'type', 'text')
     })
 
     it("Test without any data", () => {
@@ -28,7 +32,7 @@ describe("Register page", () => {
         cy.get("input[id=\"passwordSecond\"").type("abc123")
         cy.get("button").click()
         cy.get("#status").invoke("text").should('not.match', /^Error while registering:.*$/i) 
-        cy.get("#status").should('contain.text', 'Account has created')
+        cy.get("#status").invoke("text").should('match', /^Account has created$/)
     })
 
     it("Input data with different passwords", () => {
