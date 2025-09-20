@@ -1,4 +1,6 @@
-describe("Test example", () => {
+/// <reference types="cypress"/>
+
+describe("Home page", () => {
     it("Render home page", () => {
         cy.visit("/")
         cy.contains("Take control over your budget with BudgetTracker!").should("be.visible")
