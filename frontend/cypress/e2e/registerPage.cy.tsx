@@ -52,7 +52,7 @@ describe("Register page", () => {
         cy.get("input[id=\"password\"").type("abc124")
         cy.get("input[id=\"passwordSecond\"").type("abc124")
         cy.get("button").click()
-        cy.get("#status").invoke("text").should('match', /^Error while registering:.*$/i) 
+        cy.get("#status").invoke("text").should('match', /Email format isn't correct/i) 
     })
 
     it("Try create account with existed email", () => {

@@ -9,10 +9,10 @@ const router = express.Router()
 module.exports = () => {
     router.post('/cleanup', async (req, res) => {
         try {
-            // await User.deleteMany({})
-            // await Note.deleteMany({})
-            // await Transaciton.deleteMany({})
-            // await Goal.deleteMany({})
+            await User.deleteMany({})
+            await Note.deleteMany({})
+            await Transaciton.deleteMany({})
+            await Goal.deleteMany({})
 
             res.status(200).json({ 'message': 'Database cleared' })
         } catch (err) {
