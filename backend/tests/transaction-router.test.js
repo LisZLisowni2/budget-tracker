@@ -5,15 +5,15 @@ import express from "express";
 import jwt from "jsonwebtoken"
 import request from "supertest"
 
-const Note = require('../models/note')
+const Transaction = require('../models/transaction')
 const User = require('../models/user')
 
-describe("Note router", () => {
+describe("Transaction router", () => {
     let redisMock
     let mongoServer
     let app
     let config
-    let noteID
+    let transactionID
     let userID
 
     beforeAll(async () => {
@@ -61,8 +61,8 @@ describe("Note router", () => {
         userID = user._id.toString()
 
         // Attach router to app
-        const noteRouter = require('../routers/note')(config, redisMock)
-        app.use('/notes/', noteRouter)
+        const transactionRouter = require('../routers/transaction')(config, redisMock)
+        app.use('/transactions/', transactionRouter)
     })
 
     afterAll(async () => {
@@ -71,59 +71,60 @@ describe("Note router", () => {
     })
 
     beforeEach(async () => {
-        await Note.deleteMany({})
+        await Transaction.deleteMany({})
         
-        // Create a new Note
-        const newNote = new Note({
+        // Create a new Transaction
+        const newTransaction = new Transaction({
             ownedBy: userID,
-            title: 'Test123',
-            content: 'Random content XD XD'
+            name: "Test",
+            price: 34.99,
+            receiver: false
         })
 
-        await newNote.save()
+        await newTransaction.save()
 
-        const note = await Note.findOne({ title: 'Test123', ownedBy: userID }).select('_id')
-        noteID = note._id.toString()
+        const transaction = await Transaction.findOne({ name: 'Test', ownedBy: userID }).select('_id')
+        transactionID = transaction._id.toString()
     })
     
     describe("GET /:id", () => {
-        it("Details of note", async () => {
+        it("Details of transaction", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
     
             const res = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/transactions/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
-            expect(res.body.title).toMatch(/Test123/)
-            expect(res.body.content).toMatch(/Random content XD XD/)
+            expect(res.body.name).toMatch(/Test/)
+            expect(res.body.price).toBe(34.99)
         })
     
-        it("Denied access to note without login", async () => {
+        it("Denied access to transaction without login", async () => {
             const res = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/transactions/${transactionID}`)
             
             expect(res.statusCode).toBe(401)
         })
     
-        it("Denied access to another user's note", async () => {
+        it("Denied access to another user's transaction", async () => {
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
     
             const res = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/transactions/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(401)
         })
     
-        it("Note doesn't exist", async () => {
+        it("Transaction doesn't exist", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
     
             const res = await request(app)
-                .get(`/notes/111111111111111111111111`)
+                .get(`/transactions/111111111111111111111111`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(404)
@@ -131,12 +132,12 @@ describe("Note router", () => {
     })
 
     describe("GET /all", () => {
-        it("All note", async () => {
+        it("All transactions", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
     
             const res = await request(app)
-                .get(`/notes/all`)
+                .get(`/transactions/all`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
@@ -146,16 +147,17 @@ describe("Note router", () => {
 
     describe("POST /new", () => {
         const body = {
-            title: 'New note',
-            content: 'HAHAHA beka'
+            name: "Wypłata",
+            price: 4299.99,
+            receiver: true
         }
 
-        it("Create a new note", async () => {
+        it("Create a new transaction", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
             const res = await request(app)
-                .post('/notes/new/')
+                .post('/transactions/new/')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
@@ -166,16 +168,16 @@ describe("Note router", () => {
     })
 
     describe("PUT /edit", () => {
-        it("Edit note", async () => {
+        it("Edit transaction", async () => {
             const body = {
-                title: 'New note',
-                content: 'HAHAHA beka'
+                name: "Zakupy",
+                price: 49.99
             }
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
             const res = await request(app)
-                .put(`/notes/edit/${noteID}`)
+                .put(`/transactions/edit/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
@@ -184,23 +186,23 @@ describe("Note router", () => {
             expect(res.statusCode).toBe(200)
 
             const resOutput = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/transactions/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
             
-            expect(resOutput.body.title).toMatch("New note");
-            expect(resOutput.body.content).toMatch("HAHAHA beka");
+            expect(resOutput.body.name).toMatch("Zakupy");
+            expect(resOutput.body.price).toBe(49.99);
         })
 
-        it("Unauthoized attempt to edit note", async () => {
+        it("Unauthoized attempt to edit transaction", async () => {
             const body = {
-                title: 'New note',
-                content: 'HAHAHA beka'
+                name: "Zakupy",
+                price: 49.99
             }
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 
             const res = await request(app)
-                .put(`/notes/edit/${noteID}`)
+                .put(`/transactions/edit/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
@@ -211,29 +213,29 @@ describe("Note router", () => {
     })
 
     describe("DELETE /delete", () => {
-        it("Delete note", async () => {
+        it("Delete transaction", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
             const res = await request(app)
-                .delete(`/notes/delete/${noteID}`)
+                .delete(`/transactions/delete/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
 
             const resOutput = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/transactions/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(resOutput.statusCode).toBe(404)
         })
 
-        it("Unauthoized attempt to delete note", async () => {
+        it("Unauthoized attempt to delete transaction", async () => {
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 
             const res = await request(app)
-                .delete(`/notes/delete/${noteID}`)
+                .delete(`/transactions/delete/${transactionID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(401)

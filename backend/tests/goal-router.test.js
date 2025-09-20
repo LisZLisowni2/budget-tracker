@@ -5,15 +5,15 @@ import express from "express";
 import jwt from "jsonwebtoken"
 import request from "supertest"
 
-const Note = require('../models/note')
+const Goal = require('../models/goal')
 const User = require('../models/user')
 
-describe("Note router", () => {
+describe("Goal router", () => {
     let redisMock
     let mongoServer
     let app
     let config
-    let noteID
+    let goalID
     let userID
 
     beforeAll(async () => {
@@ -61,8 +61,8 @@ describe("Note router", () => {
         userID = user._id.toString()
 
         // Attach router to app
-        const noteRouter = require('../routers/note')(config, redisMock)
-        app.use('/notes/', noteRouter)
+        const goalRouter = require('../routers/goal')(config, redisMock)
+        app.use('/goals/', goalRouter)
     })
 
     afterAll(async () => {
@@ -71,59 +71,59 @@ describe("Note router", () => {
     })
 
     beforeEach(async () => {
-        await Note.deleteMany({})
+        await Goal.deleteMany({})
         
-        // Create a new Note
-        const newNote = new Note({
+        // Create a new Goal
+        const newGoal = new Goal({
             ownedBy: userID,
-            title: 'Test123',
-            content: 'Random content XD XD'
+            goalname: "Kotek",
+            requiredmoney: 8000
         })
 
-        await newNote.save()
+        await newGoal.save()
 
-        const note = await Note.findOne({ title: 'Test123', ownedBy: userID }).select('_id')
-        noteID = note._id.toString()
+        const goal = await Goal.findOne({ goalname: "Kotek", ownedBy: userID }).select('_id')
+        goalID = goal._id.toString()
     })
     
     describe("GET /:id", () => {
-        it("Details of note", async () => {
+        it("Details of goal", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
     
             const res = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
-            expect(res.body.title).toMatch(/Test123/)
-            expect(res.body.content).toMatch(/Random content XD XD/)
+            expect(res.body.goalname).toMatch(/Kotek/)
+            expect(res.body.requiredmoney).toBe(8000)
         })
     
-        it("Denied access to note without login", async () => {
+        it("Denied access to goal without login", async () => {
             const res = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/goals/${goalID}`)
             
             expect(res.statusCode).toBe(401)
         })
     
-        it("Denied access to another user's note", async () => {
+        it("Denied access to another user's goal", async () => {
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
     
             const res = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(401)
         })
     
-        it("Note doesn't exist", async () => {
+        it("Goal doesn't exist", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
     
             const res = await request(app)
-                .get(`/notes/111111111111111111111111`)
+                .get(`/goals/111111111111111111111111`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(404)
@@ -131,12 +131,12 @@ describe("Note router", () => {
     })
 
     describe("GET /all", () => {
-        it("All note", async () => {
+        it("All goals", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
     
             const res = await request(app)
-                .get(`/notes/all`)
+                .get(`/goals/all`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
@@ -146,16 +146,16 @@ describe("Note router", () => {
 
     describe("POST /new", () => {
         const body = {
-            title: 'New note',
-            content: 'HAHAHA beka'
+            goalname: "Komputer",
+            requiredmoney: 7500
         }
 
-        it("Create a new note", async () => {
+        it("Create a new goal", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
             const res = await request(app)
-                .post('/notes/new/')
+                .post('/goals/new/')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
@@ -166,16 +166,16 @@ describe("Note router", () => {
     })
 
     describe("PUT /edit", () => {
-        it("Edit note", async () => {
+        it("Edit goal", async () => {
             const body = {
-                title: 'New note',
-                content: 'HAHAHA beka'
+                goalname: 'Harambe',
+                requiredmoney: 4500
             }
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
             const res = await request(app)
-                .put(`/notes/edit/${noteID}`)
+                .put(`/goals/edit/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
@@ -184,23 +184,23 @@ describe("Note router", () => {
             expect(res.statusCode).toBe(200)
 
             const resOutput = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
-            expect(resOutput.body.title).toMatch("New note");
-            expect(resOutput.body.content).toMatch("HAHAHA beka");
+            expect(resOutput.body.goalname).toMatch("Harambe");
+            expect(resOutput.body.requiredmoney).toBe(4500);
         })
 
         it("Unauthoized attempt to edit note", async () => {
             const body = {
-                title: 'New note',
-                content: 'HAHAHA beka'
+                goalname: 'Harambe',
+                requiredmoney: 4500
             }
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 
             const res = await request(app)
-                .put(`/notes/edit/${noteID}`)
+                .put(`/goals/edit/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
@@ -211,18 +211,18 @@ describe("Note router", () => {
     })
 
     describe("DELETE /delete", () => {
-        it("Delete note", async () => {
+        it("Delete goal", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
             const res = await request(app)
-                .delete(`/notes/delete/${noteID}`)
+                .delete(`/goals/delete/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
 
             const resOutput = await request(app)
-                .get(`/notes/${noteID}`)
+                .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(resOutput.statusCode).toBe(404)
@@ -233,7 +233,7 @@ describe("Note router", () => {
             redisMock.get.mockResolvedValue('1267')
 
             const res = await request(app)
-                .delete(`/notes/delete/${noteID}`)
+                .delete(`/goals/delete/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(401)
