@@ -191,7 +191,7 @@ describe("Goal router", () => {
             expect(resOutput.body.requiredmoney).toBe(4500);
         })
 
-        it("Unauthoized attempt to edit note", async () => {
+        it("Unauthoized attempt to edit goal", async () => {
             const body = {
                 goalname: 'Harambe',
                 requiredmoney: 4500
@@ -228,7 +228,7 @@ describe("Goal router", () => {
             expect(resOutput.statusCode).toBe(404)
         })
 
-        it("Unauthoized attempt to delete note", async () => {
+        it("Unauthoized attempt to delete goal", async () => {
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 
