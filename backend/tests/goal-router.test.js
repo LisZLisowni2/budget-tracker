@@ -166,11 +166,11 @@ describe("Goal router", () => {
     })
 
     describe("PUT /edit", () => {
+        const body = {
+            goalname: 'Harambe',
+            requiredmoney: 4500
+        }
         it("Edit goal", async () => {
-            const body = {
-                goalname: 'Harambe',
-                requiredmoney: 4500
-            }
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
@@ -192,10 +192,6 @@ describe("Goal router", () => {
         })
 
         it("Unauthoized attempt to edit goal", async () => {
-            const body = {
-                goalname: 'Harambe',
-                requiredmoney: 4500
-            }
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 
@@ -234,6 +230,37 @@ describe("Goal router", () => {
 
             const res = await request(app)
                 .delete(`/goals/delete/${goalID}`)
+                .set('Authorization', `Bearer ${token}`)
+            
+            expect(res.statusCode).toBe(401)
+        })
+    })
+
+    describe("PUT /complete", () => {
+        it("Complete Goal", async () => {
+            const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+            redisMock.get.mockResolvedValue('123')
+
+            const res = await request(app)
+                .put(`/goals/complete/${goalID}`)
+                .set('Authorization', `Bearer ${token}`)
+            
+            expect(res.statusCode).toBe(200)
+
+            const resOutput = await request(app)
+                .get(`/goals/${goalID}`)
+                .set('Authorization', `Bearer ${token}`)
+            
+            expect(resOutput.body.goalname).toMatch("Harambe");
+            expect(resOutput.body.requiredmoney).toBe(4500);
+        })
+
+        it("Unauthoized attempt to complete goal", async () => {
+            const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
+            redisMock.get.mockResolvedValue('1267')
+
+            const res = await request(app)
+                .put(`/goals/complete/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(401)
