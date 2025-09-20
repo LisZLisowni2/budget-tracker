@@ -75,7 +75,7 @@ export default function Register() {
                     </div>
                 </div>
                 <p className="flex my-4 flex-col"><Button text="Register" /></p>
-                <p className="text-red-600 font-bold lg:text-xl">{ error }</p>
+                <p className="text-orange-300 font-bold lg:text-xl">{ error }</p>
                 <p><Link to="/login" className="font-bold lg:text-xl hover:text-gray-300 transition">If you have an account, login</Link></p>
             </form>
         </div>
