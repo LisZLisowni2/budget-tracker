@@ -60,7 +60,7 @@ export default function Register() {
         <div>
             <form onSubmit={async (event) => await handleRegister(event)} className="relative bg-gradient-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto">
                 <h1 className="text-2xl md:text-3xl font-bold md:mb-8">Register form</h1>
-                <div className="flex md:gap-4 max-md:flex-col">
+                <div className="flex md:gap-4 max-md:flex-col justify-between">
                     <div>
                         <FormField label="Username:" type="text" id="login" onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
                         <FormField label="Email:" type="text" id="email" onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}/>
@@ -75,7 +75,7 @@ export default function Register() {
                     </div>
                 </div>
                 <p className="flex my-4 flex-col"><Button text="Register" /></p>
-                <p className="text-orange-300 font-bold lg:text-xl">{ error }</p>
+                <p id="status" className="text-orange-300 font-bold lg:text-xl">{ error }</p>
                 <p><Link to="/login" className="font-bold lg:text-xl hover:text-gray-300 transition">If you have an account, login</Link></p>
             </form>
         </div>

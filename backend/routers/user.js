@@ -46,7 +46,7 @@ module.exports = (config, redis) => {
         try {
             const { username, email, password } = req.body
             if (!username || !email || !password) {
-                res.status(400).json({ 'message': 'Useername, email or password not present' })
+                res.status(400).json({ 'message': 'Username, email or password not present' })
             }
             const hashedPassword = await bcrypt.hash(password, 10)
             const newUser = new User({ username: username, email: email, password: hashedPassword })
