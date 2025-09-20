@@ -26,3 +26,4 @@ dist-ssr
 env
 *.crt
 *.key
+**/cypress/screenshots/
