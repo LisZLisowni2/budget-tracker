@@ -168,11 +168,11 @@ describe("Transaction router", () => {
     })
 
     describe("PUT /edit", () => {
+        const body = {
+            name: "Zakupy",
+            price: 49.99
+        }
         it("Edit transaction", async () => {
-            const body = {
-                name: "Zakupy",
-                price: 49.99
-            }
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
@@ -194,10 +194,6 @@ describe("Transaction router", () => {
         })
 
         it("Unauthoized attempt to edit transaction", async () => {
-            const body = {
-                name: "Zakupy",
-                price: 49.99
-            }
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 

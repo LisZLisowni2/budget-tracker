@@ -166,11 +166,11 @@ describe("Note router", () => {
     })
 
     describe("PUT /edit", () => {
+        const body = {
+            title: 'New note',
+            content: 'HAHAHA beka'
+        }
         it("Edit note", async () => {
-            const body = {
-                title: 'New note',
-                content: 'HAHAHA beka'
-            }
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('123')
 
@@ -192,10 +192,6 @@ describe("Note router", () => {
         })
 
         it("Unauthoized attempt to edit note", async () => {
-            const body = {
-                title: 'New note',
-                content: 'HAHAHA beka'
-            }
             const token = jwt.sign({ username: 'anotherTest', sessionID: '1267' }, config.JWT_Secret)
             redisMock.get.mockResolvedValue('1267')
 
