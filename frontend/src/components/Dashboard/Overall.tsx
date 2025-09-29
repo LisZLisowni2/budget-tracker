@@ -66,6 +66,7 @@ function Notes({ title, notes }: INotes) {
 }
 
 export default function Overall() {
+    sessionStorage.setItem("selectedDashboard", "0")
     const { user, loading } = useUser()
 
     if (loading) {

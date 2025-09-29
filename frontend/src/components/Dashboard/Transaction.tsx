@@ -2,6 +2,7 @@ import { useUser } from "../../context/UserContext"
 import Button from "../Button/Button"
 
 export default function Transactions() {
+    sessionStorage.setItem("selectedDashboard", "1")
     const { user, loading } = useUser()
 
     if (loading) {

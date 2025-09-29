@@ -3,6 +3,7 @@
 import { useUser } from "../../context/UserContext";
 
 export default function Profile() {
+    sessionStorage.setItem("selectedDashboard", "5")
     const { user, loading } = useUser()
 
     if (loading) {

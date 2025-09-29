@@ -22,6 +22,7 @@ function NoteElement({ title, content, onClick, selected }: INoteElement) {
 }
 
 export default function Notes() {
+    sessionStorage.setItem("selectedDashboard", "3")
     const { user, loading } = useUser()
     const [ selectedID, setSelectedID ] = useState<number>()
 

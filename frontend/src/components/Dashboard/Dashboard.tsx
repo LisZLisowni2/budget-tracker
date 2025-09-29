@@ -23,7 +23,7 @@ function NavOption({ text, route, active, onClick }: INavOption) {
 }
 
 export default function Dashboard({ children }: IChildren ) {
-    const [selected, setSelected] = useState<number>(5) // TODO: Selected item highlight
+    const [selected, setSelected] = useState<string | null>((sessionStorage.getItem("selectedDashboard")) ? sessionStorage.getItem("selectedDashboard") : "1") // TODO: Selected item highlight
     const { user, loading } = useUser()
 
     if (loading) {
@@ -43,12 +43,12 @@ export default function Dashboard({ children }: IChildren ) {
     return (
         <section className="w-full lg:max-sm:flex-col lg:flex border-t-8 text-center z-10">
             <nav className="flex flex-col lg:w-1/5 bg-rose-500 max-md:overflow-auto">
-                <NavOption text="Overall" route="overall" active={ (selected == 0) ? true : false } onClick={() => setSelected(0)}/>
-                <NavOption text="Transactions" route="transactions" active={ (selected == 1) ? true : false } onClick={() => setSelected(1)}/>
-                <NavOption text="Goals" route="goals" active={ (selected == 2) ? true : false } onClick={() => setSelected(2)}/>
-                <NavOption text="Notes" route="notes" active={ (selected == 3) ? true : false } onClick={() => setSelected(3)}/>
+                <NavOption text="Overall" route="overall" active={ (selected == "0") ? true : false } onClick={() => setSelected("0")}/>
+                <NavOption text="Transactions" route="transactions" active={ (selected == "1") ? true : false } onClick={() => setSelected("1")}/>
+                <NavOption text="Goals" route="goals" active={ (selected == "2") ? true : false } onClick={() => setSelected("2")}/>
+                <NavOption text="Notes" route="notes" active={ (selected == "3") ? true : false } onClick={() => setSelected("3")}/>
                 {/* <NavOption text="Trends" route="trends" active={ (selected == 4) ? true : false } onClick={() => setSelected(4)}/> */}
-                <NavOption text="Profile" route="profile" active={ (selected == 5) ? true : false } onClick={() => setSelected(5)}/>
+                <NavOption text="Profile" route="profile" active={ (selected == "5") ? true : false } onClick={() => setSelected("5")}/>
             </nav>
             <div className="lg:w-4/5 text-center text-black bg-white">
                 { children }
