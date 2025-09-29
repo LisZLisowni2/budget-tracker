@@ -9,12 +9,14 @@ services:
       - target: 443
         published: 443
         protocol: tcp
-        mode: host
+        # mode: host
 
   backend:
     image: 127.0.0.1:5000/budget-tracker-backend:latest
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     ports:
       - "3000:3000"
     environment:
@@ -37,21 +39,28 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD_FILE=/run/secrets/db_password
       - MONGO_INITDB_DATABASE=myapp
     ports:
-      - "27018:27017"
+      - "27017:27017"
     networks:
       - overlayNet
 
   redis:
-    image: redis:latest
+    image: redis:8.2.1-latest
     deploy:
       replicas: 1
     ports:
-      - "6380:6379"
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        # mode: host
     secrets:
       - redis_password
-    command: [
-      "bash", "-c", 'docker-entrypoint.sh --requirepass "$$(cat /run/secrets/redis_password)"'
-    ]
+    command: >
+      sh -c "docker-entrypoint.sh --requirepass $$(cat /run/secrets/redis_password)"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "$$(cat /run/secrets/redis_password)", "PING"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - overlayNet
 
