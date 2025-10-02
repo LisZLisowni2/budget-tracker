@@ -42,9 +42,11 @@ services:
       - "27017:27017"
     networks:
       - overlayNet
+    volumes:
+      - databaseTestData:/data/db
 
   redis:
-    image: redis:8.2.1-latest
+    image: redis:8.2.1
     deploy:
       replicas: 1
     ports:
@@ -67,6 +69,9 @@ services:
 networks:
   overlayNet:
     driver: overlay
+
+volumes:
+  databaseTestData:
 
 secrets:
   db_password:
