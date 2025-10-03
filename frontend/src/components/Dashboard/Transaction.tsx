@@ -40,7 +40,7 @@ export default function Transactions() {
                     </tbody>
                 </table>
             </div>
-            <div className="text-white flex justify-evenly w-full h-1/3 items-center">
+            <div className="text-white flex max-md:flex-col justify-evenly w-full h-1/3 items-center">
                 <Button text="Add new transaction"/>
                 <Button text="Change transaction details"/>
                 <Button text="Delete transactions"/>

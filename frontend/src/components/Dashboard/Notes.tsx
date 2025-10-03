@@ -20,8 +20,8 @@ interface INoteElement {
 
 function NoteElement({ title, content, onClick, selected }: INoteElement) {
     return (
-        <button id={`note`} onClick={onClick} className={`${(selected) ? "bg-rose-100" : ""} shadow-lg w-4/5 rounded-4xl mx-12 hover:scale-105 transition-all m-4 cursor-pointer`}>
-            <div className="flex flex-col justify-start text-left p-2 m-4">
+        <button id={`note`} onClick={onClick} className={`${(selected) ? "bg-rose-100" : ""} shadow-sm md:shadow-lg w-4/5 md:rounded-4xl md:m-4 md:mx-12 md:hover:scale-105 transition-all cursor-pointer`}>
+            <div className="flex flex-col justify-start text-left p-2 md:m-4">
                 <h1 className="text-3xl break-words max-h-10 overflow-hidden">{ title }</h1>
                 <h3 className="text-sm text-gray-400 h-8 overflow-hidden">{ content }</h3>
             </div>
@@ -116,9 +116,9 @@ export default function Notes() {
     console.log(user)
     
     return (
-        <div className="flex flex-1 overflow-hidden items-center justify-between flex-row max-lg:overflow-auto">
-            <div className="max-md:w-full w-2/5 h-screen overflow-y-auto transition-all shadow-2xl border-r-2">
-                <div className="h-1/16 sticky top-0 bg-white border-b">
+        <div className="flex flex-1 max-md:flex-col overflow-hidden items-center justify-between flex-row max-lg:overflow-auto">
+            <div className="max-md:w-full w-2/5 max-md:h-64 h-screen overflow-y-auto transition-all shadow-sm md:shadow-2xl border-r-2">
+                <div className="max-md:p-4 md:h-1/16 sticky top-0 bg-white border-b">
                     <div className="flex justify-evenly items-center h-full *:cursor-pointer *:hover:scale-125 *:hover:text-gray-400 *:transition-all">
                         <Plus onClick={createNewNote}/>
                         <Minus onClick={deleteNote}/>
@@ -132,16 +132,16 @@ export default function Notes() {
                     })
                 }
             </div>
-            <div className="max-md:w-1/4 w-4/5 h-1/2">
+            <div className="md:w-4/5 md:h-1/2">
                 { (selectedNoteID !== undefined && selectedNote !== undefined) ? 
                     <section className="flex flex-col items-center *:text-center">
-                        <input className="w-1/2 text-4xl" type="text" value={selectedNote?.title} onChange={titleChangeHandle} placeholder="Title" id="title"/>
+                        <input className="md:w-1/2 text-4xl" type="text" value={selectedNote?.title} onChange={titleChangeHandle} placeholder="Title" id="title"/>
                         <textarea 
-                            className="block w-7/8 m-4 flex-1" 
+                            className="block md:w-7/8 md:m-4 flex-1" 
                             id="content" rows={30} readOnly={false} onChange={contentChangeHandle} value={selectedNote?.content} placeholder="Content">
                         </textarea>
                     </section>
-                : <h1 className="text-5xl">Choose a note</h1> }
+                : <h1 className="text-3xl">Choose a note</h1> }
             </div>
         </div>
     )

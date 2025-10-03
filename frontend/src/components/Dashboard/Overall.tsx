@@ -55,7 +55,7 @@ function StatsItem({ title, value, currency, weekDiff, monthDiff, type }: IStats
 
 function Notes({ title, notes }: INotes) {
     return (
-        <div className="overflow-auto w-1/2 mx-2 h-80">
+        <div className="overflow-auto mx-2 h-80">
             <h2 className="text-xl lg:text-2xl">{ title }</h2>
             <hr />
             <ul className="*:p-2 text-md">
@@ -109,8 +109,8 @@ export default function Overall() {
     
     return (
         <div className="flex items-center justify-between flex-col h-full *:p-4 max-lg:overflow-auto">
-            <div className="flex flex-row w-full">
-                <div className="flex-col w-full h-1/4 *:p-8 ">
+            <div className="flex max-md:flex-col w-full max-md:justify-center">
+                <div className="flex-col w-full h-1/4 md:*:p-8 ">
                     <div className="flex flex-row *:m-1 *:p-4">
                         <StatsItem title="Total income" value={ 6250 } currency="zł" weekDiff={ -1 } monthDiff={ 2 } type="income" />
                         <StatsItem title="Total costs" value={ 2000 } currency="zł" weekDiff={ 3 } monthDiff={ -4 } type="expense" />
@@ -120,7 +120,7 @@ export default function Overall() {
                         <StatsItem title="Total balance" value={ 7000 } currency="zł" weekDiff={ 3 } monthDiff={ -4 } type="other" />
                     </div>
                 </div>
-                <div className="flex-col w-full h-1/4 max-md:hidden mt-8">
+                <div className="flex-col lg:w-full h-1/4 max-md:hidden mt-8">
                     <h3 className="text-3xl">Fast actions</h3>
                     <ul className="[&>li]:bg-rose-400 [&>li]:hover:bg-rose-700 [&>li]:hover:scale-105 [&>li]:transition-all [&>li]:my-4 [&>li]:p-2 text-white font-bold">
                         <li>Add/Change income</li>
@@ -129,18 +129,15 @@ export default function Overall() {
                     </ul>
                 </div>
             </div>
-            <div className="flex max-md:flex-col justify-evenly lg:w-full *:bg-white">
-                <div className="text-lg lg:text-xl max-h-80 p-8 m-2 shadow-2xl md:w-3/5 rounded-3xl flex justify-between overflow-hidden">
+            <div className="flex max-md:flex-col justify-evenly items-center lg:w-full *:bg-white">
+                <div className="max-md:hidden text-lg lg:text-xl max-h-80 p-8 m-2 shadow-2xl md:w-3/5 rounded-3xl flex justify-between overflow-hidden">
                     <div className="w-full h-full flex justify-center">
                         <Line data={data} options={options} width={600} height={250}/>
                     </div>
                 </div>
-                <div className="text-lg lg:text-xl max-h-80 p-8 m-2 shadow-2xl md:w-3/5 rounded-3xl flex flex-col justify-between overflow-hidden">
+                <div className="text-lg lg:text-xl max-h-80 p-8 m-2 shadow-2xl min-w-xs max-w-4/5 w-screen md:w-3/5 rounded-3xl flex flex-col justify-between overflow-hidden">
                     <h3 className="text-3xl">Notes</h3>
-                    <div className="flex">
-                        <Notes title="Latest" notes={["Note 1", "Note 1", "Note 1"]}/>
-                        <Notes title="Favourite" notes={["Note 1", "Note 1", "Note 1"]}/>
-                    </div>
+                    <Notes title="Latest (last 3)" notes={["Note 1", "Note 1", "Note 1"]}/>
                 </div>
             </div>
         </div>
