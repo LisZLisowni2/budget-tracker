@@ -55,7 +55,7 @@ function StatsItem({ title, value, currency, weekDiff, monthDiff, type }: IStats
 
 function Notes({ title, notes }: INotes) {
     return (
-        <div className="overflow-auto mx-2 h-80">
+        <div className="overflow-hidden mx-2 h-80">
             <h2 className="text-xl lg:text-2xl">{ title }</h2>
             <hr />
             <ul className="*:p-2 text-md">
