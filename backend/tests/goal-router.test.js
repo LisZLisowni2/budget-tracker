@@ -251,7 +251,7 @@ describe("Goal router", () => {
                 .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
-            expect(resOutput.body.goalname).toMatch("Harambe");
+            expect(resOutput.body.goalname).toMatch("Kotek");
             expect(resOutput.body.requiredmoney).toBe(4500);
         })
 
