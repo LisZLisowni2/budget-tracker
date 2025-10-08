@@ -1,4 +1,5 @@
-import { screen, render } from "@testing-library/react";
+import { screen, render, fireEvent } from "@testing-library/react";
+import { vi } from "vitest";
 import Dashboard from "./Dashboard";
 import { MemoryRouter } from "react-router";
 

@@ -1,7 +1,8 @@
 import { useUser } from "../../context/UserContext"
 import Button from "../Button/Button"
 
-export default function Transactions() {
+export default function Transactions() { // TODO: Create context for transactions
+    // TODO: Handle CRUD for transactions
     sessionStorage.setItem("selectedDashboard", "1")
     const { user, loading } = useUser()
 

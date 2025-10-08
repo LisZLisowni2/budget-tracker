@@ -29,7 +29,8 @@ function NoteElement({ title, content, onClick, selected }: INoteElement) {
     )
 }
 
-export default function Notes() {
+export default function Notes() { // TODO: Create context for notes
+    // TODO: Handle CRUD for notes
     const listTemplate = {
         id: 10294,
         ownedBy: 'Janusz',

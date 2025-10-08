@@ -23,7 +23,7 @@ function NavOption({ text, route, active, onClick }: INavOption) {
 }
 
 export default function Dashboard({ children }: IChildren ) {
-    const [selected, setSelected] = useState<string | null>((sessionStorage.getItem("selectedDashboard")) ? sessionStorage.getItem("selectedDashboard") : "1") // TODO: Selected item highlight
+    const [selected, setSelected] = useState<string | null>((sessionStorage.getItem("selectedDashboard")) ? sessionStorage.getItem("selectedDashboard") : "1") 
     const { loading } = useUser()
 
     if (loading) {

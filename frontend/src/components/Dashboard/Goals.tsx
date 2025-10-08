@@ -1,7 +1,8 @@
 import { useUser } from "../../context/UserContext"
 import Button from "../Button/Button"
 
-export default function Goals() {
+export default function Goals() { // TODO: Create context for goals
+    // TODO: Handle CRUD for goals
     sessionStorage.setItem("selectedDashboard", "2")
     const { user, loading } = useUser()
 
