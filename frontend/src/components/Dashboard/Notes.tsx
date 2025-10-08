@@ -28,7 +28,7 @@ export default function Notes() {
     sessionStorage.setItem("selectedDashboard", "3")
     const { user, loading: userLoading } = useUser()
     const { notes, loading: notesLoading } = useNotes()
-    const [ selectedNoteID, setSelectedNoteID ] = useState<number | null>()
+    const [ selectedNoteID, setSelectedNoteID ] = useState<string | null>()
 
     if (userLoading) {
         return (<p>
@@ -44,7 +44,7 @@ export default function Notes() {
 
     if (!user || !notes) return (<p>User or notes not loaded</p>)
 
-    const selectedNote = notes.find((note) => note.id === selectedNoteID)
+    const selectedNote = notes.find((note) => note._id === selectedNoteID)
     
     const titleChangeHandle = (e: ChangeEvent<HTMLInputElement>) => {
         if (selectedNoteID !== null) {
@@ -66,7 +66,7 @@ export default function Notes() {
 
     const deleteNote = () => {
         // if (selectedNoteID) {
-        //     setNotes(prevNotes => prevNotes.filter(note => note.id !== selectedNoteID))
+        //     setNotes(prevNotes => prevNotes.filter(note => note._id !== selectedNoteID))
         //     setSelectedNoteID(null)
         // }
     }
@@ -91,8 +91,8 @@ export default function Notes() {
                 </div>
                 {
                     notes.map((note) => { 
-                        if (note.id === selectedNoteID) return <NoteElement key={note.id} selected={true} title={note.title} content={note.content} onClick={() => setSelectedNoteID(note.id)}/>
-                        return <NoteElement key={note.id} selected={false} title={note.title} content={note.content} onClick={() => setSelectedNoteID(note.id)}/>
+                        if (note._id === selectedNoteID) return <NoteElement key={note._id} selected={true} title={note.title} content={note.content} onClick={() => setSelectedNoteID(note._id)}/>
+                        return <NoteElement key={note._id} selected={false} title={note.title} content={note.content} onClick={() => setSelectedNoteID(note._id)}/>
                     })
                 }
             </div>

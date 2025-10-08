@@ -45,6 +45,8 @@ module.exports = (config, redis) => {
         try {
             const { title, content } = req.body
 
+            if (title === undefined || content === undefined) return res.status(404).json({ message: "Title or content doesn't exist in request body" })
+
             // Fetch user ID
             const { username } = req.user
             const user = await User.findOne({ username: username }).select('_id')

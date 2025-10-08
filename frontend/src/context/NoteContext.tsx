@@ -6,7 +6,7 @@ interface IChildren {
 }
 
 interface INote {
-    id: number,
+    _id: string,
     title: string,
     content: string,
 }

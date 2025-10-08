@@ -65,6 +65,8 @@ services:
       retries: 5
     networks:
       - overlayNet
+    volumes:
+      - redisTestData:/data
 
 networks:
   overlayNet:
@@ -72,6 +74,7 @@ networks:
 
 volumes:
   databaseTestData:
+  redisTestData:
 
 secrets:
   db_password:
