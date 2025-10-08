@@ -22,7 +22,6 @@ export default function Goals() { // TODO: Create context for goals
                         <tr><th>Date Creation</th><th>Goal</th><th>Required money</th><th>Done?</th><th>Date Complete</th><th></th></tr>
                     </thead>
                     <tbody className="*:hover:bg-gray-100 *:transition-all">
-                        <tr><td>2025-08-01</td><td>Birman Cat</td><td>8000 zł</td><td>true</td><td>2025-09-01</td><td className="*:m-auto *:text-white"><Button text="Complete" onClick={() => console.log()}/></td></tr>
                     </tbody>
                 </table>
             </div>

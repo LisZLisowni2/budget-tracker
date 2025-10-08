@@ -9,6 +9,7 @@ import Register from './components/User/Register'
 import Dashboard from './components/Dashboard/Dashboard'
 import { BrowserRouter as Router, Routes, Route } from 'react-router'
 import { UserProvide } from './context/UserContext'
+import { NoteProvide } from './context/NoteContext'
 import Profile from './components/Dashboard/Profile'
 import Overall from './components/Dashboard/Overall'
 import Transactions from './components/Dashboard/Transaction'
@@ -26,7 +27,7 @@ function DashboardLayout() {
             <Route path='/overall' element={<Overall />} />
             <Route path='/transactions' element={<Transactions />} />
             <Route path='/goals' element={<Goals />} />
-            <Route path='/notes' element={<Notes />} />
+            <Route path='/notes' element={<NoteProvide><Notes /></NoteProvide>} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/' element={<Profile />} />
           </Routes>

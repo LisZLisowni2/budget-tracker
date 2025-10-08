@@ -10,8 +10,6 @@ export default function Profile() {
         </p>)
     }
 
-    console.log(user)
-    
     return (
         <div className="flex justify-center items-center flex-col h-full *:p-4">
             <h1 className="text-6xl">{ user?.username } </h1>

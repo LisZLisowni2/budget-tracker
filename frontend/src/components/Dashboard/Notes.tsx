@@ -1,13 +1,7 @@
 import { useUser } from "../../context/UserContext"
 import { useState, MouseEventHandler, ChangeEvent } from "react"
 import { Plus, Minus, Copy } from "lucide-react"
-
-interface INoteModel {
-    id: number,
-    title: string,
-    content: string,
-    ownedBy: string
-}
+import { useNotes } from "../../context/NoteContext"
 
 interface INoteElement {
     id?: number,
@@ -29,93 +23,62 @@ function NoteElement({ title, content, onClick, selected }: INoteElement) {
     )
 }
 
-export default function Notes() { // TODO: Create context for notes
+export default function Notes() {
     // TODO: Handle CRUD for notes
-    const listTemplate = {
-        id: 10294,
-        ownedBy: 'Janusz',
-        title: 'Title',
-        content: '<h1>Hello world</h1>'
-    }
-    
-    const listTemplate2 = {
-        id: 1581,
-        ownedBy: 'Janusz',
-        title: 'Koza',
-        content: 'Ale beka krwa'
-    }
-    
-    const listTemplate3 = {
-        id: 52,
-        ownedBy: 'Kowal',
-        title: 'Szansa',
-        content: 'Jutro kiedykolwiek będzie mocno w kij'
-    }
-    
-    const list = [listTemplate, listTemplate2, listTemplate3]
     sessionStorage.setItem("selectedDashboard", "3")
-    const { user, loading } = useUser()
-    const [ notes, setNotes ] = useState<INoteModel[]>(list)
+    const { user, loading: userLoading } = useUser()
+    const { notes, loading: notesLoading } = useNotes()
     const [ selectedNoteID, setSelectedNoteID ] = useState<number | null>()
 
-    const selectedNote = notes.find((note) => note.id === selectedNoteID)
-    const fillteredList = notes.filter((note) => note.ownedBy === 'Janusz')
-    console.log(selectedNoteID)
-    console.log(selectedNote)
-
-    if (loading) {
+    if (userLoading) {
         return (<p>
             Loading profile...
         </p>)
     }
+
+    if (notesLoading) {
+        return (<p>
+            Loading notes...
+        </p>)
+    }
+
+    if (!user || !notes) return (<p>User or notes not loaded</p>)
+
+    const selectedNote = notes.find((note) => note.id === selectedNoteID)
     
     const titleChangeHandle = (e: ChangeEvent<HTMLInputElement>) => {
         if (selectedNoteID !== null) {
-            setNotes(prevNotes => 
-                prevNotes.map(note =>
-                    note.id === selectedNoteID 
-                    ? { ... note, title: e.target.value }
-                    : note
-                )
-            )
+            console.log(e.target)
         }
     }
 
     const contentChangeHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
         if (selectedNoteID !== null) {
-            setNotes(prevNotes => 
-                prevNotes.map(note =>
-                    note.id === selectedNoteID 
-                    ? { ... note, content: e.target.value }
-                    : note
-                )
-            )
+            console.log(e.target)
         }
     }
 
     const createNewNote = () => {
-        const generatedID = Math.random() % 100 + 1
-        setNotes([...notes, {id: generatedID, title: "", content: "", ownedBy: "Janusz"}])
-        setSelectedNoteID(generatedID)
+        // const generatedID = Math.random() % 100 + 1
+        // setNotes([...notes, {id: generatedID, title: "", content: "", ownedBy: "Janusz"}])
+        // setSelectedNoteID(generatedID)
     }
 
     const deleteNote = () => {
-        if (selectedNoteID) {
-            setNotes(prevNotes => prevNotes.filter(note => note.id !== selectedNoteID))
-            setSelectedNoteID(null)
-        }
+        // if (selectedNoteID) {
+        //     setNotes(prevNotes => prevNotes.filter(note => note.id !== selectedNoteID))
+        //     setSelectedNoteID(null)
+        // }
     }
 
     const copyNote = () => {
-        if (selectedNoteID && selectedNote) {
-            const generatedID = Math.random() % 100 + 1
-            setNotes([...notes, {id: generatedID, title: selectedNote?.title, content: selectedNote?.content, ownedBy: selectedNote?.ownedBy}])
-            setSelectedNoteID(generatedID)
-        }
+        // if (selectedNoteID && selectedNote) {
+        //     const generatedID = Math.random() % 100 + 1
+        //     setNotes([...notes, {id: generatedID, title: selectedNote?.title, content: selectedNote?.content, ownedBy: selectedNote?.ownedBy}])
+        //     setSelectedNoteID(generatedID)
+        // }
     }
 
-    console.log(user)
-    
     return (
         <div className="flex flex-1 max-md:flex-col overflow-hidden items-center justify-between flex-row max-lg:overflow-auto">
             <div className="max-md:w-full w-2/5 max-md:h-64 h-screen overflow-y-auto transition-all shadow-sm md:shadow-2xl border-r-2">
@@ -127,7 +90,7 @@ export default function Notes() { // TODO: Create context for notes
                     </div>
                 </div>
                 {
-                    fillteredList.map((note) => { 
+                    notes.map((note) => { 
                         if (note.id === selectedNoteID) return <NoteElement key={note.id} selected={true} title={note.title} content={note.content} onClick={() => setSelectedNoteID(note.id)}/>
                         return <NoteElement key={note.id} selected={false} title={note.title} content={note.content} onClick={() => setSelectedNoteID(note.id)}/>
                     })

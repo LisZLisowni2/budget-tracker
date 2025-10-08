@@ -22,22 +22,6 @@ export default function Transactions() { // TODO: Create context for transaction
                         <tr><th>Date</th><th>Transaction Name</th><th>Receiver?</th><th>Quantity</th></tr>
                     </thead>
                     <tbody className="*:hover:bg-gray-100 *:transition-all">
-                        <tr><td>2025-08-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
-                        <tr><td>2025-09-01</td><td>Transaction Name</td><td>True</td><td>99.99</td></tr>
                     </tbody>
                 </table>
             </div>
