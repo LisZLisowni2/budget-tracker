@@ -27,7 +27,7 @@ export default function Notes() {
     // TODO: Handle CRUD for notes
     sessionStorage.setItem("selectedDashboard", "3")
     const { user, loading: userLoading } = useUser()
-    const { notes, loading: notesLoading } = useNotes()
+    const { notes, loading: notesLoading, handleAddNote, handleChangeNote, handleCopyNote, handleDeleteNote } = useNotes()
     const [ selectedNoteID, setSelectedNoteID ] = useState<string | null>()
 
     if (userLoading) {
@@ -47,36 +47,26 @@ export default function Notes() {
     const selectedNote = notes.find((note) => note._id === selectedNoteID)
     
     const titleChangeHandle = (e: ChangeEvent<HTMLInputElement>) => {
-        if (selectedNoteID !== null) {
-            console.log(e.target)
-        }
+        if (selectedNoteID) handleChangeNote(selectedNoteID, { title: e.target.value })
     }
 
     const contentChangeHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (selectedNoteID !== null) {
-            console.log(e.target)
-        }
+        if (selectedNoteID) handleChangeNote(selectedNoteID, { content: e.target.value })
     }
 
     const createNewNote = () => {
-        // const generatedID = Math.random() % 100 + 1
-        // setNotes([...notes, {id: generatedID, title: "", content: "", ownedBy: "Janusz"}])
-        // setSelectedNoteID(generatedID)
+        handleAddNote()
     }
 
     const deleteNote = () => {
-        // if (selectedNoteID) {
-        //     setNotes(prevNotes => prevNotes.filter(note => note._id !== selectedNoteID))
-        //     setSelectedNoteID(null)
-        // }
+        if (selectedNoteID) {
+            handleDeleteNote(selectedNoteID)
+            setSelectedNoteID(null)
+        } 
     }
 
     const copyNote = () => {
-        // if (selectedNoteID && selectedNote) {
-        //     const generatedID = Math.random() % 100 + 1
-        //     setNotes([...notes, {id: generatedID, title: selectedNote?.title, content: selectedNote?.content, ownedBy: selectedNote?.ownedBy}])
-        //     setSelectedNoteID(generatedID)
-        // }
+        if (selectedNoteID) handleCopyNote(selectedNoteID)
     }
 
     return (

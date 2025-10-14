@@ -15,10 +15,10 @@ interface INoteContext {
 	notes: INote[] | null,
 	loading: boolean,
     handleNotes: () => Promise<void>,
-	// handleAddNote: () => Promise<void>,
-	// handleChangeNote: () => Promise<void>,
-	// handleDeleteNote: () => Promise<void>,
-	// handleCopyNote: () => Promise<void>,
+	handleAddNote: () => Promise<void>,
+	handleChangeNote: (_id: string, body: {}) => Promise<void>,
+	handleDeleteNote: (_id: string) => Promise<void>,
+	handleCopyNote: (_id: string) => Promise<void>,
 }
 
 const NoteContext = createContext<INoteContext | null>(null);
@@ -32,6 +32,28 @@ export function NoteProvide({ children }: IChildren) {
         .then(res => {
             setNotes(res.data)
         })
+    }
+
+    const handleAddNote = async () => {
+        await api.post('/notes/new', { title: "TEST", content: "" })
+        .then(_ => handleNotes())
+    }
+
+    const handleDeleteNote = async (_id: string) => {
+        await api.delete(`/notes/delete/${_id}`)
+        .then(_ => handleNotes())
+    }
+
+    const handleCopyNote = async (_id: string) => {
+        const res = await api.get(`/notes/${_id}`)
+        const note: INote = res.data
+        await api.post(`/notes/new/`, { title: note.title, content: note.content })
+        .then(_ => handleNotes())
+    }
+
+    const handleChangeNote = async (_id: string, body: {}) => {
+        await api.put(`/notes/edit/${_id}`, body)
+        .then(_ => handleNotes())
     }
 
     useEffect(() => {
@@ -48,7 +70,7 @@ export function NoteProvide({ children }: IChildren) {
     }, [])
 
     return (
-        <NoteContext.Provider value={{ notes, handleNotes, loading }}>
+        <NoteContext.Provider value={{ notes, handleNotes, handleAddNote, handleChangeNote, handleCopyNote, handleDeleteNote, loading }}>
             { children }
         </NoteContext.Provider>
     )
