@@ -7,7 +7,8 @@ interface IChildren {
 
 interface IGoal {
     _id: string,
-    'date-creation': Date,
+    dateCreation: Date,
+    dateUpdate: Date,
     goalname: string,
     requiredmoney: number,
     completed: boolean,

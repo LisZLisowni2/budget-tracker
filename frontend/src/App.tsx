@@ -10,6 +10,8 @@ import Dashboard from './components/Dashboard/Dashboard'
 import { BrowserRouter as Router, Routes, Route } from 'react-router'
 import { UserProvide } from './context/UserContext'
 import { NoteProvide } from './context/NoteContext'
+import { GoalProvide } from './context/GoalContext'
+import { TransactionProvide } from './context/TransactionContext'
 import Profile from './components/Dashboard/Profile'
 import Overall from './components/Dashboard/Overall'
 import Transactions from './components/Dashboard/Transaction'
@@ -27,12 +29,16 @@ function DashboardLayout() {
             <Route path='/overall' element={
               <UserProvide>
                 <NoteProvide>
-                  <Overall />
+                  <GoalProvide>
+                    <TransactionProvide>
+                      <Overall />
+                    </TransactionProvide>
+                  </GoalProvide>
                 </NoteProvide>
               </UserProvide>
             } />
-            <Route path='/transactions' element={<Transactions />} />
-            <Route path='/goals' element={<Goals />} />
+            <Route path='/transactions' element={<TransactionProvide><Transactions /></TransactionProvide>} />
+            <Route path='/goals' element={<GoalProvide><Goals /></GoalProvide>} />
             <Route path='/notes' element={<NoteProvide><Notes /></NoteProvide>} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/' element={<Profile />} />

@@ -7,7 +7,8 @@ interface IChildren {
 
 interface ITranscation {
     _id: string,
-    'date-creation': Date,
+    dateCreation: Date,
+    dateUpdate: Date,
     name: string,
     price: number,
     receiver: boolean,

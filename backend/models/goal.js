@@ -2,7 +2,11 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const goalSchema = new mongoose.Schema({
-    'date-creation': {
+    'dateCreation': {
+        type: Date,
+        default: Date.now
+    },
+    'dateUpdate': {
         type: Date,
         default: Date.now
     },
