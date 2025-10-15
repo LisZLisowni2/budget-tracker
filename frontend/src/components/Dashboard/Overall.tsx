@@ -75,7 +75,13 @@ export default function Overall() {
         </p>)
     }
 
-    console.log(user)
+    if (!user) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+            </div>
+        )
+    }
 
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],

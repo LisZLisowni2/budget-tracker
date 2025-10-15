@@ -59,7 +59,19 @@ export default function Notes() {
         </p>)
     }
 
-    if (!user || !notes) return (<p>User or notes not loaded</p>)
+    if (!user) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+            </div>
+        )
+    }
+
+    if (!notes) { return (
+        <div className="w-full flex justify-center items-center">
+            <p className="text-black text-4xl font-bold text-center">Notes doesn't load. Probably server's error.<br />Please try again later</p>
+        </div>)
+    }
 
     const selectedNote = notes.find((note) => note._id === selectedNoteID)
     

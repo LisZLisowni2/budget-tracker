@@ -12,8 +12,14 @@ export default function Goals() { // TODO: Create context for goals
         </p>)
     }
 
-    console.log(user)
-    
+    if (!user) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+            </div>
+        )
+    }
+
     return (
         <div className="flex items-center justify-between flex-col h-full *:p-4 max-lg:overflow-auto">
             <div className="bg-white w-4/5 shadow-2xl rounded-4xl max-h-150 m-8 overflow-auto">

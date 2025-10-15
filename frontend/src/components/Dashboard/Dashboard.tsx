@@ -24,7 +24,7 @@ function NavOption({ text, route, active, onClick }: INavOption) {
 
 export default function Dashboard({ children }: IChildren ) {
     const [selected, setSelected] = useState<string | null>((sessionStorage.getItem("selectedDashboard")) ? sessionStorage.getItem("selectedDashboard") : "1") 
-    const { loading } = useUser()
+    const { user, loading } = useUser()
 
     if (loading) {
         return (
@@ -32,13 +32,13 @@ export default function Dashboard({ children }: IChildren ) {
         )
     }
 
-    // if (!user) {
-    //     return (
-    //         <div className="w-full flex justify-center items-center">
-    //             <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
-    //         </div>
-    //     )
-    // }
+    if (!user) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+            </div>
+        )
+    }
 
     return (
         <section className="w-full lg:max-sm:flex-col lg:flex border-t-8 text-center z-10">

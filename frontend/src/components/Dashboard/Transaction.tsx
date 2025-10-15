@@ -12,7 +12,13 @@ export default function Transactions() { // TODO: Create context for transaction
         </p>)
     }
 
-    console.log(user)
+    if (!user) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+            </div>
+        )
+    }
     
     return (
         <div className="flex items-center justify-between flex-col h-full *:p-4 max-lg:overflow-auto">

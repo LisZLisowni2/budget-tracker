@@ -10,6 +10,14 @@ export default function Profile() {
         </p>)
     }
 
+    if (!user) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+            </div>
+        )
+    }
+
     return (
         <div className="flex justify-center items-center flex-col h-full *:p-4">
             <h1 className="text-6xl">{ user?.username } </h1>
