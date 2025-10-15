@@ -24,7 +24,13 @@ function DashboardLayout() {
       <div className='flex flex-1'>
         <Dashboard>
           <Routes>
-            <Route path='/overall' element={<Overall />} />
+            <Route path='/overall' element={
+              <UserProvide>
+                <NoteProvide>
+                  <Overall />
+                </NoteProvide>
+              </UserProvide>
+            } />
             <Route path='/transactions' element={<Transactions />} />
             <Route path='/goals' element={<Goals />} />
             <Route path='/notes' element={<NoteProvide><Notes /></NoteProvide>} />
