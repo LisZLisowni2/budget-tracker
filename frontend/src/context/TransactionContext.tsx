@@ -71,7 +71,7 @@ export function TransactionProvide({ children }: IChildren) {
     )
 }
 
-export function useNotes() {
+export function useTransactions() {
     const context = useContext(TransactionContext)
     if (!context) {
     	throw new Error("useNotes must be used within an NoteProvide")
