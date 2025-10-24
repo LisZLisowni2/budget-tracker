@@ -4,15 +4,16 @@ interface IFormLabel {
     label: string,
     type: string,
     id: string,
+    value?: string | number
     onChange?: ChangeEventHandler
     children?: ReactNode
 }
 
-export default function FormField({ label, type, id, onChange, children }: IFormLabel) {
+export default function FormField({ label, type, id, onChange, children, value }: IFormLabel) {
     return (
         <p className="flex md:my-4 h-20 flex-col">
             <span className="lg:text-lg">{label}</span>
-            <input type={type} id={id} className="p-1 md:p-2 font-extrabold text-black bg-white border-white border-2 rounded-2xl" onChange={onChange}/>
+            <input type={type} id={id} value={value} className="p-1 md:p-2 font-extrabold text-black bg-white border-white border-2 rounded-2xl" onChange={onChange}/>
             { children }
         </p>
     )
