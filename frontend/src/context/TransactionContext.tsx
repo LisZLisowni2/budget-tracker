@@ -18,8 +18,8 @@ interface ITransactionContext {
 	transactions: ITranscation[] | null,
 	loading: boolean,
     handleTransactions: () => Promise<void>,
-	handleAddTransaction: () => Promise<void>,
-	handleChangeTransaction: (_id: string, body: {}) => Promise<void>,
+	handleAddTransaction: (body: object) => Promise<void>,
+	handleChangeTransaction: (_id: string, body: object) => Promise<void>,
 	handleDeleteTransaction: (_id: string) => Promise<void>,
 }
 
@@ -36,19 +36,19 @@ export function TransactionProvide({ children }: IChildren) {
         })
     }
 
-    const handleAddTransaction = async () => {
-        await api.post('/transactions/new', { title: "TEST", content: "" })
-        .then(_ => handleTransactions())
+    const handleAddTransaction = async (body: object) => {
+        await api.post('/transactions/new', body)
+        .then(() => handleTransactions())
     }
 
     const handleDeleteTransaction = async (_id: string) => {
         await api.delete(`/transactions/delete/${_id}`)
-        .then(_ => handleTransactions())
+        .then(() => handleTransactions())
     }
 
-    const handleChangeTransaction = async (_id: string, body: {}) => {
+    const handleChangeTransaction = async (_id: string, body: object) => {
         await api.put(`/transactions/edit/${_id}`, body)
-        .then(_ => handleTransactions())
+        .then(() => handleTransactions())
     }
 
     useEffect(() => {

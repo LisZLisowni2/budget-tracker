@@ -19,7 +19,7 @@ interface IGoalContext {
 	loading: boolean,
     handleGoals: () => Promise<void>,
 	handleAddGoal: () => Promise<void>,
-	handleChangeGoal: (_id: string, body: {}) => Promise<void>,
+	handleChangeGoal: (_id: string, body: object) => Promise<void>,
 	handleDeleteGoal: (_id: string) => Promise<void>,
     handleFinishGoal: (_id: string) => Promise<void>
 }
@@ -39,22 +39,22 @@ export function GoalProvide({ children }: IChildren) {
 
     const handleAddGoal = async () => {
         await api.post('/goals/new', { title: "TEST", content: "" })
-        .then(_ => handleGoals())
+        .then(() => handleGoals())
     }
 
     const handleDeleteGoal = async (_id: string) => {
         await api.delete(`/goals/delete/${_id}`)
-        .then(_ => handleGoals())
+        .then(() => handleGoals())
     }
 
-    const handleChangeGoal = async (_id: string, body: {}) => {
+    const handleChangeGoal = async (_id: string, body: object) => {
         await api.put(`/goals/edit/${_id}`, body)
-        .then(_ => handleGoals())
+        .then(() => handleGoals())
     }
 
     const handleFinishGoal = async (_id: string) => {
         await api.put(`/goals/edit/${_id}`, { completed: true })
-        .then(_ => handleGoals())
+        .then(() => handleGoals())
     }
 
     useEffect(() => {
