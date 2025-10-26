@@ -22,6 +22,10 @@ const transactionSchema = new mongoose.Schema({
         type: Number,
         require: true
     },
+    'category': {
+        type: String,
+        require: true
+    },
     'receiver': {
         type: Boolean,
         default: true,

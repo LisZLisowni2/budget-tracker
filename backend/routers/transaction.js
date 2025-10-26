@@ -43,7 +43,7 @@ module.exports = (config, redis) => {
 
     router.post('/new', Auth.authenticateToken, async (req, res) => {
         try {
-            const { name, price, receiver } = req.body
+            const { name, price, receiver, category } = req.body
 
             // Fetch user ID
             const { username } = req.user
@@ -54,7 +54,8 @@ module.exports = (config, redis) => {
                 name: name,
                 ownedBy: userID,
                 price: price,
-                receiver: receiver
+                receiver: receiver,
+                category: category
             })
 
             await newTransaction.save()
