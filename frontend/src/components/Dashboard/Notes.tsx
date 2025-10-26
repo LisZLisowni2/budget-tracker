@@ -32,7 +32,7 @@ function NoteElement({ title, content, onClick, selected }: INoteElement) {
 
 function NoteViewer({ content }: INoteViewer) {
     return (
-        <div className="prose max-w-none border p-4">
+        <div className="prose max-w-none p-4">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 { content?.replace(/\\n/g, '\n') }
             </ReactMarkdown>
@@ -115,21 +115,23 @@ export default function Notes() {
                     })
                 }
             </div>
-            <div className="md:h-1/2">
-                { (selectedNoteID !== undefined && selectedNote !== undefined) ? 
-                    <section className="flex flex-col items-center *:text-center">
-                        <div className="flex flex-row justify-evenly items-center">
-                            <input className="md:w-1/2 text-4xl p-4" type="text" value={selectedNote?.title} onChange={titleChangeHandle} placeholder="Title" id="title"/>
-                            <Button text={(isEditor) ? "Preview" : "Edit"} onClick={() => setIsEditor(!isEditor)}/>
-                        </div>
-                        <div className="w-full *:md:m-4 *:flex-1 flex flex-col justify-center">
-                            { (isEditor) ? <textarea 
-                                className="block" 
-                                id="content" rows={30} readOnly={false} onChange={contentChangeHandle} value={selectedNote?.content} placeholder="Content">
-                            </textarea> : <NoteViewer content={selectedNote?.content} /> }
-                        </div>
-                    </section>
-                : <h1 className="text-3xl">Choose a note</h1> }
+            <div className="max-md:w-full w-2/3 h-screen overflow-y-auto transition-all">
+                <div className="md:h-1/2">
+                    { (selectedNoteID !== undefined && selectedNote !== undefined) ? 
+                        <section className="flex flex-col items-center *:text-center">
+                            <div className="max-w-2/3 flex flex-row justify-evenly items-center">
+                                <input className="w-full text-4xl p-4" type="text" value={selectedNote?.title} onChange={titleChangeHandle} placeholder="Title" id="title"/>
+                                <Button text={(isEditor) ? "Preview" : "Edit"} onClick={() => setIsEditor(!isEditor)}/>
+                            </div>
+                            <div className="w-full *:md:m-4 *:flex-1 flex flex-col justify-center">
+                                { (isEditor) ? <textarea 
+                                    className="block" 
+                                    id="content" rows={30} readOnly={false} onChange={contentChangeHandle} value={selectedNote?.content} placeholder="Content">
+                                </textarea> : <NoteViewer content={selectedNote?.content} /> }
+                            </div>
+                        </section>
+                    : <h1 className="text-3xl">Choose a note</h1> }
+                </div>
             </div>
         </div>
     )
