@@ -131,6 +131,7 @@ export default function Transactions() {
             <Modal activator={isAddForm} header="Add transaction form" onClick={() => setStateAddForm(!isAddForm)}>
                 <form className="p-8 m-4 *:w-full" onSubmit={handleAdd}>
                     <FormField id="name" label="Transaction name" type="text" onChange={handleChange}/>
+                    <FormField id="category" label="Category" type="text" onChange={handleChange}/>
                     <FormField id="price" label="Money quantity" type="number" onChange={handleChange}/>
                     <FormField id="receiver" label="Is receiving?" type="checkbox" onChange={handleChange}/>
                     <Button text="Send" />
@@ -143,6 +144,7 @@ export default function Transactions() {
                         { transactions.map(transaction => <option value={transaction._id}>{transaction.name}</option>)}
                     </select>
                     <FormField id="name" label="Transaction name" value={state.name} type="text" onChange={handleChange}/>
+                    <FormField id="category" label="Category" type="text" onChange={handleChange}/>
                     <FormField id="price" label="Money quantity" value={state.price} type="number" onChange={handleChange}/>
                     <FormField id="receiver" label="Is receiving?" value={(state.receiver) ? "true" : "false"} type="checkbox" onChange={handleChange}/>
                     <Button text="Update" />
@@ -160,10 +162,10 @@ export default function Transactions() {
             <div className="bg-white w-4/5 shadow-2xl rounded-4xl max-h-150 m-8 overflow-auto">
                 <table className="**:p-3 **:border border-collapse w-full h-full table-auto">
                     <thead className="bg-gray-300 sticky top-0">
-                        <tr><th>Date creation</th><th>Last update</th><th>Transaction Name</th><th>Receiver?</th><th>Quantity</th></tr>
+                        <tr><th>Date creation</th><th>Last update</th><th>Transaction Name</th><th>Category</th><th>Receiver?</th><th>Quantity</th></tr>
                     </thead>
                     <tbody className="*:hover:bg-gray-100 *:transition-all">
-                        { transactions.map((transaction) => <tr><td>{transaction.dateCreation.toString()}</td><td>{transaction.dateUpdate.toString()}</td><td>{transaction.name}</td><td>{(transaction.receiver) ? "Yes" : "No"}</td><td>{transaction.price}</td></tr>) }
+                        { transactions.map((transaction) => <tr><td>{transaction.dateCreation.toString()}</td><td>{transaction.dateUpdate.toString()}</td><td>{transaction.category}</td><td>{transaction.name}</td><td>{(transaction.receiver) ? "Yes" : "No"}</td><td>{transaction.price}</td></tr>) }
                     </tbody>
                 </table>
             </div>

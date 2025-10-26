@@ -1,7 +1,6 @@
 // TODO: UPDATE TO SERVE THE DATA FROM SERVER
 
 import { useUser } from "../../context/UserContext";
-import { Line } from "react-chartjs-2"
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,6 +10,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    ArcElement
 } from "chart.js"
 
 ChartJS.register(
@@ -20,8 +20,10 @@ ChartJS.register(
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    ArcElement
 )
+import { Pie } from "react-chartjs-2"
 
 interface IStatsItem {
     title: string,
@@ -94,14 +96,6 @@ export default function Overall() {
                 fill: true, 
                 tension: 0.4
             },
-            {
-                label: "Expenses",
-                data: [300, 200, 200, 100, 200, 400],
-                borderColor: "red",
-                backgroundColor: "orange",
-                fill: true,
-                tension: 0.4
-            }
         ]
     }
 
@@ -138,7 +132,7 @@ export default function Overall() {
             <div className="flex max-md:flex-col h-1/2 justify-evenly items-center w-full *:bg-white">
                 <div className="text-lg lg:text-xl w-full h-full p-8 m-2 shadow-2xl rounded-3xl flex justify-between overflow-hidden">
                     <div className="w-full h-full flex justify-center">
-                        <Line data={data} options={options}/>
+                        <Pie data={data} options={options}/>
                     </div>
                 </div>
                 <div className="text-lg lg:text-xl w-full h-full p-8 m-2 shadow-2xl rounded-3xl flex flex-col justify-between overflow-hidden">

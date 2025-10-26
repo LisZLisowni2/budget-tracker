@@ -11,6 +11,7 @@ interface ITranscation {
     dateUpdate: Date,
     name: string,
     price: number,
+    category: string,
     receiver: boolean,
 }
 
