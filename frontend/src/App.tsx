@@ -18,6 +18,7 @@ import Transactions from './components/Dashboard/Transaction'
 import Goals from './components/Dashboard/Goals'
 import Notes from './components/Dashboard/Notes'
 import Footer from './components/Footer/Footer'
+import Analytics from './components/Dashboard/Analytics'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 
@@ -32,6 +33,17 @@ function DashboardLayout() {
                   <GoalProvide>
                     <TransactionProvide>
                       <Overall />
+                    </TransactionProvide>
+                  </GoalProvide>
+                </NoteProvide>
+              </UserProvide>
+            } />
+            <Route path='/analytics' element={
+              <UserProvide>
+                <NoteProvide>
+                  <GoalProvide>
+                    <TransactionProvide>
+                      <Analytics />
                     </TransactionProvide>
                   </GoalProvide>
                 </NoteProvide>
