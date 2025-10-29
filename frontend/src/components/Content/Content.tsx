@@ -1,13 +1,13 @@
-import React from "react"
+import React from 'react';
 
 interface IChildren {
-    children?: React.ReactNode
+    children?: React.ReactNode;
 }
 
-export default function Content({ children }: IChildren ) {
+export default function Content({ children }: IChildren) {
     return (
         <div className="flex justify-center items-center flex-1">
-            { children }
+            {children}
         </div>
-    )
+    );
 }

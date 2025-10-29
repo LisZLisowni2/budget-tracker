@@ -9,7 +9,8 @@
     "test:coverage": "vitest --run",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{js,ts,jsx,tsx,json,css,scss,md}\""
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.7",
@@ -46,6 +47,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
+    "prettier": "^3.6.2",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
     "vite": "^6.1.0",

@@ -1,23 +1,26 @@
-import { useUser } from "../../context/UserContext"
-import Button from "../Button/Button"
+import { useUser } from '../../context/UserContext';
+import Button from '../Button/Button';
 
-export default function Goals() { // TODO: Create context for goals
+export default function Goals() {
+    // TODO: Create context for goals
     // TODO: Handle CRUD for goals
-    sessionStorage.setItem("selectedDashboard", "2")
-    const { user, loading } = useUser()
+    sessionStorage.setItem('selectedDashboard', '2');
+    const { user, loading } = useUser();
 
     if (loading) {
-        return (<p>
-            Loading profile...
-        </p>)
+        return <p>Loading profile...</p>;
     }
 
     if (!user) {
         return (
             <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">You are not allowed to access Dashboard.<br />Please login to continue</p>
+                <p className="text-black text-4xl font-bold text-center">
+                    You are not allowed to access Dashboard.
+                    <br />
+                    Please login to continue
+                </p>
             </div>
-        )
+        );
     }
 
     return (
@@ -25,17 +28,23 @@ export default function Goals() { // TODO: Create context for goals
             <div className="bg-white w-4/5 shadow-2xl rounded-4xl max-h-150 m-8 overflow-auto">
                 <table className="**:p-3 **:border border-collapse w-full h-full table-auto">
                     <thead className="bg-gray-300 sticky top-0">
-                        <tr><th>Date Creation</th><th>Goal</th><th>Required money</th><th>Done?</th><th>Date Complete</th><th></th></tr>
+                        <tr>
+                            <th>Date Creation</th>
+                            <th>Goal</th>
+                            <th>Required money</th>
+                            <th>Done?</th>
+                            <th>Date Complete</th>
+                            <th></th>
+                        </tr>
                     </thead>
-                    <tbody className="*:hover:bg-gray-100 *:transition-all">
-                    </tbody>
+                    <tbody className="*:hover:bg-gray-100 *:transition-all"></tbody>
                 </table>
             </div>
             <div className="text-white flex max-md:flex-col justify-evenly w-full h-1/3 items-center">
-                <Button text="Add new goal"/>
-                <Button text="Change goal details"/>
-                <Button text="Delete goal"/>
+                <Button text="Add new goal" />
+                <Button text="Change goal details" />
+                <Button text="Delete goal" />
             </div>
         </div>
-    )
+    );
 }
