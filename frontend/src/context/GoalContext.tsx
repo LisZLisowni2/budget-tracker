@@ -24,7 +24,7 @@ interface IGoalContext {
     goals: IGoal[] | null;
     loading: boolean;
     handleGoals: () => Promise<void>;
-    handleAddGoal: () => Promise<void>;
+    handleAddGoal: (body: object) => Promise<void>;
     handleChangeGoal: (_id: string, body: object) => Promise<void>;
     handleDeleteGoal: (_id: string) => Promise<void>;
     handleFinishGoal: (_id: string) => Promise<void>;
@@ -42,9 +42,9 @@ export function GoalProvide({ children }: IChildren) {
         });
     };
 
-    const handleAddGoal = async () => {
+    const handleAddGoal = async (body: object) => {
         await api
-            .post('/goals/new', { title: 'TEST', content: '' })
+            .post('/goals/new', body)
             .then(() => handleGoals());
     };
 

@@ -181,7 +181,7 @@ export default function Transactions() {
             </Modal>
             <Modal
                 activator={isChangeForm}
-                header="Add transaction form"
+                header="Update transaction form"
                 onClick={() => setStateChangeForm(!isChangeForm)}
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleChangeItem}>
@@ -229,7 +229,7 @@ export default function Transactions() {
             </Modal>
             <Modal
                 activator={isDeleteForm}
-                header="Add transaction form"
+                header="Delete transaction form"
                 onClick={() => setStateDeleteForm(!isDeleteForm)}
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleDeleteItem}>
@@ -265,8 +265,8 @@ export default function Transactions() {
                             <tr>
                                 <td>{transaction.dateCreation.toString()}</td>
                                 <td>{transaction.dateUpdate.toString()}</td>
-                                <td>{transaction.category}</td>
                                 <td>{transaction.name}</td>
+                                <td>{transaction.category}</td>
                                 <td>{transaction.receiver ? 'Yes' : 'No'}</td>
                                 <td>{transaction.price}</td>
                             </tr>
