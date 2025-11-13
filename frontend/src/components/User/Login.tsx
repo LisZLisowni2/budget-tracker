@@ -1,15 +1,31 @@
 import Button from '../Button/Button';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from 'react';
 import { useUser } from '../../context/UserContext';
 import api from '../../api';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
+import { useForm } from "react-hook-form"
+
+const UserSchema = z.object({
+    username: z.string().min(3).max(60),
+    password: z.string().min(3)
+})
+
+type TUserSchema = z.infer<typeof UserSchema>;
 
 export default function Login() {
+    const { register, handleSubmit } = useForm<TUserSchema>({
+        resolver: zodResolver(UserSchema),
+        defaultValues: {
+            username: '',
+            password: ''
+        }
+    });
+
     const [passwordView, setPasswordView] = useState(false);
-    const [username, setUsername] = useState<string | null>('');
-    const [password, setPassword] = useState<string | null>('');
     const [error, setError] = useState<string | null>('');
     const navigate = useNavigate();
     const { handleUserLogin } = useUser();
@@ -18,21 +34,9 @@ export default function Login() {
         setPasswordView(!passwordView);
     };
 
-    const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError('');
-        if (!username || !password) {
-            setError('Username or password not present');
-            return;
-        }
-
-        const obj = {
-            username: username,
-            password: password,
-        };
-
+    const handleLogin = async (data: TUserSchema) => {
         await api
-            .post('/users/login', obj)
+            .post('/users/login', data)
             .then((res) => {
                 localStorage.setItem('token', res.data.token);
                 handleUserLogin();
@@ -91,7 +95,7 @@ export default function Login() {
     return (
         <div>
             <form
-                onSubmit={async (event) => await handleLogin(event)}
+                onSubmit={handleSubmit(handleLogin)}
                 className="relative bg-gradient-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto"
             >
                 <h1 className="text-2xl md:text-3xl font-bold mb-8">
@@ -101,17 +105,13 @@ export default function Login() {
                     label="Username:"
                     type="text"
                     id="login"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        setUsername(e.target.value)
-                    }
+                    {...register("username")}
                 />
                 <FormField
                     label="Password:"
                     type={passwordView ? 'text' : 'password'}
                     id="password"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        setPassword(e.target.value)
-                    }
+                    {...register("password")}
                 >
                     <span className="self-end relative bottom-8.5 right-1.5">
                         {passwordIcon}
