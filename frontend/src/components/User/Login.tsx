@@ -7,7 +7,7 @@ import api from '../../api';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 
 const UserSchema = z.object({
     username: z.string().min(3).max(60),
@@ -17,7 +17,7 @@ const UserSchema = z.object({
 type TUserSchema = z.infer<typeof UserSchema>;
 
 export default function Login() {
-    const { register, handleSubmit } = useForm<TUserSchema>({
+    const { register, handleSubmit, control } = useForm<TUserSchema>({
         resolver: zodResolver(UserSchema),
         defaultValues: {
             username: '',
@@ -34,7 +34,10 @@ export default function Login() {
         setPasswordView(!passwordView);
     };
 
+    const onSubmit = (data: TUserSchema) => console.log(data)
+
     const handleLogin = async (data: TUserSchema) => {
+        console.log("handleLogin triggered")
         await api
             .post('/users/login', data)
             .then((res) => {
@@ -47,6 +50,7 @@ export default function Login() {
                 setError(`Error while logging: ${err.message}`);
             });
     };
+    handleLogin({ username: '', password: '' });
 
     let passwordIcon;
     if (!passwordView) {
@@ -95,28 +99,40 @@ export default function Login() {
     return (
         <div>
             <form
-                onSubmit={handleSubmit(handleLogin)}
+                onSubmit={handleSubmit(onSubmit)}
                 className="relative bg-gradient-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto"
             >
                 <h1 className="text-2xl md:text-3xl font-bold mb-8">
                     Login form
                 </h1>
-                <FormField
-                    label="Username:"
-                    type="text"
-                    id="login"
-                    {...register("username")}
+                <Controller 
+                    name='username'
+                    control={control}
+                    render={({field}) => (
+                        <FormField
+                            label="Username:"
+                            type='text'
+                            id='username'
+                            {...field}
+                        />
+                    )}
                 />
-                <FormField
-                    label="Password:"
-                    type={passwordView ? 'text' : 'password'}
-                    id="password"
-                    {...register("password")}
-                >
-                    <span className="self-end relative bottom-8.5 right-1.5">
-                        {passwordIcon}
-                    </span>
-                </FormField>
+                <Controller 
+                    name='password'
+                    control={control}
+                    render={({field}) => (        
+                        <FormField
+                            label="Password:"
+                            type={passwordView ? 'text' : 'password'}
+                            id="password"
+                            {...field}
+                        >
+                            <span className="self-end relative bottom-8.5 right-1.5">
+                                {passwordIcon}
+                            </span>
+                        </FormField>
+                    )}
+                />
                 <p className="flex my-4 flex-col">
                     <Button text="Login" />
                 </p>
