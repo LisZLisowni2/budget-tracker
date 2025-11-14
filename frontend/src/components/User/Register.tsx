@@ -1,33 +1,45 @@
 import Button from '../Button/Button';
-import * as z from "zod"
+import FieldError from '../FormUtils/FieldError';
+import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from "react-hook-form"
+import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
 import api from '../../api';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
 
 const UserRegisterSchema = z.object({
-    username: z.string().min(3, { error: "Username too short" }).max(60, { error: "Username too long" }).regex(/^[a-zA-Z0-9]+$/, { error: "Username contains forbidden characters" }),
-    email: z.email({ error: "Invalid email pattern "}),
-    password: z.string().min(3, { error: "Password too short" }),
-    passwordVerify: z.string().min(3, { error: "Password too short" })
-})
+    username: z
+        .string()
+        .min(3, { error: 'Username too short' })
+        .max(60, { error: 'Username too long' })
+        .regex(/^[a-zA-Z0-9]+$/, {
+            error: 'Username contains forbidden characters',
+        }),
+    email: z.email({ error: 'Invalid email pattern ' }),
+    password: z.string().min(3, { error: 'Password too short' }),
+    passwordVerify: z.string().min(3, { error: 'Password too short' }),
+});
 
-type TUserRegisterSchema = z.infer<typeof UserRegisterSchema>
+type TUserRegisterSchema = z.infer<typeof UserRegisterSchema>;
 
 export default function Register() {
     const [passwordView, setPasswordView] = useState(false);
 
-    const { control, handleSubmit, setError, formState: { errors }} = useForm<TUserRegisterSchema>({
+    const {
+        control,
+        handleSubmit,
+        setError,
+        formState: { errors },
+    } = useForm<TUserRegisterSchema>({
         resolver: zodResolver(UserRegisterSchema),
         defaultValues: {
             username: '',
             email: '',
             password: '',
-            passwordVerify: ''
-        }
-    })
+            passwordVerify: '',
+        },
+    });
 
     const handlePasswordView = () => {
         setPasswordView(!passwordView);
@@ -36,8 +48,8 @@ export default function Register() {
     const handleRegister = async (data: TUserRegisterSchema) => {
         // Verify passwords
         if (data.password != data.passwordVerify) {
-            setError("passwordVerify", {
-                message: 'Passwords are not the same'
+            setError('passwordVerify', {
+                message: 'Passwords are not the same',
             });
             return;
         }
@@ -51,20 +63,20 @@ export default function Register() {
         await api
             .post('/users/register', obj)
             .then(() => {
-                setError("root", { message: 'Account has created' });
+                setError('root', { message: 'Account has created' });
             })
             .catch((err) => {
                 console.error(err);
                 switch (err.status) {
                     case 404:
-                        setError("root", {
-                            message: "There are empty fields"
-                        })
-                        break
+                        setError('root', {
+                            message: 'There are empty fields',
+                        });
+                        break;
                     default:
-                        setError("root", {
-                            message: "Internal server error."
-                        })
+                        setError('root', {
+                            message: 'Internal server error.',
+                        });
                 }
             });
     };
@@ -124,10 +136,10 @@ export default function Register() {
                 </h1>
                 <div className="flex md:gap-4 max-md:flex-col justify-between">
                     <div>
-                        <Controller 
-                            name='username'
+                        <Controller
+                            name="username"
                             control={control}
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <>
                                     <FormField
                                         label="Username:"
@@ -135,14 +147,18 @@ export default function Register() {
                                         id="login"
                                         {...field}
                                     />
-                                    { errors.username && <p>{errors.username.message}</p>}
+                                    {errors.username && (
+                                        <FieldError
+                                            message={errors.username.message}
+                                        />
+                                    )}
                                 </>
                             )}
                         />
-                        <Controller 
-                            name='email'
+                        <Controller
+                            name="email"
                             control={control}
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <>
                                     <FormField
                                         label="Email:"
@@ -150,20 +166,26 @@ export default function Register() {
                                         id="email"
                                         {...field}
                                     />
-                                    { errors.email && <p>{errors.email.message}</p>}
+                                    {errors.email && (
+                                        <FieldError
+                                            message={errors.email.message}
+                                        />
+                                    )}
                                 </>
                             )}
                         />
                     </div>
                     <div>
-                        <Controller 
-                            name='password'
+                        <Controller
+                            name="password"
                             control={control}
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <>
                                     <FormField
                                         label="Password:"
-                                        type={passwordView ? 'text' : 'password'}
+                                        type={
+                                            passwordView ? 'text' : 'password'
+                                        }
                                         id="password"
                                         {...field}
                                     >
@@ -171,30 +193,41 @@ export default function Register() {
                                             {passwordIcon}
                                         </span>
                                     </FormField>
-                                    { errors.password && <p>{errors.password.message}</p>}
+                                    {errors.password && (
+                                        <FieldError
+                                            message={errors.password.message}
+                                        />
+                                    )}
                                 </>
                             )}
                         />
-                        <Controller 
-                            name='passwordVerify'
+                        <Controller
+                            name="passwordVerify"
                             control={control}
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <>
                                     <FormField
-                                    label="Password Verify:"
-                                    type={passwordView ? 'text' : 'password'}
-                                    id="passwordSecond"
-                                    {...field}
-                                >
-                                    <span className="self-end relative bottom-7.5 md:bottom-8.5 right-1.5">
-                                        {passwordIcon}
-                                    </span>
-                                </FormField>
-                                    { errors.passwordVerify && <p>{errors.passwordVerify.message}</p>}
+                                        label="Password Verify:"
+                                        type={
+                                            passwordView ? 'text' : 'password'
+                                        }
+                                        id="passwordSecond"
+                                        {...field}
+                                    >
+                                        <span className="self-end relative bottom-7.5 md:bottom-8.5 right-1.5">
+                                            {passwordIcon}
+                                        </span>
+                                    </FormField>
+                                    {errors.passwordVerify && (
+                                        <FieldError
+                                            message={
+                                                errors.passwordVerify.message
+                                            }
+                                        />
+                                    )}
                                 </>
                             )}
                         />
-                        
                     </div>
                 </div>
                 <p className="flex my-4 flex-col">

@@ -18,7 +18,7 @@ export default function FormField({
     value,
 }: IFormLabel) {
     return (
-        <p className="flex md:my-4 h-20 flex-col">
+        <p className="flex md:mt-4 h-20 flex-col">
             <span className="lg:text-lg">{label}</span>
             <input
                 type={type}

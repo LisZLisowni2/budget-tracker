@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
 import { useForm, Controller } from 'react-hook-form';
+import FieldError from '../FormUtils/FieldError';
 
 const UserSchema = z.object({
     username: z.string().min(3, { error: "Username too short "}).max(60, { error: "Username too long" }),
@@ -133,7 +134,7 @@ export default function Login() {
                                 {...field}
                             />
                             {errors.username && (
-                                <p>{errors.username.message}</p>
+                                <FieldError message={errors.username.message} />
                             )}
                         </>
                     )}
@@ -154,7 +155,7 @@ export default function Login() {
                                 </span>
                             </FormField>
                             {errors.password && (
-                                <p>{errors.password.message}</p>
+                                <FieldError message={errors.password.message} />
                             )}
                         </>
                     )}
