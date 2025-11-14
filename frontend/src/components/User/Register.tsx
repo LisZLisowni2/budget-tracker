@@ -1,61 +1,71 @@
 import Button from '../Button/Button';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import * as z from "zod"
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, Controller } from "react-hook-form"
+import { useState } from 'react';
 import api from '../../api';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
 
+const UserRegisterSchema = z.object({
+    username: z.string().min(3, { error: "Username too short" }).max(60, { error: "Username too long" }).regex(/^[a-zA-Z0-9]+$/, { error: "Username contains forbidden characters" }),
+    email: z.email({ error: "Invalid email pattern "}),
+    password: z.string().min(3, { error: "Password too short" }),
+    passwordVerify: z.string().min(3, { error: "Password too short" })
+})
+
+type TUserRegisterSchema = z.infer<typeof UserRegisterSchema>
+
 export default function Register() {
     const [passwordView, setPasswordView] = useState(false);
-    const [username, setUsername] = useState<string | null>('');
-    const [email, setEmail] = useState<string | null>('');
-    const [password, setPassword] = useState<string | null>('');
-    const [passwordVerify, setPasswordVerify] = useState<string | null>('');
-    const [error, setError] = useState<string | null>('');
+
+    const { control, handleSubmit, setError, formState: { errors }} = useForm<TUserRegisterSchema>({
+        resolver: zodResolver(UserRegisterSchema),
+        defaultValues: {
+            username: '',
+            email: '',
+            password: '',
+            passwordVerify: ''
+        }
+    })
 
     const handlePasswordView = () => {
         setPasswordView(!passwordView);
     };
 
-    const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError('');
-
-        // Check if all fields are not empty
-        if (!username || !password || !email || !passwordVerify) {
-            setError(
-                'Username, email, password or second password not present'
-            );
-            return;
-        }
-
+    const handleRegister = async (data: TUserRegisterSchema) => {
         // Verify passwords
-        if (password != passwordVerify) {
-            setError('Passwords are not the same');
-            return;
-        }
-
-        // Verify email format
-        const emailRegex =
-            /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/i;
-        if (!emailRegex.test(email)) {
-            setError("Email format isn't correct");
+        if (data.password != data.passwordVerify) {
+            setError("passwordVerify", {
+                message: 'Passwords are not the same'
+            });
             return;
         }
 
         const obj = {
-            username: username,
-            email: email,
-            password: password,
+            username: data.username,
+            email: data.email,
+            password: data.password,
         };
 
         await api
             .post('/users/register', obj)
             .then(() => {
-                setError('Account has created');
+                setError("root", { message: 'Account has created' });
             })
             .catch((err) => {
                 console.error(err);
-                setError(`Error while registering: ${err.message}`);
+                switch (err.status) {
+                    case 404:
+                        setError("root", {
+                            message: "There are empty fields"
+                        })
+                        break
+                    default:
+                        setError("root", {
+                            message: "Internal server error."
+                        })
+                }
             });
     };
 
@@ -106,64 +116,91 @@ export default function Register() {
     return (
         <div>
             <form
-                onSubmit={async (event) => await handleRegister(event)}
-                className="relative bg-gradient-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto"
+                onSubmit={handleSubmit(handleRegister)}
+                className="relative bg-linear-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto"
             >
                 <h1 className="text-2xl md:text-3xl font-bold md:mb-8">
                     Register form
                 </h1>
                 <div className="flex md:gap-4 max-md:flex-col justify-between">
                     <div>
-                        <FormField
-                            label="Username:"
-                            type="text"
-                            id="login"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                setUsername(e.target.value)
-                            }
+                        <Controller 
+                            name='username'
+                            control={control}
+                            render={({field}) => (
+                                <>
+                                    <FormField
+                                        label="Username:"
+                                        type="text"
+                                        id="login"
+                                        {...field}
+                                    />
+                                    { errors.username && <p>{errors.username.message}</p>}
+                                </>
+                            )}
                         />
-                        <FormField
-                            label="Email:"
-                            type="text"
-                            id="email"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                setEmail(e.target.value)
-                            }
+                        <Controller 
+                            name='email'
+                            control={control}
+                            render={({field}) => (
+                                <>
+                                    <FormField
+                                        label="Email:"
+                                        type="text"
+                                        id="email"
+                                        {...field}
+                                    />
+                                    { errors.email && <p>{errors.email.message}</p>}
+                                </>
+                            )}
                         />
                     </div>
                     <div>
-                        <FormField
-                            label="Password:"
-                            type={passwordView ? 'text' : 'password'}
-                            id="password"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                setPassword(e.target.value)
-                            }
-                        >
-                            <span className="self-end relative bottom-7.5 md:bottom-8.5 right-1.5">
-                                {passwordIcon}
-                            </span>
-                        </FormField>
-                        <FormField
-                            label="Password Verify:"
-                            type={passwordView ? 'text' : 'password'}
-                            id="passwordSecond"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                setPasswordVerify(e.target.value)
-                            }
-                        >
-                            <span className="self-end relative bottom-7.5 md:bottom-8.5 right-1.5">
-                                {passwordIcon}
-                            </span>
-                        </FormField>
+                        <Controller 
+                            name='password'
+                            control={control}
+                            render={({field}) => (
+                                <>
+                                    <FormField
+                                        label="Password:"
+                                        type={passwordView ? 'text' : 'password'}
+                                        id="password"
+                                        {...field}
+                                    >
+                                        <span className="self-end relative bottom-7.5 md:bottom-8.5 right-1.5">
+                                            {passwordIcon}
+                                        </span>
+                                    </FormField>
+                                    { errors.password && <p>{errors.password.message}</p>}
+                                </>
+                            )}
+                        />
+                        <Controller 
+                            name='passwordVerify'
+                            control={control}
+                            render={({field}) => (
+                                <>
+                                    <FormField
+                                    label="Password Verify:"
+                                    type={passwordView ? 'text' : 'password'}
+                                    id="passwordSecond"
+                                    {...field}
+                                >
+                                    <span className="self-end relative bottom-7.5 md:bottom-8.5 right-1.5">
+                                        {passwordIcon}
+                                    </span>
+                                </FormField>
+                                    { errors.passwordVerify && <p>{errors.passwordVerify.message}</p>}
+                                </>
+                            )}
+                        />
+                        
                     </div>
                 </div>
                 <p className="flex my-4 flex-col">
                     <Button text="Register" />
                 </p>
-                <p id="status" className="text-orange-300 font-bold lg:text-xl">
-                    {error}
-                </p>
+                {errors.root && <p>{errors.root.message}</p>}
                 <p>
                     <Link
                         to="/login"

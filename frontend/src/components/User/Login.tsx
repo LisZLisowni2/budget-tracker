@@ -1,32 +1,36 @@
 import Button from '../Button/Button';
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useUser } from '../../context/UserContext';
 import api from '../../api';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
-import { useForm, Controller } from "react-hook-form"
+import { useForm, Controller } from 'react-hook-form';
 
 const UserSchema = z.object({
-    username: z.string().min(3).max(60),
-    password: z.string().min(3)
-})
+    username: z.string().min(3, { error: "Username too short "}).max(60, { error: "Username too long" }),
+    password: z.string().min(3, { error: "Password too short" }),
+});
 
 type TUserSchema = z.infer<typeof UserSchema>;
 
 export default function Login() {
-    const { register, handleSubmit, control } = useForm<TUserSchema>({
+    const {
+        handleSubmit,
+        control,
+        setError,
+        formState: { errors },
+    } = useForm<TUserSchema>({
         resolver: zodResolver(UserSchema),
         defaultValues: {
             username: '',
-            password: ''
-        }
+            password: '',
+        },
     });
 
     const [passwordView, setPasswordView] = useState(false);
-    const [error, setError] = useState<string | null>('');
     const navigate = useNavigate();
     const { handleUserLogin } = useUser();
 
@@ -34,10 +38,8 @@ export default function Login() {
         setPasswordView(!passwordView);
     };
 
-    const onSubmit = (data: TUserSchema) => console.log(data)
-
     const handleLogin = async (data: TUserSchema) => {
-        console.log("handleLogin triggered")
+        console.log('handleLogin triggered');
         await api
             .post('/users/login', data)
             .then((res) => {
@@ -47,10 +49,24 @@ export default function Login() {
             })
             .catch((err) => {
                 console.error(err);
-                setError(`Error while logging: ${err.message}`);
+                switch (err.status) {
+                    case 404:
+                        setError('username', {
+                            message: "That username doesn't exist",
+                        });
+                        break
+                    case 401:
+                        setError('password', {
+                            message: "Wrong password"
+                        })
+                        break
+                    default:
+                        setError("root", {
+                            message: "Internal server error."
+                        })
+                }
             });
     };
-    handleLogin({ username: '', password: '' });
 
     let passwordIcon;
     if (!passwordView) {
@@ -99,45 +115,55 @@ export default function Login() {
     return (
         <div>
             <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="relative bg-gradient-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto"
+                onSubmit={handleSubmit(handleLogin)}
+                className="relative bg-linear-to-r from-rose-400 to-rose-500 p-8 lg:p-16 rounded-4xl text-center max-w-3xs md:max-w-2xl lg:max-w-3xl z-10 shadow-2xl backdrop-blur-3xl m-auto"
             >
                 <h1 className="text-2xl md:text-3xl font-bold mb-8">
                     Login form
                 </h1>
-                <Controller 
-                    name='username'
+                <Controller
+                    name="username"
                     control={control}
-                    render={({field}) => (
-                        <FormField
-                            label="Username:"
-                            type='text'
-                            id='username'
-                            {...field}
-                        />
+                    render={({ field }) => (
+                        <>
+                            <FormField
+                                label="Username:"
+                                type="text"
+                                id="username"
+                                {...field}
+                            />
+                            {errors.username && (
+                                <p>{errors.username.message}</p>
+                            )}
+                        </>
                     )}
                 />
-                <Controller 
-                    name='password'
+                <Controller
+                    name="password"
                     control={control}
-                    render={({field}) => (        
-                        <FormField
-                            label="Password:"
-                            type={passwordView ? 'text' : 'password'}
-                            id="password"
-                            {...field}
-                        >
-                            <span className="self-end relative bottom-8.5 right-1.5">
-                                {passwordIcon}
-                            </span>
-                        </FormField>
+                    render={({ field }) => (
+                        <>
+                            <FormField
+                                label="Password:"
+                                type={passwordView ? 'text' : 'password'}
+                                id="password"
+                                {...field}
+                            >
+                                <span className="self-end relative bottom-8.5 right-1.5">
+                                    {passwordIcon}
+                                </span>
+                            </FormField>
+                            {errors.password && (
+                                <p>{errors.password.message}</p>
+                            )}
+                        </>
                     )}
                 />
+                { errors.root && (
+                    <p>{errors.root.message}</p>
+                )}
                 <p className="flex my-4 flex-col">
                     <Button text="Login" />
-                </p>
-                <p id="status" className="text-orange-300 font-bold text-2xl">
-                    {error}
                 </p>
                 <p>
                     <Link
