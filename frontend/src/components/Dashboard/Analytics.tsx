@@ -11,6 +11,7 @@ import {
     Tooltip,
     Legend,
     ArcElement,
+    Colors
 } from 'chart.js';
 
 ChartJS.register(
@@ -21,7 +22,8 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    ArcElement
+    ArcElement,
+    Colors
 );
 
 import { Pie } from 'react-chartjs-2';
@@ -52,8 +54,6 @@ export default function Analytics() {
             {
                 label: 'Sales',
                 data: [100, 300, 200, 100, 500, 300],
-                borderColor: 'blue',
-                backgroundColor: 'lightblue',
                 fill: true,
                 tension: 0.4,
             },
@@ -68,6 +68,9 @@ export default function Analytics() {
                 display: true,
                 text: 'Monthly income and expenses, last 6 months',
             },
+            colors: {
+                enabled: true
+            }
         },
     };
 
