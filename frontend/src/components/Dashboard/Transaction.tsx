@@ -9,6 +9,7 @@ import FormField from '../FormUtils/FormField';
 interface FormState {
     name: string;
     price: number;
+    category: string;
     receiver: boolean;
 }
 
@@ -24,6 +25,7 @@ type Action =
 const initialState: FormState = {
     name: '',
     price: 0,
+    category: '',
     receiver: false,
 };
 
@@ -122,6 +124,7 @@ export default function Transactions() {
     };
 
     const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value === '-1') return;
         const filtered = transactions.filter(
             (transaction) => transaction._id === e.target.value
         );
@@ -191,6 +194,7 @@ export default function Transactions() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
+                        <option selected value={"-1"}>Select one of these</option>
                         {transactions.map((transaction) => (
                             <option value={transaction._id}>
                                 {transaction.name}
@@ -207,6 +211,7 @@ export default function Transactions() {
                     <FormField
                         id="category"
                         label="Category"
+                        value={state.category}
                         type="text"
                         onChange={handleChange}
                     />
@@ -220,7 +225,7 @@ export default function Transactions() {
                     <FormField
                         id="receiver"
                         label="Is receiving?"
-                        value={state.receiver ? 'true' : 'false'}
+                        checked={state.receiver}
                         type="checkbox"
                         onChange={handleChange}
                     />
@@ -239,6 +244,7 @@ export default function Transactions() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
+                        <option selected value={"-1"}>Select one of these</option>
                         {transactions.map((transaction) => (
                             <option value={transaction._id}>
                                 {transaction.name}

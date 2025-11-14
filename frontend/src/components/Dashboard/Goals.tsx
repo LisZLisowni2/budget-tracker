@@ -102,6 +102,7 @@ export default function Goals() {
     }
 
     const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value === '-1') return;
         const filtered = goals.filter(goal => goal._id === e.target.value)
         if (filtered.length === 1) {
             const body = filtered[0];
@@ -166,6 +167,7 @@ export default function Goals() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
+                        <option selected value={"-1"}>Select one of these</option>
                         {goals.map(goal => (
                             <option value={goal._id}>
                                 {goal.goalname}
@@ -201,6 +203,7 @@ export default function Goals() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
+                        <option selected value={"-1"}>Select one of these</option>
                         {goals.map(goal => (
                             <option value={goal._id}>
                                 {goal.goalname}

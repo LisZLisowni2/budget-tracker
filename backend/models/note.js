@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const noteSchema = new Schema({
-    'date-creation': {
+    'dateCreation': {
         type: Date,
         default: Date.now
     },
@@ -19,7 +19,7 @@ const noteSchema = new Schema({
         type: String,
         require: true
     },
-    'last-edit-date': {
+    'dateUpdate': {
         type: Date,
         default: Date.now
     }

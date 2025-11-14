@@ -5,6 +5,7 @@ interface IFormLabel {
     type: string;
     id: string;
     value?: string | number;
+    checked?: boolean
     onChange?: ChangeEventHandler;
     children?: ReactNode;
 }
@@ -14,6 +15,7 @@ export default function FormField({
     type,
     id,
     onChange,
+    checked,
     children,
     value,
 }: IFormLabel) {
@@ -24,6 +26,7 @@ export default function FormField({
                 type={type}
                 id={id}
                 value={value}
+                checked={checked}
                 className="p-1 md:p-2 font-extrabold text-black bg-white border-white border-2 rounded-2xl"
                 onChange={onChange}
             />
