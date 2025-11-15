@@ -1,5 +1,3 @@
-// TODO: UPDATE TO SERVE THE DATA FROM SERVER
-
 import { useUser } from '../../context/UserContext';
 import {
     Chart as ChartJS,
@@ -76,6 +74,7 @@ export default function Analytics() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 h-full max-h-screen gap-4 *:m-auto *:w-full *:h-full *:flex *:justify-center *:p-4 max-lg:overflow-auto">
+            {/* TODO: Update charts to represent data */}
             <div>
                 <Pie data={data} options={options} />
             </div>

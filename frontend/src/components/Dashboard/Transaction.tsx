@@ -46,7 +46,6 @@ function formReducer(state: FormState, action: Action): FormState {
 }
 
 export default function Transactions() {
-    // TODO: Handle CRUD for transactions
     sessionStorage.setItem('selectedDashboard', '1');
     const { user, loading: userLoading } = useUser();
     const {

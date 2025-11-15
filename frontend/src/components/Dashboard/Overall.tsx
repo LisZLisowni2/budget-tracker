@@ -256,7 +256,7 @@ export default function Overall() {
                     </div>
                 </div>
                 <div className="flex-col lg:w-full h-1/4 max-md:hidden mt-8">
-                    <h1>Goals here</h1>
+                    <h1>Goals here</h1> {/* TODO: Add Goals for Overall */}
                 </div>
             </div>
             <div className="flex max-md:flex-col h-1/2 justify-evenly items-center w-full *:bg-white">
