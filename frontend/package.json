@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tanstack/eslint-plugin-query": "^5.91.2",
     "@types/cypress": "^1.1.6",
     "@types/react": "^19.2.4",
     "@types/react-dom": "^19.2.3",

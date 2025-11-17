@@ -26,8 +26,8 @@ ChartJS.register(
 );
 import { useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
-import { useTransactions } from '@/context/TransactionContext';
 import { useNotes } from '@/context/NoteContext';
+import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 
 interface IStatsItem {
     title: string;
@@ -84,7 +84,7 @@ export default function Overall() {
     const { user, loading } = useUser();
     const { goals, loading: goalsLoading } = useGoals();
     const { notes, loading: notesLoading } = useNotes();
-    const { transactions, loading: transactionsLoading } = useTransactions();
+    const { data: transactions, isLoading: transactionsLoading } = useTransactionsQuery();
 
     if (loading || goalsLoading || notesLoading || transactionsLoading) {
         return (

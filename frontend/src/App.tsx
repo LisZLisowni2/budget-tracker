@@ -21,6 +21,9 @@ import Footer from './components/Footer/Footer';
 import Analytics from './components/Dashboard/Analytics';
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+const queryClient = new QueryClient()
 
 function DashboardLayout() {
     return (
@@ -89,50 +92,52 @@ function DashboardLayout() {
 
 function App() {
     return (
-        <UserProvide>
-            <Router>
-                <section className="min-h-screen flex text-white flex-col bg-gradient-to-r from-gray-100 to-gray-200">
-                    <Header />
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                <div className="flex-col justify-center items-center">
-                                    <div className="flex justify-center p-60">
-                                        <HeroBox />
+        <QueryClientProvider client={queryClient}>
+            <UserProvide>
+                <Router>
+                    <section className="min-h-screen flex text-white flex-col bg-gradient-to-r from-gray-100 to-gray-200">
+                        <Header />
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <div className="flex-col justify-center items-center">
+                                        <div className="flex justify-center p-60">
+                                            <HeroBox />
+                                        </div>
+                                        <div className="max-md:flex-col flex lg justify-between bg-white shadow-2xl">
+                                            <ReasonsBox />
+                                            <WhyBox />
+                                        </div>
                                     </div>
-                                    <div className="max-md:flex-col flex lg justify-between bg-white shadow-2xl">
-                                        <ReasonsBox />
-                                        <WhyBox />
-                                    </div>
-                                </div>
-                            }
-                        />
-                        <Route
-                            path="/login"
-                            element={
-                                <Content>
-                                    <Login />
-                                </Content>
-                            }
-                        />
-                        <Route
-                            path="/dashboard/*"
-                            element={<DashboardLayout />}
-                        />
-                        <Route
-                            path="/register"
-                            element={
-                                <Content>
-                                    <Register />
-                                </Content>
-                            }
-                        />
-                    </Routes>
-                    <Footer />
-                </section>
-            </Router>
-        </UserProvide>
+                                }
+                            />
+                            <Route
+                                path="/login"
+                                element={
+                                    <Content>
+                                        <Login />
+                                    </Content>
+                                }
+                            />
+                            <Route
+                                path="/dashboard/*"
+                                element={<DashboardLayout />}
+                            />
+                            <Route
+                                path="/register"
+                                element={
+                                    <Content>
+                                        <Register />
+                                    </Content>
+                                }
+                            />
+                        </Routes>
+                        <Footer />
+                    </section>
+                </Router>
+            </UserProvide>
+        </QueryClientProvider>
     );
 }
 

@@ -5,6 +5,7 @@ import { ChangeEvent } from 'react';
 import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
+import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 
 interface FormState {
     name: string;
@@ -48,16 +49,11 @@ function formReducer(state: FormState, action: Action): FormState {
 export default function Transactions() {
     sessionStorage.setItem('selectedDashboard', '1');
     const { user, loading: userLoading } = useUser();
-    const {
-        transactions,
-        loading: transactionLoading,
-        handleAddTransaction,
-        handleChangeTransaction,
-        handleDeleteTransaction,
-    } = useTransactions();
+    const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
     const [isChangeForm, setStateChangeForm] = useState<boolean>(false);
     const [isDeleteForm, setStateDeleteForm] = useState<boolean>(false);
+    const { add, change, delete: remove } = useTransactions();
 
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
@@ -66,7 +62,7 @@ export default function Transactions() {
         return <p>Loading profile...</p>;
     }
 
-    if (transactionLoading) {
+    if (isTransactionsLoading) {
         return <p>Loading transactions...</p>;
     }
 
@@ -97,7 +93,7 @@ export default function Transactions() {
     const handleAdd = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (state.name === '' || state.name === null) return;
-        handleAddTransaction(state);
+        add(state);
         dispatch({
             type: 'RESET',
         });
@@ -107,7 +103,7 @@ export default function Transactions() {
         e.preventDefault();
         if (!selectRef.current) return;
         if (state.name === '' || state.name === null) return;
-        handleChangeTransaction(selectRef.current.value, state);
+        change(selectRef.current.value, state);
         dispatch({
             type: 'RESET',
         });
@@ -116,7 +112,7 @@ export default function Transactions() {
     const handleDeleteItem = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!selectRef.current) return;
-        handleDeleteTransaction(selectRef.current.value);
+        remove(selectRef.current.value);
         dispatch({
             type: 'RESET',
         });

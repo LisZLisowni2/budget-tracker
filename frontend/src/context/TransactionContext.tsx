@@ -1,89 +1,55 @@
 import {
-    useState,
     createContext,
     useContext,
-    useEffect,
     ReactNode,
 } from 'react';
 import api from '../api';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 interface IChildren {
     children?: ReactNode;
 }
 
-interface ITranscation {
-    _id: string;
-    dateCreation: Date;
-    dateUpdate: Date;
-    name: string;
-    price: number;
-    category: string;
-    receiver: boolean;
-}
-
 interface ITransactionContext {
-    transactions: ITranscation[] | null;
-    loading: boolean;
-    handleTransactions: () => Promise<void>;
-    handleAddTransaction: (body: object) => Promise<void>;
-    handleChangeTransaction: (_id: string, body: object) => Promise<void>;
-    handleDeleteTransaction: (_id: string) => Promise<void>;
+    add: (body: object) => void;
+    change: (_id: string, body: object) => void;
+    delete: (_id: string) => void;
 }
 
 const TransactionContext = createContext<ITransactionContext | null>(null);
 
+type ChangeMutationArgs = {
+    _id: string,
+    body: object
+}
+
 export function TransactionProvide({ children }: IChildren) {
-    const [transactions, setTransactions] = useState<ITranscation[] | null>(
-        null
-    );
-    const [loading, setLoading] = useState<boolean>(true);
+    const queryClient = useQueryClient()
+    const queryKey = ['transactions']
 
-    const handleTransactions = async () => {
-        await api.get('/transactions/all').then((res) => {
-            setTransactions(res.data);
-        });
-    };
+    const onSuccess = () => queryClient.invalidateQueries({ queryKey })
 
-    const handleAddTransaction = async (body: object) => {
-        await api
-            .post('/transactions/new', body)
-            .then(() => handleTransactions());
-    };
+    const handleAddMutation = useMutation({
+        mutationFn: (body: object) => api.post('/transactions/new', body),
+        onSuccess
+    })
 
-    const handleDeleteTransaction = async (_id: string) => {
-        await api
-            .delete(`/transactions/delete/${_id}`)
-            .then(() => handleTransactions());
-    };
+    const handleChangeMutation = useMutation({
+        mutationFn: ({_id, body} : ChangeMutationArgs) => api.put(`/transactions/edit/${_id}`, body),
+        onSuccess
+    })
 
-    const handleChangeTransaction = async (_id: string, body: object) => {
-        await api
-            .put(`/transactions/edit/${_id}`, body)
-            .then(() => handleTransactions());
-    };
-
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                await handleTransactions();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchTransactions();
-    }, []);
+    const handleDeleteMutation = useMutation({
+        mutationFn: (_id: string) => api.delete(`/transactions/delete/${_id}`),
+        onSuccess
+    })
 
     return (
         <TransactionContext.Provider
             value={{
-                transactions,
-                handleTransactions,
-                handleAddTransaction,
-                handleChangeTransaction,
-                handleDeleteTransaction,
-                loading,
+                add: (body: object) => handleAddMutation.mutate(body),
+                change: (_id: string, body: object) => handleChangeMutation.mutate({ _id, body }),
+                delete: (_id: string) => handleDeleteMutation.mutate(_id),
             }}
         >
             {children}
