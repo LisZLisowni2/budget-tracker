@@ -4,6 +4,7 @@ import { useReducer, useState, useRef, ChangeEvent, FormEvent } from 'react';
 import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
+import useGoalsQuery from '@/hooks/useGoalsQuery';
 
 interface FormState {
     goalname: string;
@@ -43,7 +44,8 @@ function formReducer(state: FormState, action: Action): FormState {
 export default function Goals() {
     sessionStorage.setItem('selectedDashboard', '2');
     const { user, loading } = useUser();
-    const { goals, loading: goalsLoading, handleAddGoal, handleChangeGoal, handleDeleteGoal, handleFinishGoal } = useGoals();
+    const { addMutation, deleteMutation, changeMutation, finishMutation } = useGoals();
+    const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery(); 
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
     const [isChangeForm, setStateChangeForm] = useState<boolean>(false);
     const [isDeleteForm, setStateDeleteForm] = useState<boolean>(false);
@@ -55,7 +57,7 @@ export default function Goals() {
         return <p>Loading profile...</p>;
     }
 
-    if (goalsLoading) {
+    if (isGoalsLoading) {
         return <p>Loading goals...</p>;
     }
 
@@ -95,7 +97,7 @@ export default function Goals() {
     const handleAdd = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (state.goalname === "" || state.goalname === null) return;
-        handleAddGoal(state);
+        addMutation(state);
         dispatch({
             type: 'RESET'
         })
@@ -117,7 +119,7 @@ export default function Goals() {
         e.preventDefault();
         if (state.goalname === '' || state.goalname === null) return;
         if (!selectRef.current) return;
-        handleChangeGoal(selectRef.current.value, state);
+        changeMutation(selectRef.current.value, state);
         dispatch({
             type: 'RESET'
         })
@@ -126,7 +128,7 @@ export default function Goals() {
     const handleDeleteItem = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!selectRef.current) return;
-        handleDeleteGoal(selectRef.current.value)
+        deleteMutation(selectRef.current.value)
         dispatch({
             type: 'RESET'
         })
@@ -239,7 +241,7 @@ export default function Goals() {
                                 </td>
                                 <td>
                                     {!goal.completed ?
-                                        <Button text='Finish' onClick={() => handleFinishGoal(goal._id)} />
+                                        <Button text='Finish' onClick={() => finishMutation(goal._id)} />
                                         : <p>Completed</p>
                                     }
                                 </td>

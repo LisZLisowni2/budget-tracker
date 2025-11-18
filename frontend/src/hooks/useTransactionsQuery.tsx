@@ -14,3 +14,5 @@ export default function useTransactionsQuery() {
         staleTime: 1000 * 60 * 5
     })
 } 
+
+// TODO: Add rest of TanStack for rest contextes 

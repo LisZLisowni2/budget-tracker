@@ -1,90 +1,68 @@
 import {
-    useState,
     createContext,
     useContext,
-    useEffect,
     ReactNode,
 } from 'react';
 import api from '../api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface IChildren {
     children?: ReactNode;
 }
 
-interface IGoal {
-    _id: string;
-    dateCreation: Date;
-    dateUpdate: Date;
-    goalname: string;
-    requiredmoney: number;
-    completed: boolean;
-}
-
 interface IGoalContext {
-    goals: IGoal[] | null;
-    loading: boolean;
-    handleGoals: () => Promise<void>;
-    handleAddGoal: (body: object) => Promise<void>;
-    handleChangeGoal: (_id: string, body: object) => Promise<void>;
-    handleDeleteGoal: (_id: string) => Promise<void>;
-    handleFinishGoal: (_id: string) => Promise<void>;
+    addMutation: (body: object) => void;
+    changeMutation: (_id: string, body: object) => void;
+    deleteMutation: (_id: string) => void;
+    finishMutation: (_id: string) => void;
 }
 
 const GoalContext = createContext<IGoalContext | null>(null);
 
+type ChangeMutationArgs = {
+    _id: string,
+    body: object
+}
+
 export function GoalProvide({ children }: IChildren) {
-    const [goals, setGoals] = useState<IGoal[] | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const queryClient = useQueryClient();
+    const queryKey = ["goals"]
 
-    const handleGoals = async () => {
-        await api.get('/goals/all').then((res) => {
-            setGoals(res.data);
-        });
-    };
+    const onSuccess = () => queryClient.invalidateQueries({ queryKey })
 
-    const handleAddGoal = async (body: object) => {
-        await api
-            .post('/goals/new', body)
-            .then(() => handleGoals());
-    };
+    const handleAddMutation = useMutation({
+        mutationKey: queryKey,
+        mutationFn: async (body: object) => await api.post('/goals/new', body),
+        onSuccess
+    })
 
-    const handleDeleteGoal = async (_id: string) => {
-        await api.delete(`/goals/delete/${_id}`).then(() => handleGoals());
-    };
+    const handleDeleteMutation = useMutation({
+        mutationKey: queryKey,
+        mutationFn: async (_id: string) => await api.delete(`/goals/delete/${_id}`),
+        onSuccess
+    });
 
-    const handleChangeGoal = async (_id: string, body: object) => {
-        await api.put(`/goals/edit/${_id}`, body).then(() => handleGoals());
-    };
+    const handleChangeMutation = useMutation({
+        mutationKey: queryKey,
+        mutationFn: async ({_id, body} : ChangeMutationArgs) => {
+            await api.put(`/goals/edit/${_id}`, body)
+        },
+        onSuccess
+    });
 
-    const handleFinishGoal = async (_id: string) => {
-        await api
-            .put(`/goals/edit/${_id}`, { completed: true })
-            .then(() => handleGoals());
-    };
-
-    useEffect(() => {
-        const fetchGoals = async () => {
-            try {
-                await handleGoals();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchGoals();
-    }, []);
+    const handleFinishMutation = useMutation({
+        mutationKey: queryKey,
+        mutationFn: async (_id:string) => await api.put(`/goals/edit/${_id}`, { completed: true }),
+        onSuccess
+    });
 
     return (
         <GoalContext.Provider
             value={{
-                goals,
-                handleGoals,
-                handleAddGoal,
-                handleFinishGoal,
-                handleChangeGoal,
-                handleDeleteGoal,
-                loading,
+                addMutation: (body: object) => handleAddMutation.mutate(body),
+                deleteMutation: (_id: string) => handleDeleteMutation.mutate(_id),
+                changeMutation: (_id: string, body: object) => handleChangeMutation.mutate({ _id, body }),
+                finishMutation: (_id: string) => handleFinishMutation.mutate(_id),
             }}
         >
             {children}
