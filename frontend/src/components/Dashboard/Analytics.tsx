@@ -1,4 +1,4 @@
-import { useUser } from '../../context/UserContext';
+import useUserQuery from '@/hooks/useUserQuery';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -28,9 +28,13 @@ import { Pie } from 'react-chartjs-2';
 
 export default function Analytics() {
     sessionStorage.setItem('selectedDashboard', '4');
-    const { user, loading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
 
-    if (loading) {
+    if (isUserLoading) {
+        return <p>Loading profile...</p>;
+    }
+
+    if (isUserLoading) {
         return <p>Loading profile...</p>;
     }
 

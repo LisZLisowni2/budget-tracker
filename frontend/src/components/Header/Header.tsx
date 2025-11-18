@@ -1,10 +1,10 @@
+import useUserQuery from '@/hooks/useUserQuery';
 import { Link } from 'react-router';
-import { useUser } from '../../context/UserContext';
 
 export default function Header() {
-    const { user, loading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
 
-    if (loading) {
+    if (isUserLoading) {
         return (
             <div className="h-auto p-5 flex justify-between bg-gradient-to-r from-yellow-500 to-orange-500 shadow-xl">
                 <h1 className="text-2xl md:text-3xl lg:text-5xl">

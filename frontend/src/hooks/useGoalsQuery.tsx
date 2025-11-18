@@ -2,7 +2,7 @@ import api from "@/api";
 import { useQuery } from "@tanstack/react-query";
 import { IGoal } from "@/types/goal";
 
-const fetchTransactions = async (): Promise<IGoal[]> => {
+const fetchGoals = async (): Promise<IGoal[]> => {
     const result = await api.get('/goals/all')
     return result.data;
 }
@@ -10,7 +10,7 @@ const fetchTransactions = async (): Promise<IGoal[]> => {
 export default function useGoalsQuery() {
     return useQuery({
         queryKey: ["goals"],
-        queryFn: fetchTransactions,
+        queryFn: fetchGoals,
         staleTime: 1000 * 60 * 5
     })
 } 

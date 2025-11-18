@@ -1,11 +1,11 @@
 import { useState, useReducer, FormEvent, useRef } from 'react';
 import { useTransactions } from '../../context/TransactionContext';
-import { useUser } from '../../context/UserContext';
 import { ChangeEvent } from 'react';
 import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
 import useTransactionsQuery from '@/hooks/useTransactionsQuery';
+import useUserQuery from '@/hooks/useUserQuery';
 
 interface FormState {
     name: string;
@@ -48,7 +48,12 @@ function formReducer(state: FormState, action: Action): FormState {
 
 export default function Transactions() {
     sessionStorage.setItem('selectedDashboard', '1');
-    const { user, loading: userLoading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
+
+    if (isUserLoading) {
+        return <p>Loading profile...</p>;
+    }
+    
     const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
     const [isChangeForm, setStateChangeForm] = useState<boolean>(false);
@@ -57,10 +62,6 @@ export default function Transactions() {
 
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
-
-    if (userLoading) {
-        return <p>Loading profile...</p>;
-    }
 
     if (isTransactionsLoading) {
         return <p>Loading transactions...</p>;

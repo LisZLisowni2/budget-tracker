@@ -1,6 +1,7 @@
 import { useState, MouseEventHandler, ReactNode } from 'react';
 import { Link } from 'react-router';
 import { useUser } from '../../context/UserContext';
+import useUserQuery from '@/hooks/useUserQuery';
 
 interface INavOption {
     text: string;
@@ -35,9 +36,9 @@ export default function Dashboard({ children }: IChildren) {
             ? sessionStorage.getItem('selectedDashboard')
             : '1'
     );
-    const { user, loading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
 
-    if (loading) {
+    if (isUserLoading) {
         return <p>Loading profile...</p>;
     }
 

@@ -33,7 +33,7 @@ export default function Login() {
 
     const [passwordView, setPasswordView] = useState(false);
     const navigate = useNavigate();
-    const { handleUserLogin } = useUser();
+    const { loginMutation } = useUser();
 
     const handlePasswordView = () => {
         setPasswordView(!passwordView);
@@ -45,7 +45,7 @@ export default function Login() {
             .post('/users/login', data)
             .then((res) => {
                 localStorage.setItem('token', res.data.token);
-                handleUserLogin();
+                loginMutation();
                 navigate('/dashboard');
             })
             .catch((err) => {

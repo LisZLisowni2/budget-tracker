@@ -1,10 +1,10 @@
-import { useUser } from '@/context/UserContext';
 import { useGoals } from '@/context/GoalContext';
 import { useReducer, useState, useRef, ChangeEvent, FormEvent } from 'react';
 import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
 import useGoalsQuery from '@/hooks/useGoalsQuery';
+import useUserQuery from '@/hooks/useUserQuery';
 
 interface FormState {
     goalname: string;
@@ -43,7 +43,11 @@ function formReducer(state: FormState, action: Action): FormState {
 
 export default function Goals() {
     sessionStorage.setItem('selectedDashboard', '2');
-    const { user, loading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
+
+    if (isUserLoading) {
+        return <p>Loading profile...</p>;
+    }
     const { addMutation, deleteMutation, changeMutation, finishMutation } = useGoals();
     const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery(); 
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
@@ -52,10 +56,6 @@ export default function Goals() {
 
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
-
-    if (loading) {
-        return <p>Loading profile...</p>;
-    }
 
     if (isGoalsLoading) {
         return <p>Loading goals...</p>;

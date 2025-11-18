@@ -1,10 +1,11 @@
-import { useUser } from '../../context/UserContext';
 import { useState, MouseEventHandler, ChangeEvent } from 'react';
 import { Plus, Minus, Copy } from 'lucide-react';
 import { useNotes } from '../../context/NoteContext';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Button from '../Button/Button';
+import useNotesQuery from '@/hooks/useNotesQuery';
+import useUserQuery from '@/hooks/useUserQuery';
 
 interface INoteElement {
     id?: number;
@@ -51,22 +52,21 @@ function NoteViewer({ content }: INoteViewer) {
 export default function Notes() {
     sessionStorage.setItem('selectedDashboard', '3');
     const [isEditor, setIsEditor] = useState<boolean>(false);
-    const { user, loading: userLoading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
+    const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
     const {
-        notes,
-        loading: notesLoading,
-        handleAddNote,
-        handleChangeNote,
-        handleCopyNote,
-        handleDeleteNote,
+        addMutation,
+        changeMutation,
+        copyMutation,
+        deleteMutation,
     } = useNotes();
     const [selectedNoteID, setSelectedNoteID] = useState<string | null>();
 
-    if (userLoading) {
+    if (isUserLoading) {
         return <p>Loading profile...</p>;
     }
 
-    if (notesLoading) {
+    if (isNotesLoading) {
         return <p>Loading notes...</p>;
     }
 
@@ -98,27 +98,27 @@ export default function Notes() {
 
     const titleChangeHandle = (e: ChangeEvent<HTMLInputElement>) => {
         if (selectedNoteID)
-            handleChangeNote(selectedNoteID, { title: e.target.value });
+            changeMutation(selectedNoteID, { title: e.target.value });
     };
 
     const contentChangeHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
         if (selectedNoteID)
-            handleChangeNote(selectedNoteID, { content: e.target.value });
+            changeMutation(selectedNoteID, { content: e.target.value });
     };
 
     const createNewNote = () => {
-        handleAddNote();
+        addMutation();
     };
 
     const deleteNote = () => {
         if (selectedNoteID) {
-            handleDeleteNote(selectedNoteID);
+            deleteMutation(selectedNoteID);
             setSelectedNoteID(null);
         }
     };
 
     const copyNote = () => {
-        if (selectedNoteID) handleCopyNote(selectedNoteID);
+        if (selectedNoteID) copyMutation(selectedNoteID);
     };
 
     return (

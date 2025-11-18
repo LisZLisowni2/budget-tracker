@@ -1,13 +1,14 @@
-import { useUser } from '../../context/UserContext';
 
 // TODO: Add more info about User like: Currency, 
 // TODO: Enable change details about account and it deletion.
 
+import useUserQuery from "@/hooks/useUserQuery";
+
 export default function Profile() {
     sessionStorage.setItem('selectedDashboard', '5');
-    const { user, loading } = useUser();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
 
-    if (loading) {
+    if (isUserLoading) {
         return <p>Loading profile...</p>;
     }
 

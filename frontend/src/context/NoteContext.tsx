@@ -1,11 +1,6 @@
-import {
-    useState,
-    createContext,
-    useContext,
-    useEffect,
-    ReactNode,
-} from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import api from '../api';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 interface IChildren {
     children?: ReactNode;
@@ -20,72 +15,67 @@ interface INote {
 }
 
 interface INoteContext {
-    notes: INote[] | null;
-    loading: boolean;
-    handleNotes: () => Promise<void>;
-    handleAddNote: () => Promise<void>;
-    handleChangeNote: (_id: string, body: object) => Promise<void>;
-    handleDeleteNote: (_id: string) => Promise<void>;
-    handleCopyNote: (_id: string) => Promise<void>;
+    addMutation: () => void;
+    changeMutation: (_id: string, body: object) => void;
+    deleteMutation: (_id: string) => void;
+    copyMutation: (_id: string) => void;
 }
 
 const NoteContext = createContext<INoteContext | null>(null);
 
+type ChangeMutationArgs = {
+    _id: string;
+    body: object;
+};
+
 export function NoteProvide({ children }: IChildren) {
-    const [notes, setNotes] = useState<INote[] | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const queryClient = useQueryClient();
+    const queryKey = ['notes'];
 
-    const handleNotes = async () => {
-        await api.get('/notes/all').then((res) => {
-            setNotes(res.data);
-        });
-    };
+    const onSuccess = () => queryClient.invalidateQueries({ queryKey });
 
-    const handleAddNote = async () => {
-        await api
-            .post('/notes/new', { title: '', content: '' })
-            .then(() => handleNotes());
-    };
+    const handleAddNote = useMutation({
+        mutationFn: async () =>
+            await api.post('/notes/new', { title: '', content: '' }),
+        mutationKey: queryKey,
+        onSuccess,
+    });
 
-    const handleDeleteNote = async (_id: string) => {
-        await api.delete(`/notes/delete/${_id}`).then(() => handleNotes());
-    };
+    const handleChangeNote = useMutation({
+        mutationFn: async ({ _id, body }: ChangeMutationArgs) => {
+            await api.put(`/notes/edit/${_id}`, body);
+        },
+        mutationKey: queryKey,
+        onSuccess,
+    });
 
-    const handleCopyNote = async (_id: string) => {
-        const res = await api.get(`/notes/${_id}`);
-        const note: INote = res.data;
-        await api
-            .post(`/notes/new/`, { title: note.title, content: note.content })
-            .then(() => handleNotes());
-    };
+    const handleDeleteNote = useMutation({
+        mutationFn: async (_id: string) =>
+            await api.delete(`/notes/delete/${_id}`),
+        mutationKey: queryKey,
+        onSuccess,
+    });
 
-    const handleChangeNote = async (_id: string, body: object) => {
-        await api.put(`/notes/edit/${_id}`, body).then(() => handleNotes());
-    };
-
-    useEffect(() => {
-        const fetchNotes = async () => {
-            try {
-                await handleNotes();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchNotes();
-    }, []);
+    const handleCopyNote = useMutation({
+        mutationFn: async (_id: string) => {
+            const res = await api.get(`/notes/${_id}`);
+            const note: INote = res.data;
+            await api.post(`/notes/new/`, {
+                title: note.title,
+                content: note.content,
+            });
+        },
+        mutationKey: queryKey,
+        onSuccess,
+    });
 
     return (
         <NoteContext.Provider
             value={{
-                notes,
-                handleNotes,
-                handleAddNote,
-                handleChangeNote,
-                handleCopyNote,
-                handleDeleteNote,
-                loading,
+                addMutation: () => handleAddNote,
+                changeMutation: (_id: string, body: object) => handleChangeNote.mutate({ _id, body }),
+                copyMutation: (_id: string) => handleCopyNote.mutate(_id),
+                deleteMutation: (_id: string) => handleDeleteNote.mutate(_id),
             }}
         >
             {children}

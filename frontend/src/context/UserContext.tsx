@@ -1,68 +1,31 @@
 import {
-    useState,
     createContext,
     useContext,
-    useEffect,
     ReactNode,
 } from 'react';
-import api from '../api';
+import { useLoginMutation, useLogoutMutation } from '@/hooks/useAuthMutations';
 
 interface IChildren {
     children?: ReactNode;
 }
 
-interface IUser {
-    username: string;
-    email: string;
-    password?: string;
-    scope?: string;
-}
-
 interface IUserContext {
-    user: IUser | null;
-    loading: boolean;
-    handleUserLogin: () => Promise<void>;
-    handleUserLogout: () => Promise<void>;
+    loginMutation: (credentials?: object) => void;
+    logoutMutation: () => void;
 }
 
 const UserContext = createContext<IUserContext | null>(null);
 
 export function UserProvide({ children }: IChildren) {
-    const [user, setUser] = useState<IUser | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const handleUserLogin = async () => {
-        const res = await api.get('/users/me');
-        const user: IUser = {
-            username: res.data.username,
-            email: res.data.email,
-            password: res.data.password,
-            scope: res.data.scope,
-        };
-        setUser(user);
-    };
-
-    const handleUserLogout = async () => {
-        await api.get('/users/me');
-        setUser(null);
-    };
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                await handleUserLogin();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUser();
-    }, []);
+    const handleLogin = useLoginMutation();
+    const handleLogout = useLogoutMutation();
 
     return (
         <UserContext.Provider
-            value={{ user, handleUserLogin, handleUserLogout, loading }}
+            value={{ 
+                loginMutation: (credentials?: object) => handleLogin.mutate(credentials),
+                logoutMutation: () => handleLogout
+            }}
         >
             {children}
         </UserContext.Provider>

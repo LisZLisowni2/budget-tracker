@@ -1,5 +1,3 @@
-import { useGoals } from '@/context/GoalContext';
-import { useUser } from '@/context/UserContext';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -26,8 +24,10 @@ ChartJS.register(
 );
 import { useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
-import { useNotes } from '@/context/NoteContext';
 import useTransactionsQuery from '@/hooks/useTransactionsQuery';
+import useUserQuery from '@/hooks/useUserQuery';
+import useNotesQuery from '@/hooks/useNotesQuery';
+import useGoalsQuery from '@/hooks/useGoalsQuery';
 
 interface IStatsItem {
     title: string;
@@ -81,18 +81,18 @@ function Notes({ title, notes }: INotes) {
 
 export default function Overall() {
     sessionStorage.setItem('selectedDashboard', '0');
-    const { user, loading } = useUser();
-    const { goals, loading: goalsLoading } = useGoals();
-    const { notes, loading: notesLoading } = useNotes();
-    const { data: transactions, isLoading: transactionsLoading } = useTransactionsQuery();
+    const { data: user, isLoading: isUserLoading } = useUserQuery();
+    const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
+    const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
+    const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
 
-    if (loading || goalsLoading || notesLoading || transactionsLoading) {
+    if (isUserLoading || isGoalsLoading || isNotesLoading || isTransactionsLoading) {
         return (
             <p>
-                Loading... User: {loading ? 'Loading' : 'Loaded'}, Goals:
-                {goalsLoading ? 'Loading' : 'Loaded'}, Transactions:
-                {transactionsLoading ? 'Loading' : 'Loaded'}, Notes:
-                {notesLoading ? 'Loading' : 'Loaded'}
+                Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
+                {isGoalsLoading ? 'Loading' : 'Loaded'}, Transactions:
+                {isTransactionsLoading ? 'Loading' : 'Loaded'}, Notes:
+                {isNotesLoading ? 'Loading' : 'Loaded'}
             </p>
         );
     }
