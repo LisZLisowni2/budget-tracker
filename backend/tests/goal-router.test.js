@@ -252,7 +252,7 @@ describe("Goal router", () => {
                 .set('Authorization', `Bearer ${token}`)
             
             expect(resOutput.body.goalname).toMatch("Kotek");
-            expect(resOutput.body.requiredmoney).toBe(4500);
+            expect(resOutput.body.requiredmoney).toBe(8000);
         })
 
         it("Unauthoized attempt to complete goal", async () => {

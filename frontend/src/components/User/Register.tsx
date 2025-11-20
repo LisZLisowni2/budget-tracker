@@ -60,6 +60,8 @@ export default function Register() {
             password: data.password,
         };
 
+        console.log(obj)
+
         await api
             .post('/users/register', obj)
             .then(() => {

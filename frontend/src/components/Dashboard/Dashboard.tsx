@@ -1,6 +1,5 @@
 import { useState, MouseEventHandler, ReactNode } from 'react';
 import { Link } from 'react-router';
-import { useUser } from '../../context/UserContext';
 import useUserQuery from '@/hooks/useUserQuery';
 
 interface INavOption {

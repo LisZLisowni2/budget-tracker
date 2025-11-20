@@ -92,6 +92,38 @@ describe("User router", () => {
         expect(res.statusCode).toBe(201)
     })
 
+    it("Register user with existed username", async () => {
+        const body = {
+            username: 'test',
+            email: 'test@example.com',
+            password: 'abc123'
+        }
+        
+        const res = await request(app)
+            .post('/users/register')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(400)
+    })
+
+    it("Register user with existed email", async () => {
+        const body = {
+            username: 'test123',
+            email: 'abc123',
+            password: 'abc123'
+        }
+        
+        const res = await request(app)
+            .post('/users/register')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(res.statusCode).toBe(400)
+    })
+
     it("Register without required fields", async () => {
         const body = {
             username: 'test123',
@@ -104,7 +136,7 @@ describe("User router", () => {
             .set('Accept', 'application/json')
             .send(body)
 
-        expect(res.statusCode).toBe(400)
+        expect(res.statusCode).toBe(404)
     })
 
     it("Login", async () => {

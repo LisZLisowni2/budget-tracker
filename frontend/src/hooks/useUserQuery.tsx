@@ -18,5 +18,3 @@ export default function useUserQuery() {
         initialData: null
     })
 } 
-
-// TODO: Add rest of TanStack for rest contextes 

@@ -20,9 +20,6 @@ module.exports = (config, redis) => {
 
     router.post('/login', async (req, res) => {
         try {
-            console.log(config)
-            console.log(config.JWT_Secret)
-
             const { username, password } = req.body
             if (!username || !password) return res.status(400).json({ 'message': 'Username or password not present'})
             
@@ -30,7 +27,7 @@ module.exports = (config, redis) => {
             if (!user) return res.status(404).json({ 'message': 'User not found' })
             
             const passTest = await bcrypt.compare(password, user.password)
-            if (!passTest) return res.status(401).json({ 'message': 'Wrong password'})
+            if (!passTest) return res.status(401).json({ 'message': 'Wrong password' })
             
             const sessionID = await generateSessionID()
             await redis.setEx(sessionID, 60 * 60, username)
@@ -48,6 +45,13 @@ module.exports = (config, redis) => {
             if (!username || !email || !password) {
                 res.status(404).json({ 'message': 'Username, email or password not present' })
             }
+            
+            const user = await User.findOne({ username: username })
+            if (user) return res.status(400).json({ 'message': 'User with that username exist' })
+
+            const userByEmail = await User.findOne({ email: email })
+            if (userByEmail) return res.status(400).json({ 'message': 'User with that email exist' })
+
             const hashedPassword = await bcrypt.hash(password, 10)
             const newUser = new User({ username: username, email: email, password: hashedPassword })
             await newUser.save()
