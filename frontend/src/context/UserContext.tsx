@@ -24,7 +24,7 @@ export function UserProvide({ children }: IChildren) {
         <UserContext.Provider
             value={{ 
                 loginMutation: (credentials?: object) => handleLogin.mutate(credentials),
-                logoutMutation: () => handleLogout
+                logoutMutation: () => handleLogout.mutate()
             }}
         >
             {children}

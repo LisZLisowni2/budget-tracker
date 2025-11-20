@@ -3,10 +3,13 @@
 // TODO: Enable change details about account and it deletion.
 
 import useUserQuery from "@/hooks/useUserQuery";
+import { useUser } from "@/context/UserContext";
+import Button from "../Button/Button";
 
 export default function Profile() {
     sessionStorage.setItem('selectedDashboard', '5');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
+    const { logoutMutation } = useUser();
 
     if (isUserLoading) {
         return <p>Loading profile...</p>;
@@ -24,10 +27,15 @@ export default function Profile() {
         );
     }
 
+    const handleLogout = () => {
+        logoutMutation()
+    }
+
     return (
         <div className="flex justify-center items-center flex-col h-full *:p-4">
             <h1 className="text-6xl">{user?.username} </h1>
             <h3 className="text-2xl">{user?.email}</h3>
+            <Button text="Wyloguj się" onClick={handleLogout} />
         </div>
     );
 }
