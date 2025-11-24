@@ -33,7 +33,7 @@ export default function Dashboard({ children }: IChildren) {
     const [selected, setSelected] = useState<string | null>(
         sessionStorage.getItem('selectedDashboard')
             ? sessionStorage.getItem('selectedDashboard')
-            : '1'
+            : '5'
     );
     const { data: user, isLoading: isUserLoading } = useUserQuery();
 

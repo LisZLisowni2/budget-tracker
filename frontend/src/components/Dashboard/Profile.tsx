@@ -30,9 +30,10 @@ export default function Profile() {
     const handleLogout = () => {
         logoutMutation()
     }
-
+    
+    // FIXME: Background of section only white, not gradient gray.
     return (
-        <div className="flex justify-center items-center flex-col h-full *:p-4">
+        <div className="flex justify-center items-center flex-col h-full max-md:overflow-auto *:p-4"> 
             <h1 className="text-6xl">{user?.username} </h1>
             <h3 className="text-2xl">{user?.email}</h3>
             <Button text="Wyloguj się" onClick={handleLogout} />

@@ -1,3 +1,6 @@
+import useGoalsQuery from '@/hooks/useGoalsQuery';
+import useNotesQuery from '@/hooks/useNotesQuery';
+import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 import useUserQuery from '@/hooks/useUserQuery';
 import {
     Chart as ChartJS,
@@ -29,13 +32,19 @@ import { Pie } from 'react-chartjs-2';
 export default function Analytics() {
     sessionStorage.setItem('selectedDashboard', '4');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
+    const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
+    const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
+    const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
 
-    if (isUserLoading) {
-        return <p>Loading profile...</p>;
-    }
-
-    if (isUserLoading) {
-        return <p>Loading profile...</p>;
+    if (isUserLoading || isGoalsLoading || isNotesLoading || isTransactionsLoading) {
+        return (
+            <p>
+                Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
+                {isGoalsLoading ? 'Loading' : 'Loaded'}, Transactions:
+                {isTransactionsLoading ? 'Loading' : 'Loaded'}, Notes:
+                {isNotesLoading ? 'Loading' : 'Loaded'}
+            </p>
+        );
     }
 
     if (!user) {
@@ -45,6 +54,42 @@ export default function Analytics() {
                     You are not allowed to access Dashboard.
                     <br />
                     Please login to continue
+                </p>
+            </div>
+        );
+    }
+
+    if (!notes) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">
+                    Notes doesn't load. Probably server's error.
+                    <br />
+                    Please try again later
+                </p>
+            </div>
+        );
+    }
+
+    if (!goals) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">
+                    Goals doesn't load. Probably server's error.
+                    <br />
+                    Please try again later
+                </p>
+            </div>
+        );
+    }
+
+    if (!transactions) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <p className="text-black text-4xl font-bold text-center">
+                    Transactions doesn't load. Probably server's error.
+                    <br />
+                    Please try again later
                 </p>
             </div>
         );
