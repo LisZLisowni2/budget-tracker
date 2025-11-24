@@ -6,6 +6,7 @@ import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
 import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 import useUserQuery from '@/hooks/useUserQuery';
+import ErrorData from './ErrorData';
 
 interface FormState {
     name: string;
@@ -49,11 +50,6 @@ function formReducer(state: FormState, action: Action): FormState {
 export default function Transactions() {
     sessionStorage.setItem('selectedDashboard', '1');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
-
-    if (isUserLoading) {
-        return <p>Loading profile...</p>;
-    }
-    
     const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
     const [isChangeForm, setStateChangeForm] = useState<boolean>(false);
@@ -63,33 +59,27 @@ export default function Transactions() {
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
 
-    if (isTransactionsLoading) {
-        return <p>Loading transactions...</p>;
-    }
-
-    if (!user) {
+    if (
+        isUserLoading ||
+        isTransactionsLoading
+    ) {
         return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    You are not allowed to access Dashboard.
-                    <br />
-                    Please login to continue
-                </p>
-            </div>
+            <p>
+                Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
+                {isTransactionsLoading ? 'Loading' : 'Loaded'}, Notes:
+            </p>
         );
     }
 
-    if (!transactions) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Transactions doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
+    if (!user)
+            return (
+                <ErrorData
+                    dataType="User"
+                    message="You are not allowed to access Dashboard. "
+                />
+            );
+
+    if (!transactions) return <ErrorData dataType="Transactions" />;
 
     const handleAdd = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();

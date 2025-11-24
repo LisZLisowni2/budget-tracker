@@ -1,6 +1,7 @@
 import { useState, MouseEventHandler, ReactNode } from 'react';
 import { Link } from 'react-router';
 import useUserQuery from '@/hooks/useUserQuery';
+import ErrorData from './ErrorData';
 
 interface INavOption {
     text: string;
@@ -41,17 +42,13 @@ export default function Dashboard({ children }: IChildren) {
         return <p>Loading profile...</p>;
     }
 
-    if (!user) {
+    if (!user)
         return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    You are not allowed to access Dashboard.
-                    <br />
-                    Please login to continue
-                </p>
-            </div>
+            <ErrorData
+                dataType="User"
+                message="You are not allowed to access Dashboard. "
+            />
         );
-    }
 
     return (
         <section className="w-full lg:max-sm:flex-col lg:flex border-t-8 text-center z-10">

@@ -5,6 +5,7 @@ import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
 import useGoalsQuery from '@/hooks/useGoalsQuery';
 import useUserQuery from '@/hooks/useUserQuery';
+import ErrorData from './ErrorData';
 
 interface FormState {
     goalname: string;
@@ -45,9 +46,6 @@ export default function Goals() {
     sessionStorage.setItem('selectedDashboard', '2');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
 
-    if (isUserLoading) {
-        return <p>Loading profile...</p>;
-    }
     const { addMutation, deleteMutation, changeMutation, finishMutation } = useGoals();
     const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery(); 
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
@@ -57,33 +55,27 @@ export default function Goals() {
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
 
-    if (isGoalsLoading) {
-        return <p>Loading goals...</p>;
-    }
-
-    if (!user) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    You are not allowed to access Dashboard.
-                    <br />
-                    Please login to continue
+    if (
+            isUserLoading ||
+            isGoalsLoading
+        ) {
+            return (
+                <p>
+                    Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
+                    {isGoalsLoading ? 'Loading' : 'Loaded'}, Notes:
                 </p>
-            </div>
-        );
-    }
-
-    if (!goals) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Goals doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
+            );
+        }
+    
+        if (!user)
+                return (
+                    <ErrorData
+                        dataType="User"
+                        message="You are not allowed to access Dashboard. "
+                    />
+                );
+    
+        if (!goals) return <ErrorData dataType="Goals" />;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, type, checked, value } = e.target;

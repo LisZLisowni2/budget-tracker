@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import Button from '../Button/Button';
 import useNotesQuery from '@/hooks/useNotesQuery';
 import useUserQuery from '@/hooks/useUserQuery';
+import ErrorData from './ErrorData';
 
 interface INoteElement {
     id?: number;
@@ -54,45 +55,26 @@ export default function Notes() {
     const [isEditor, setIsEditor] = useState<boolean>(false);
     const { data: user, isLoading: isUserLoading } = useUserQuery();
     const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
-    const {
-        addMutation,
-        changeMutation,
-        copyMutation,
-        deleteMutation,
-    } = useNotes();
+    const { addMutation, changeMutation, copyMutation, deleteMutation } =
+        useNotes();
     const [selectedNoteID, setSelectedNoteID] = useState<string | null>();
 
-    if (isUserLoading) {
-        return <p>Loading profile...</p>;
-    }
-
-    if (isNotesLoading) {
-        return <p>Loading notes...</p>;
-    }
-
-    if (!user) {
+    if (isUserLoading || isNotesLoading) {
         return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    You are not allowed to access Dashboard.
-                    <br />
-                    Please login to continue
-                </p>
-            </div>
+            <p>
+                Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
+                {isNotesLoading ? 'Loading' : 'Loaded'}
+            </p>
         );
     }
-
-    if (!notes) {
+    if (!user)
         return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Notes doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
+            <ErrorData
+                dataType="User"
+                message="You are not allowed to access Dashboard. "
+            />
         );
-    }
+    if (!notes) return <ErrorData dataType="Note" />;
 
     const selectedNote = notes.find((note) => note._id === selectedNoteID);
 

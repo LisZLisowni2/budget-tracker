@@ -8,7 +8,7 @@ import {
     Tooltip,
     Legend,
     ArcElement,
-    Colors
+    Colors,
 } from 'chart.js';
 
 ChartJS.register(
@@ -28,6 +28,7 @@ import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 import useUserQuery from '@/hooks/useUserQuery';
 import useNotesQuery from '@/hooks/useNotesQuery';
 import useGoalsQuery from '@/hooks/useGoalsQuery';
+import ErrorData from './ErrorData';
 
 interface IStatsItem {
     title: string;
@@ -84,9 +85,15 @@ export default function Overall() {
     const { data: user, isLoading: isUserLoading } = useUserQuery();
     const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
     const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
-    const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
+    const { data: transactions, isLoading: isTransactionsLoading } =
+        useTransactionsQuery();
 
-    if (isUserLoading || isGoalsLoading || isNotesLoading || isTransactionsLoading) {
+    if (
+        isUserLoading ||
+        isGoalsLoading ||
+        isNotesLoading ||
+        isTransactionsLoading
+    ) {
         return (
             <p>
                 Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
@@ -97,64 +104,26 @@ export default function Overall() {
         );
     }
 
-    if (!user) {
+    if (!user)
         return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    You are not allowed to access Dashboard.
-                    <br />
-                    Please login to continue
-                </p>
-            </div>
+            <ErrorData
+                dataType="User"
+                message="You are not allowed to access Dashboard. "
+            />
         );
-    }
-
-    if (!notes) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Notes doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
-
-    if (!goals) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Goals doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
-
-    if (!transactions) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Transactions doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
+    if (!notes) return <ErrorData dataType="Note" />;
+    if (!goals) return <ErrorData dataType="Goals" />;
+    if (!transactions) return <ErrorData dataType="Transactions" />;
 
     const latestNotes = 5;
     const sortedNotes = useMemo(
         () =>
             notes
-                .sort(
-                    (noteA, noteB) => {
-                        const dateA = new Date(noteA.dateUpdate)
-                        const dateB = new Date(noteB.dateUpdate)
-                        return dateA.getTime() - dateB.getTime()
-                    })
+                .sort((noteA, noteB) => {
+                    const dateA = new Date(noteA.dateUpdate);
+                    const dateB = new Date(noteB.dateUpdate);
+                    return dateA.getTime() - dateB.getTime();
+                })
                 .slice(0, latestNotes),
         [notes]
     );
@@ -175,24 +144,27 @@ export default function Overall() {
         return result;
     }, [transactions]);
     const categories = useMemo(() => {
-        let categories = new Set<string>()
+        let categories = new Set<string>();
         transactions.map((transaction) => {
-            if (!transaction.receiver) categories.add(transaction.category)
+            if (!transaction.receiver) categories.add(transaction.category);
         });
 
-        return Array.from(categories)
+        return Array.from(categories);
     }, [transactions]);
     const valuesByCategories = useMemo(() => {
-        let dictionary = new Map<string, number>()
-        categories.map(category => {
-            let res = 0
-            transactions.map(transaction => {
-                res += (transaction.category === category && !transaction.receiver) ? transaction.price : 0
-            })
-            dictionary.set(category, res)
-        })
-        return Array.from(dictionary.values())
-    }, [transactions])
+        let dictionary = new Map<string, number>();
+        categories.map((category) => {
+            let res = 0;
+            transactions.map((transaction) => {
+                res +=
+                    transaction.category === category && !transaction.receiver
+                        ? transaction.price
+                        : 0;
+            });
+            dictionary.set(category, res);
+        });
+        return Array.from(dictionary.values());
+    }, [transactions]);
 
     const data = {
         labels: categories,
@@ -217,8 +189,8 @@ export default function Overall() {
                 text: 'Expenses by categories',
             },
             colors: {
-                enabled: true
-            }
+                enabled: true,
+            },
         },
     };
 

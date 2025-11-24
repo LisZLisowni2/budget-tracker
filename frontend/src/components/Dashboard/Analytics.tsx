@@ -12,7 +12,7 @@ import {
     Tooltip,
     Legend,
     ArcElement,
-    Colors
+    Colors,
 } from 'chart.js';
 
 ChartJS.register(
@@ -28,15 +28,22 @@ ChartJS.register(
 );
 
 import { Pie } from 'react-chartjs-2';
+import ErrorData from './ErrorData';
 
 export default function Analytics() {
     sessionStorage.setItem('selectedDashboard', '4');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
     const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
     const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
-    const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
+    const { data: transactions, isLoading: isTransactionsLoading } =
+        useTransactionsQuery();
 
-    if (isUserLoading || isGoalsLoading || isNotesLoading || isTransactionsLoading) {
+    if (
+        isUserLoading ||
+        isGoalsLoading ||
+        isNotesLoading ||
+        isTransactionsLoading
+    ) {
         return (
             <p>
                 Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
@@ -47,41 +54,16 @@ export default function Analytics() {
         );
     }
 
-    if (!user) {
+    if (!user)
         return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    You are not allowed to access Dashboard.
-                    <br />
-                    Please login to continue
-                </p>
-            </div>
+            <ErrorData
+                dataType="User"
+                message="You are not allowed to access Dashboard. "
+            />
         );
-    }
-
-    if (!notes) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Notes doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
-
-    if (!goals) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Goals doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
+    if (!notes) return <ErrorData dataType="Note" />;
+    if (!goals) return <ErrorData dataType="Goals" />;
+    if (!transactions) return <ErrorData dataType="Transactions" />;
 
     if (!transactions) {
         return (
@@ -116,8 +98,8 @@ export default function Analytics() {
                 text: 'Monthly income and expenses, last 6 months',
             },
             colors: {
-                enabled: true
-            }
+                enabled: true,
+            },
         },
     };
 
