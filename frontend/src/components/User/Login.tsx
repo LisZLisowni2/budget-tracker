@@ -3,13 +3,14 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useUser } from '../../context/UserContext';
-import api from '../../api';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router';
 import FormField from '../FormUtils/FormField';
 import { useForm, Controller } from 'react-hook-form';
 import FieldError from '../FormUtils/FieldError';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { AxiosError } from 'axios';
 
 const UserSchema = z.object({
     username: z.string().min(3, { error: "Username too short "}).max(60, { error: "Username too long" }),
@@ -19,6 +20,7 @@ const UserSchema = z.object({
 type TUserSchema = z.infer<typeof UserSchema>;
 
 export default function Login() {
+    const queryClient = useQueryClient()
     const {
         handleSubmit,
         control,
@@ -34,23 +36,23 @@ export default function Login() {
 
     const [passwordView, setPasswordView] = useState(false);
     const navigate = useNavigate();
-    const { loginMutation } = useUser();
+    const { loginMutate } = useUser();
+    const { mutate } = loginMutate;
 
     const handlePasswordView = () => {
         setPasswordView(!passwordView);
     };
 
     const handleLogin = async (data: TUserSchema) => {
-        await api
-            .post('/users/login', data)
-            .then((res) => {
+        mutate(data, {
+            onSuccess: (res) => {
                 localStorage.setItem('token', res.data.token);
-                loginMutation();
+                queryClient.invalidateQueries({queryKey: [ 'user' ]})
                 navigate('/dashboard');
-            })
-            .catch((err) => {
-                console.error(err);
-                switch (err.status) {
+            },
+            onError: (err: AxiosError) => {
+                const status = err.response ? err.response.status : null
+                switch (status) {
                     case 404:
                         setError('username', {
                             message: "That username doesn't exist",
@@ -66,7 +68,8 @@ export default function Login() {
                             message: "Internal server error."
                         })
                 }
-            });
+            }
+        })
     };
 
     let passwordIcon;

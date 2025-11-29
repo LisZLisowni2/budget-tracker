@@ -29,6 +29,7 @@ ChartJS.register(
 
 import { Pie } from 'react-chartjs-2';
 import ErrorData from './ErrorData';
+import { useMemo } from 'react';
 
 export default function Analytics() {
     sessionStorage.setItem('selectedDashboard', '4');
@@ -65,18 +66,61 @@ export default function Analytics() {
     if (!goals) return <ErrorData dataType="Goals" />;
     if (!transactions) return <ErrorData dataType="Transactions" />;
 
-    if (!transactions) {
-        return (
-            <div className="w-full flex justify-center items-center">
-                <p className="text-black text-4xl font-bold text-center">
-                    Transactions doesn't load. Probably server's error.
-                    <br />
-                    Please try again later
-                </p>
-            </div>
-        );
-    }
+    const latestNotes = 5;
+    const sortedNotes = useMemo(
+        () =>
+            notes
+                .sort((noteA, noteB) => {
+                    const dateA = new Date(noteA.dateUpdate);
+                    const dateB = new Date(noteB.dateUpdate);
+                    return dateA.getTime() - dateB.getTime();
+                })
+                .slice(0, latestNotes),
+        [notes]
+    );
+    const income = useMemo(() => {
+        let result = 0;
+        transactions.map((transaction) => {
+            if (transaction.receiver) result += transaction.price;
+        });
 
+        return result;
+    }, [transactions]);
+    const expensive = useMemo(() => {
+        let result = 0;
+        transactions.map((transaction) => {
+            if (!transaction.receiver) result += transaction.price;
+        });
+
+        return result;
+    }, [transactions]);
+    const categories = useMemo(() => {
+        let categories = new Set<string>();
+        transactions.map((transaction) => {
+            if (!transaction.receiver) categories.add(transaction.category);
+        });
+
+        return Array.from(categories);
+    }, [transactions]);
+    const valuesByCategories = useMemo(() => {
+        let dictionary = new Map<string, number>();
+        categories.map((category) => {
+            let res = 0;
+            transactions.map((transaction) => {
+                res +=
+                    transaction.category === category && !transaction.receiver
+                        ? transaction.price
+                        : 0;
+            });
+            dictionary.set(category, res);
+        });
+        return Array.from(dictionary.values());
+    }, [transactions]);
+
+    console.log(income)
+    console.log(sortedNotes)
+    console.log(valuesByCategories)
+    console.log(expensive)
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [
@@ -107,15 +151,23 @@ export default function Analytics() {
         <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 h-full max-h-screen gap-4 *:m-auto *:w-full *:h-full *:flex *:justify-center *:p-4 max-lg:overflow-auto">
             {/* TODO: Update charts to represent data */}
             <div>
+                {' '}
+                {/* TODO: Income and expanses in 6 months */}
                 <Pie data={data} options={options} />
             </div>
             <div>
+                {' '}
+                {/* TODO: Progression of goals */}
                 <Pie data={data} options={options} />
             </div>
             <div>
+                {' '}
+                {/* TODO: Comparision of Income and Expanses in 2 months */}
                 <Pie data={data} options={options} />
             </div>
             <div>
+                {' '}
+                {/* TODO: Source of income */}
                 <Pie data={data} options={options} />
             </div>
         </div>

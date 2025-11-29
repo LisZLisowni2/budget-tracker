@@ -15,6 +15,6 @@ export default function useUserQuery() {
     return useQuery({
         queryKey: ["user"],
         queryFn: fetchUser,
-        initialData: null
+        staleTime: 1000 * 60 * 5
     })
 } 

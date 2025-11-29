@@ -1,13 +1,26 @@
 services:
   frontend:
-    image: 127.0.0.1:5000/budget-tracker-frontend:latest
+    image: 127.0.0.1:5000/budget-tracker-frontend-dev:latest
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "--tries=1", "--no-check-certificate", "https://127.0.0.1:5173/"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
     networks:
       - overlayNet
+    environment:
+      - VITE_API_URL=https://localhost:3000/
+    volumes:
+      - ./frontend/:/app
+      - /app/node_modules/
     ports:
-      - target: 443
-        published: 443
+      - target: 5173
+        published: 5173
         protocol: tcp
         # mode: host
 
@@ -20,7 +33,17 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - Port=3000
+      - Address=0.0.0.0
       - NODE_ENV=test
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "--tries=1", "--no-check-certificate", "https://127.0.0.1:3000/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 1m
+    volumes:
+      - ./backend/cert/:/app/cert/
     networks:
       - overlayNet
     secrets:
@@ -29,15 +52,23 @@ services:
       - jwt_token
 
   database:
-    image: mongo:latest # Version 4.4 on CPU without AVX support otherwise replace 4.4 with latest or another desired version
+    image: mongo:latest 
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     secrets:
       - db_password
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD_FILE=/run/secrets/db_password
       - MONGO_INITDB_DATABASE=myapp
+    healthcheck:
+      test: echo "db.adminCommand('ping')" | mongosh localhost:27017 -u root -p $$(cat /run/secrets/db_password) --quiet || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 1m
     ports:
       - "27017:27017"
     networks:
@@ -49,6 +80,8 @@ services:
     image: redis:8.2.1
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
     ports:
       - target: 6379
         published: 6379
@@ -63,6 +96,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+      start_period: 30s
     networks:
       - overlayNet
     volumes:

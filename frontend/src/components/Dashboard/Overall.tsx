@@ -1,3 +1,10 @@
+import { useMemo } from 'react';
+import { Pie } from 'react-chartjs-2';
+import useTransactionsQuery from '@/hooks/useTransactionsQuery';
+import useUserQuery from '@/hooks/useUserQuery';
+import useNotesQuery from '@/hooks/useNotesQuery';
+import useGoalsQuery from '@/hooks/useGoalsQuery';
+import ErrorData from './ErrorData';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -22,13 +29,7 @@ ChartJS.register(
     ArcElement,
     Colors
 );
-import { useMemo } from 'react';
-import { Pie } from 'react-chartjs-2';
-import useTransactionsQuery from '@/hooks/useTransactionsQuery';
-import useUserQuery from '@/hooks/useUserQuery';
-import useNotesQuery from '@/hooks/useNotesQuery';
-import useGoalsQuery from '@/hooks/useGoalsQuery';
-import ErrorData from './ErrorData';
+// import { DataRanges } from '@/types/dataRanges';
 
 interface IStatsItem {
     title: string;
@@ -82,12 +83,67 @@ function Notes({ title, notes }: INotes) {
 
 export default function Overall() {
     sessionStorage.setItem('selectedDashboard', '0');
+    // const [selectedRange, setSelectedRange] = useState<DataRanges>(
+    //     DataRanges.ONE_MONTH
+    // );
+
     const { data: user, isLoading: isUserLoading } = useUserQuery();
     const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
     const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
     const { data: transactions, isLoading: isTransactionsLoading } =
         useTransactionsQuery();
 
+    const latestNotes = 5;
+    const sortedNotes = useMemo(
+        () =>
+            (notes || [])
+                .sort((noteA, noteB) => {
+                    const dateA = new Date(noteA.dateUpdate);
+                    const dateB = new Date(noteB.dateUpdate);
+                    return dateA.getTime() - dateB.getTime();
+                })
+                .slice(0, latestNotes),
+        [notes]
+    );
+    const income = useMemo(() => {
+        let result = 0;
+        (transactions || []).map((transaction) => {
+            if (transaction.receiver) result += transaction.price;
+        });
+
+        return result;
+    }, [transactions]);
+    const expensive = useMemo(() => {
+        let result = 0;
+        (transactions || []).map((transaction) => {
+            if (!transaction.receiver) result += transaction.price;
+        });
+
+        return result;
+    }, [transactions]);
+    const categories = useMemo(() => {
+        let categories = new Set<string>();
+        (transactions || []).map((transaction) => {
+            if (!transaction.receiver) categories.add(transaction.category);
+        });
+
+        return Array.from(categories);
+    }, [transactions]);
+    const valuesByCategories = useMemo(() => {
+        let dictionary = new Map<string, number>();
+        (categories || []).map((category) => {
+            let res = 0;
+            (transactions || []).map((transaction) => {
+                res +=
+                    transaction.category === category && !transaction.receiver
+                        ? transaction.price
+                        : 0;
+            });
+            dictionary.set(category, res);
+        });
+        return Array.from(dictionary.values());
+    }, [transactions]);
+    
     if (
         isUserLoading ||
         isGoalsLoading ||
@@ -114,57 +170,6 @@ export default function Overall() {
     if (!notes) return <ErrorData dataType="Note" />;
     if (!goals) return <ErrorData dataType="Goals" />;
     if (!transactions) return <ErrorData dataType="Transactions" />;
-
-    const latestNotes = 5;
-    const sortedNotes = useMemo(
-        () =>
-            notes
-                .sort((noteA, noteB) => {
-                    const dateA = new Date(noteA.dateUpdate);
-                    const dateB = new Date(noteB.dateUpdate);
-                    return dateA.getTime() - dateB.getTime();
-                })
-                .slice(0, latestNotes),
-        [notes]
-    );
-    const income = useMemo(() => {
-        let result = 0;
-        transactions.map((transaction) => {
-            if (transaction.receiver) result += transaction.price;
-        });
-
-        return result;
-    }, [transactions]);
-    const expensive = useMemo(() => {
-        let result = 0;
-        transactions.map((transaction) => {
-            if (!transaction.receiver) result += transaction.price;
-        });
-
-        return result;
-    }, [transactions]);
-    const categories = useMemo(() => {
-        let categories = new Set<string>();
-        transactions.map((transaction) => {
-            if (!transaction.receiver) categories.add(transaction.category);
-        });
-
-        return Array.from(categories);
-    }, [transactions]);
-    const valuesByCategories = useMemo(() => {
-        let dictionary = new Map<string, number>();
-        categories.map((category) => {
-            let res = 0;
-            transactions.map((transaction) => {
-                res +=
-                    transaction.category === category && !transaction.receiver
-                        ? transaction.price
-                        : 0;
-            });
-            dictionary.set(category, res);
-        });
-        return Array.from(dictionary.values());
-    }, [transactions]);
 
     const data = {
         labels: categories,
@@ -193,6 +198,9 @@ export default function Overall() {
             },
         },
     };
+
+    console.log(data);
+    console.log(options);
 
     return (
         <div className="flex items-center flex-col h-full *:p-4 max-lg:overflow-auto">
@@ -234,7 +242,12 @@ export default function Overall() {
             <div className="flex max-md:flex-col h-1/2 justify-evenly items-center w-full *:bg-white">
                 <div className="text-lg lg:text-xl w-full h-full p-8 m-2 shadow-2xl rounded-3xl flex justify-between overflow-hidden">
                     <div className="w-full h-full flex justify-center">
-                        <Pie data={data} options={options} />
+                        {categories.length > 0 &&
+                        valuesByCategories.length > 0 ? (
+                            <Pie data={data} options={options} />
+                        ) : (
+                            <p>Undefined data about expenses in that range.</p>
+                        )}
                     </div>
                 </div>
                 <div className="text-lg lg:text-xl w-full h-full p-8 m-2 shadow-2xl rounded-3xl flex flex-col justify-between overflow-hidden">

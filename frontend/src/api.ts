@@ -1,14 +1,12 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
-const API_URL: string = 'https://localhost/api/';
+const API_URL: string =
+    import.meta.env.VITE_API_URL || 'https://localhost/api/';
 
 const getToken = () => localStorage.getItem('token');
 
 const isLocalHost = window.location.hostname === 'localhost';
-
-console.log(isLocalHost);
-
-const api = axios.create({
+const api: AxiosInstance = axios.create({
     baseURL: API_URL,
     withCredentials: isLocalHost,
 });

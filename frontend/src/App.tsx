@@ -21,9 +21,9 @@ import Footer from './components/Footer/Footer';
 import Analytics from './components/Dashboard/Analytics';
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function DashboardLayout() {
     return (
@@ -33,29 +33,25 @@ function DashboardLayout() {
                     <Route
                         path="/overall"
                         element={
-                            <UserProvide>
-                                <NoteProvide>
-                                    <GoalProvide>
-                                        <TransactionProvide>
-                                            <Overall />
-                                        </TransactionProvide>
-                                    </GoalProvide>
-                                </NoteProvide>
-                            </UserProvide>
+                            <NoteProvide>
+                                <GoalProvide>
+                                    <TransactionProvide>
+                                        <Overall />
+                                    </TransactionProvide>
+                                </GoalProvide>
+                            </NoteProvide>
                         }
                     />
                     <Route
                         path="/analytics"
                         element={
-                            <UserProvide>
-                                <NoteProvide>
-                                    <GoalProvide>
-                                        <TransactionProvide>
-                                            <Analytics />
-                                        </TransactionProvide>
-                                    </GoalProvide>
-                                </NoteProvide>
-                            </UserProvide>
+                            <NoteProvide>
+                                <GoalProvide>
+                                    <TransactionProvide>
+                                        <Analytics />
+                                    </TransactionProvide>
+                                </GoalProvide>
+                            </NoteProvide>
                         }
                     />
                     <Route

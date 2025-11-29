@@ -1,30 +1,61 @@
+import { createContext, useContext, ReactNode } from 'react';
 import {
-    createContext,
-    useContext,
-    ReactNode,
-} from 'react';
-import { useLoginMutation, useLogoutMutation } from '@/hooks/useAuthMutations';
+    useMutation,
+    UseMutationResult,
+    useQueryClient,
+} from '@tanstack/react-query';
+import api from '@/api';
+import { AxiosError, AxiosResponse } from 'axios';
 
 interface IChildren {
     children?: ReactNode;
 }
 
 interface IUserContext {
-    loginMutation: (credentials?: object) => void;
+    loginMutate: UseMutationResult<
+        AxiosResponse<any, any, {}>,
+        AxiosError<any, any>,
+        object | undefined,
+        unknown
+    >;
     logoutMutation: () => void;
 }
 
 const UserContext = createContext<IUserContext | null>(null);
 
 export function UserProvide({ children }: IChildren) {
-    const handleLogin = useLoginMutation();
-    const handleLogout = useLogoutMutation();
+    const queryClient = useQueryClient();
+    const queryKey = ['user'];
+
+    const onSuccess = () => queryClient.invalidateQueries({ queryKey });
+
+    const handleLogin = useMutation<
+        AxiosResponse<any, any>,
+        AxiosError<any, any>,
+        object | undefined,
+        unknown
+    >({
+        mutationFn: (credentials?: object) =>
+            api.post('/users/login', credentials),
+        onSuccess: (res) => {
+            localStorage.setItem('token', res.data.token);
+            queryClient.invalidateQueries({ queryKey });
+        },
+        onError: (error) => {
+            console.log('Login failed: ', error);
+        },
+    });
+
+    const handleLogout = useMutation({
+        mutationFn: () => api.get('/users/logout'),
+        onSuccess,
+    });
 
     return (
         <UserContext.Provider
-            value={{ 
-                loginMutation: (credentials?: object) => handleLogin.mutate(credentials),
-                logoutMutation: () => handleLogout.mutate()
+            value={{
+                loginMutate: handleLogin,
+                logoutMutation: () => handleLogout.mutate(),
             }}
         >
             {children}
