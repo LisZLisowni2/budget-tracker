@@ -1,16 +1,16 @@
-import api from "@/api";
-import { useQuery } from "@tanstack/react-query";
-import { INote } from "@/types/note";
+import api from '@/api';
+import { useQuery } from '@tanstack/react-query';
+import { INote } from '@/types/note';
 
 const fetchNotes = async (): Promise<INote[]> => {
-    const result = await api.get('/notes/all')
+    const result = await api.get('/notes/all');
     return result.data;
-}
+};
 
 export default function useNotesQuery() {
     return useQuery({
-        queryKey: ["notes"],
+        queryKey: ['notes'],
         queryFn: fetchNotes,
-        staleTime: 1000 * 60 * 5
-    })
-} 
+        staleTime: 1000 * 60 * 5,
+    });
+}

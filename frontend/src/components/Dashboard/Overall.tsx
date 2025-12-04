@@ -1,4 +1,10 @@
-import { ChangeEvent, ReactNode, useMemo, useState } from 'react';
+import React, {
+    ChangeEvent,
+    ReactNode,
+    useMemo,
+    useState,
+    useEffect,
+} from 'react';
 import { Pie } from 'react-chartjs-2';
 import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 import useUserQuery from '@/hooks/useUserQuery';
@@ -17,7 +23,10 @@ import {
     Legend,
     ArcElement,
     Colors,
+    Filler,
 } from 'chart.js';
+import { INote } from '@/types/note';
+import { IGoal } from '@/types/goal';
 
 ChartJS.register(
     CategoryScale,
@@ -28,7 +37,8 @@ ChartJS.register(
     Tooltip,
     Legend,
     ArcElement,
-    Colors
+    Colors,
+    Filler
 );
 // import { DataRanges } from '@/types/dataRanges';
 
@@ -41,12 +51,12 @@ interface IStatsItem {
 
 interface INotes {
     title: string;
-    data: any[];
+    data: INote[] | IGoal[];
 }
 
 interface IGridItem {
     children: ReactNode;
-    className?: string
+    className?: string;
 }
 
 function StatsItem({ title, value, currency, type }: IStatsItem) {
@@ -76,8 +86,11 @@ function List({ title, data }: INotes) {
             <hr />
             <ul className="*:p-2 text-md">
                 {data.map((item) => (
-                    <li className="shadow-md p-1 m-2 hover:scale-105 transition-all">
-                        {item}
+                    <li
+                        key={item._id}
+                        className="shadow-md p-1 m-2 hover:scale-105 transition-all"
+                    >
+                        {'title' in item ? item.title : item.goalname}
                     </li>
                 ))}
             </ul>
@@ -87,7 +100,9 @@ function List({ title, data }: INotes) {
 
 function GridItem({ children, className }: IGridItem) {
     return (
-        <div className={`${className} text-lg lg:text-xl p-8 m-2 w-full h-full shadow-lg rounded-3xl overflow-hidden`}>
+        <div
+            className={`${className} text-lg lg:text-xl p-8 m-2 w-full h-full shadow-lg rounded-3xl overflow-hidden`}
+        >
             {children}
         </div>
     );
@@ -95,12 +110,14 @@ function GridItem({ children, className }: IGridItem) {
 
 export default function Overall() {
     sessionStorage.setItem('selectedDashboard', '0');
-    const [selectedRange, setSelectedRange] = useState<DataRanges>(
-        () => {
-            const savedRange = localStorage.getItem('selectedRange');
-            return savedRange ? JSON.parse(savedRange) : DataRanges.ONE_MONTH;
-        }
-    );
+
+    const getDataRange = () => {
+        const savedRange = localStorage.getItem('selectedRange');
+        return savedRange ? JSON.parse(savedRange) : DataRanges.ONE_MONTH;
+    };
+
+    const [selectedRange, setSelectedRange] =
+        useState<DataRanges>(getDataRange);
 
     const { data: user, isLoading: isUserLoading } = useUserQuery();
     const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
@@ -110,8 +127,11 @@ export default function Overall() {
 
     const handleRangeChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedRange(event.target.value as DataRanges);
-        localStorage.setItem('selectedRange', JSON.stringify(event.target.value));
-    }
+        localStorage.setItem(
+            'selectedRange',
+            JSON.stringify(event.target.value)
+        );
+    };
 
     const calculateTime = useMemo(() => {
         const now = new Date();
@@ -162,31 +182,31 @@ export default function Overall() {
         (transactions || []).map((transaction) => {
             if (
                 transaction.receiver &&
-                transaction.dateCreation.getTime() > calculateTime
+                new Date(transaction.dateCreation).getTime() > calculateTime
             )
                 result += transaction.price;
         });
 
         return result;
-    }, [transactions, selectedRange]);
+    }, [transactions, calculateTime]);
     const expensive = useMemo(() => {
         let result = 0;
         (transactions || []).map((transaction) => {
             if (
                 !transaction.receiver &&
-                transaction.dateCreation.getTime() > calculateTime
+                new Date(transaction.dateCreation).getTime() > calculateTime
             )
                 result += transaction.price;
         });
 
         return result;
-    }, [transactions, selectedRange]);
+    }, [transactions, calculateTime]);
     const incomeNoLimit = useMemo(() => {
         let result = 0;
         (transactions || []).map((transaction) => {
             if (
                 transaction.receiver &&
-                transaction.dateCreation.getTime() > calculateTime
+                new Date(transaction.dateCreation).getTime() > calculateTime
             )
                 result += transaction.price;
         });
@@ -204,25 +224,62 @@ export default function Overall() {
     const categories = useMemo(() => {
         let categories = new Set<string>();
         (transactions || []).map((transaction) => {
-            if (!transaction.receiver) categories.add(transaction.category);
+            if (
+                !transaction.receiver &&
+                new Date(transaction.dateCreation).getTime() > calculateTime
+            )
+                categories.add(transaction.category);
         });
 
         return Array.from(categories);
-    }, [transactions, selectedRange]);
+    }, [transactions, calculateTime]);
     const valuesByCategories = useMemo(() => {
         let dictionary = new Map<string, number>();
         (categories || []).map((category) => {
             let res = 0;
             (transactions || []).map((transaction) => {
                 res +=
-                    transaction.category === category && !transaction.receiver
+                    transaction.category === category &&
+                    !transaction.receiver &&
+                    new Date(transaction.dateCreation).getTime() > calculateTime
                         ? transaction.price
                         : 0;
             });
             dictionary.set(category, res);
         });
         return Array.from(dictionary.values());
-    }, [transactions]);
+    }, [transactions, calculateTime]);
+
+    let [pieComponent, setPieComponent] = useState<ReactNode>(null);
+    useEffect(() => {
+        const data = {
+            labels: categories,
+            datasets: [
+                {
+                    label: 'Expenses',
+                    data: valuesByCategories,
+                    fill: true,
+                    tension: 0.4,
+                },
+            ],
+        };
+
+        const options = {
+            responsive: true,
+            plugins: {
+                // legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: 'Expenses by categories',
+                },
+                colors: {
+                    forceOverride: true,
+                },
+            },
+        };
+
+        setPieComponent(<Pie data={data} options={options} />);
+    }, [categories, valuesByCategories]);
 
     if (
         isUserLoading ||
@@ -250,34 +307,6 @@ export default function Overall() {
     if (!notes) return <ErrorData dataType="Note" />;
     if (!goals) return <ErrorData dataType="Goals" />;
     if (!transactions) return <ErrorData dataType="Transactions" />;
-
-    const data = {
-        labels: categories,
-        datasets: [
-            {
-                label: 'Expenses',
-                data: valuesByCategories,
-                // borderColor: 'blue',
-                // backgroundColor: 'lightblue',
-                fill: true,
-                tension: 0.4,
-            },
-        ],
-    };
-
-    const options = {
-        responsive: true,
-        plugins: {
-            // legend: { position: "top" },
-            title: {
-                display: true,
-                text: 'Expenses by categories',
-            },
-            colors: {
-                enabled: true,
-            },
-        },
-    };
 
     return (
         <div className="grid grid-rows-4 grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 *:justify-self-center *:self-center p-10 max-h-screen">
@@ -309,13 +338,14 @@ export default function Overall() {
             </div>
             <GridItem>
                 <h3 className="text-4xl">Goals</h3>
-                <List
-                    title="Latest (last 5)"
-                    data={sortedGoals.map((goal) => goal.goalname)}
-                />
+                <List title="Latest (last 5)" data={sortedGoals} />
             </GridItem>
-            <GridItem className='flex flex-col justify-center items-center'>
-                <select className='text-center' onChange={(e) => handleRangeChange(e)}>
+            <GridItem className="flex flex-col justify-center items-center">
+                <select
+                    className="text-center"
+                    onChange={(e) => handleRangeChange(e)}
+                    defaultValue={getDataRange()}
+                >
                     <option value="1W">Week</option>
                     <option value="1M">Month</option>
                     <option value="3M">3 Months</option>
@@ -323,14 +353,11 @@ export default function Overall() {
                     <option value="1Y">Year</option>
                     <option value="ALL">All time</option>
                 </select>
-                <Pie data={data} options={options} />
+                {pieComponent}
             </GridItem>
             <GridItem>
                 <h3 className="text-3xl">Notes</h3>
-                <List
-                    title="Latest (last 5)"
-                    data={sortedNotes.map((note) => note.title)}
-                />
+                <List title="Latest (last 5)" data={sortedNotes} />
             </GridItem>
         </div>
     );

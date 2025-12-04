@@ -50,7 +50,8 @@ function formReducer(state: FormState, action: Action): FormState {
 export default function Transactions() {
     sessionStorage.setItem('selectedDashboard', '1');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
-    const { data: transactions, isLoading: isTransactionsLoading } = useTransactionsQuery();
+    const { data: transactions, isLoading: isTransactionsLoading } =
+        useTransactionsQuery();
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
     const [isChangeForm, setStateChangeForm] = useState<boolean>(false);
     const [isDeleteForm, setStateDeleteForm] = useState<boolean>(false);
@@ -59,10 +60,7 @@ export default function Transactions() {
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
 
-    if (
-        isUserLoading ||
-        isTransactionsLoading
-    ) {
+    if (isUserLoading || isTransactionsLoading) {
         return (
             <p>
                 Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
@@ -72,12 +70,12 @@ export default function Transactions() {
     }
 
     if (!user)
-            return (
-                <ErrorData
-                    dataType="User"
-                    message="You are not allowed to access Dashboard. "
-                />
-            );
+        return (
+            <ErrorData
+                dataType="User"
+                message="You are not allowed to access Dashboard. "
+            />
+        );
 
     if (!transactions) return <ErrorData dataType="Transactions" />;
 
@@ -180,9 +178,14 @@ export default function Transactions() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={"-1"}>Select one of these</option>
+                        <option selected value={'-1'}>
+                            Select one of these
+                        </option>
                         {transactions.map((transaction) => (
-                            <option value={transaction._id}>
+                            <option
+                                key={transaction._id}
+                                value={transaction._id}
+                            >
                                 {transaction.name}
                             </option>
                         ))}
@@ -230,9 +233,14 @@ export default function Transactions() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={"-1"}>Select one of these</option>
+                        <option selected value={'-1'}>
+                            Select one of these
+                        </option>
                         {transactions.map((transaction) => (
-                            <option value={transaction._id}>
+                            <option
+                                key={transaction._id}
+                                value={transaction._id}
+                            >
                                 {transaction.name}
                             </option>
                         ))}
@@ -254,7 +262,7 @@ export default function Transactions() {
                     </thead>
                     <tbody className="*:hover:bg-gray-100 *:transition-all">
                         {transactions.map((transaction) => (
-                            <tr>
+                            <tr key={transaction._id}>
                                 <td>{transaction.dateCreation.toString()}</td>
                                 <td>{transaction.dateUpdate.toString()}</td>
                                 <td>{transaction.name}</td>

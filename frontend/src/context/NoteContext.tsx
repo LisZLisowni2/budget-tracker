@@ -73,7 +73,8 @@ export function NoteProvide({ children }: IChildren) {
         <NoteContext.Provider
             value={{
                 addMutation: () => handleAddNote,
-                changeMutation: (_id: string, body: object) => handleChangeNote.mutate({ _id, body }),
+                changeMutation: (_id: string, body: object) =>
+                    handleChangeNote.mutate({ _id, body }),
                 copyMutation: (_id: string) => handleCopyNote.mutate(_id),
                 deleteMutation: (_id: string) => handleDeleteNote.mutate(_id),
             }}

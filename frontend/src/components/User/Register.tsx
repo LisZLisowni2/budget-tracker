@@ -85,11 +85,17 @@ export default function Register() {
     let passwordIcon;
     if (!passwordView) {
         passwordIcon = (
-            <EyeIcon className='size-8 text-black' onClick={handlePasswordView} />
+            <EyeIcon
+                className="size-8 text-black"
+                onClick={handlePasswordView}
+            />
         );
     } else {
         passwordIcon = (
-            <EyeOffIcon className='size-8 text-black' onClick={handlePasswordView} />
+            <EyeOffIcon
+                className="size-8 text-black"
+                onClick={handlePasswordView}
+            />
         );
     }
 

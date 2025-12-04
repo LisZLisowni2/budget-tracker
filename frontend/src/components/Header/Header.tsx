@@ -12,7 +12,7 @@ export default function Header() {
                     BudgetTracker - Loading
                 </h1>
                 <div className="flex items-center justify-center *:mx-3 cursor-pointer transition hover:text-gray-300">
-                    <CircleUserIcon className='size-10 lg:size-12'/>
+                    <CircleUserIcon className="size-10 lg:size-12" />
                 </div>
             </div>
         );
@@ -27,7 +27,7 @@ export default function Header() {
             </Link>
             <div className="flex items-center justify-center *:mx-3 cursor-pointer transition hover:text-gray-300">
                 <Link to={user ? '/dashboard/profile' : '/login'}>
-                    <CircleUserIcon className='size-10 lg:size-12'/>
+                    <CircleUserIcon className="size-10 lg:size-12" />
                 </Link>
             </div>
         </div>

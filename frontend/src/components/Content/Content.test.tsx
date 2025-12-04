@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { expect, it, describe } from 'vitest'
+import { expect, it, describe } from 'vitest';
 import Content from './Content';
 import HeroBox from '../Main/HeroBox';
 
 describe('Content component', () => {
     it('renders with single text', () => {
         render(<Content children={'Hello!'} />);
-        expect(screen.getByText('Hello!')).toBeInTheDocument()
+        expect(screen.getByText('Hello!')).toBeInTheDocument();
         expect(screen.getByText('Hello!')).toHaveTextContent('Hello!');
     });
 

@@ -1,5 +1,5 @@
 import { screen, render } from '@testing-library/react';
-import { expect, it, describe } from 'vitest'
+import { expect, it, describe } from 'vitest';
 import FormField from './FormField';
 
 describe('Form Field component', () => {

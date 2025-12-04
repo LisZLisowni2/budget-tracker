@@ -18,7 +18,7 @@ type Action =
           field: keyof FormState;
           value: string | number | boolean | null;
       }
-    | { type: 'UPDATE_BODY'; field: FormState; }
+    | { type: 'UPDATE_BODY'; field: FormState }
     | { type: 'RESET' };
 
 const initialState: FormState = {
@@ -46,8 +46,9 @@ export default function Goals() {
     sessionStorage.setItem('selectedDashboard', '2');
     const { data: user, isLoading: isUserLoading } = useUserQuery();
 
-    const { addMutation, deleteMutation, changeMutation, finishMutation } = useGoals();
-    const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery(); 
+    const { addMutation, deleteMutation, changeMutation, finishMutation } =
+        useGoals();
+    const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
     const [isAddForm, setStateAddForm] = useState<boolean>(false);
     const [isChangeForm, setStateChangeForm] = useState<boolean>(false);
     const [isDeleteForm, setStateDeleteForm] = useState<boolean>(false);
@@ -55,57 +56,54 @@ export default function Goals() {
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
 
-    if (
-            isUserLoading ||
-            isGoalsLoading
-        ) {
-            return (
-                <p>
-                    Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
-                    {isGoalsLoading ? 'Loading' : 'Loaded'}, Notes:
-                </p>
-            );
-        }
-    
-        if (!user)
-                return (
-                    <ErrorData
-                        dataType="User"
-                        message="You are not allowed to access Dashboard. "
-                    />
-                );
-    
-        if (!goals) return <ErrorData dataType="Goals" />;
+    if (isUserLoading || isGoalsLoading) {
+        return (
+            <p>
+                Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
+                {isGoalsLoading ? 'Loading' : 'Loaded'}, Notes:
+            </p>
+        );
+    }
+
+    if (!user)
+        return (
+            <ErrorData
+                dataType="User"
+                message="You are not allowed to access Dashboard. "
+            />
+        );
+
+    if (!goals) return <ErrorData dataType="Goals" />;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, type, checked, value } = e.target;
         dispatch({
             type: 'UPDATE_FIELD',
             field: id as keyof FormState,
-            value: type === "checkbox" ? checked : value
-        })
-    }
+            value: type === 'checkbox' ? checked : value,
+        });
+    };
 
     const handleAdd = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (state.goalname === "" || state.goalname === null) return;
+        if (state.goalname === '' || state.goalname === null) return;
         addMutation(state);
         dispatch({
-            type: 'RESET'
-        })
-    }
+            type: 'RESET',
+        });
+    };
 
     const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value === '-1') return;
-        const filtered = goals.filter(goal => goal._id === e.target.value)
+        const filtered = goals.filter((goal) => goal._id === e.target.value);
         if (filtered.length === 1) {
             const body = filtered[0];
             dispatch({
                 type: 'UPDATE_BODY',
                 field: body,
-            })
-        } 
-    }
+            });
+        }
+    };
 
     const handleChangeItem = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -113,18 +111,18 @@ export default function Goals() {
         if (!selectRef.current) return;
         changeMutation(selectRef.current.value, state);
         dispatch({
-            type: 'RESET'
-        })
-    }
+            type: 'RESET',
+        });
+    };
 
     const handleDeleteItem = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!selectRef.current) return;
-        deleteMutation(selectRef.current.value)
+        deleteMutation(selectRef.current.value);
         dispatch({
-            type: 'RESET'
-        })
-    }
+            type: 'RESET',
+        });
+    };
 
     return (
         <div className="flex items-center justify-between flex-col h-full *:p-4 max-lg:overflow-auto">
@@ -161,9 +159,11 @@ export default function Goals() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={"-1"}>Select one of these</option>
-                        {goals.map(goal => (
-                            <option value={goal._id}>
+                        <option selected value={'-1'}>
+                            Select one of these
+                        </option>
+                        {goals.map((goal) => (
+                            <option key={goal._id} value={goal._id}>
                                 {goal.goalname}
                             </option>
                         ))}
@@ -197,9 +197,11 @@ export default function Goals() {
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={"-1"}>Select one of these</option>
-                        {goals.map(goal => (
-                            <option value={goal._id}>
+                        <option selected value={'-1'}>
+                            Select one of these
+                        </option>
+                        {goals.map((goal) => (
+                            <option key={goal._id} value={goal._id}>
                                 {goal.goalname}
                             </option>
                         ))}
@@ -232,10 +234,16 @@ export default function Goals() {
                                         : 'In progress'}
                                 </td>
                                 <td>
-                                    {!goal.completed ?
-                                        <Button text='Finish' onClick={() => finishMutation(goal._id)} />
-                                        : <p>Completed</p>
-                                    }
+                                    {!goal.completed ? (
+                                        <Button
+                                            text="Finish"
+                                            onClick={() =>
+                                                finishMutation(goal._id)
+                                            }
+                                        />
+                                    ) : (
+                                        <p>Completed</p>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -243,9 +251,18 @@ export default function Goals() {
                 </table>
             </div>
             <div className="text-white flex max-md:flex-col justify-evenly w-full h-1/3 items-center">
-                <Button text="Add new goal" onClick={() => setStateAddForm(!isAddForm)}/>
-                <Button text="Change goal details" onClick={() => setStateChangeForm(!isChangeForm)}/>
-                <Button text="Delete goal" onClick={() => setStateDeleteForm(!isDeleteForm)}/>
+                <Button
+                    text="Add new goal"
+                    onClick={() => setStateAddForm(!isAddForm)}
+                />
+                <Button
+                    text="Change goal details"
+                    onClick={() => setStateChangeForm(!isChangeForm)}
+                />
+                <Button
+                    text="Delete goal"
+                    onClick={() => setStateDeleteForm(!isDeleteForm)}
+                />
             </div>
         </div>
     );

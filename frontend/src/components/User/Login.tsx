@@ -13,14 +13,17 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { AxiosError } from 'axios';
 
 const UserSchema = z.object({
-    username: z.string().min(3, { error: "Username too short "}).max(60, { error: "Username too long" }),
-    password: z.string().min(3, { error: "Password too short" }),
+    username: z
+        .string()
+        .min(3, { error: 'Username too short ' })
+        .max(60, { error: 'Username too long' }),
+    password: z.string().min(3, { error: 'Password too short' }),
 });
 
 type TUserSchema = z.infer<typeof UserSchema>;
 
 export default function Login() {
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
     const {
         handleSubmit,
         control,
@@ -47,39 +50,45 @@ export default function Login() {
         mutate(data, {
             onSuccess: (res) => {
                 localStorage.setItem('token', res.data.token);
-                queryClient.invalidateQueries({queryKey: [ 'user' ]})
+                queryClient.invalidateQueries({ queryKey: ['user'] });
                 navigate('/dashboard');
             },
             onError: (err: AxiosError) => {
-                const status = err.response ? err.response.status : null
+                const status = err.response ? err.response.status : null;
                 switch (status) {
                     case 404:
                         setError('username', {
                             message: "That username doesn't exist",
                         });
-                        break
+                        break;
                     case 401:
                         setError('password', {
-                            message: "Wrong password"
-                        })
-                        break
+                            message: 'Wrong password',
+                        });
+                        break;
                     default:
-                        setError("root", {
-                            message: "Internal server error."
-                        })
+                        setError('root', {
+                            message: 'Internal server error.',
+                        });
                 }
-            }
-        })
+            },
+        });
     };
 
     let passwordIcon;
     if (!passwordView) {
         passwordIcon = (
-            <EyeIcon className='size-8 text-black' onClick={handlePasswordView} />
+            <EyeIcon
+                className="size-8 text-black"
+                onClick={handlePasswordView}
+            />
         );
     } else {
         passwordIcon = (
-            <EyeOffIcon className='size-8 text-black' onClick={handlePasswordView} />
+            <EyeOffIcon
+                className="size-8 text-black"
+                onClick={handlePasswordView}
+            />
         );
     }
 
@@ -130,9 +139,7 @@ export default function Login() {
                         </>
                     )}
                 />
-                { errors.root && (
-                    <p>{errors.root.message}</p>
-                )}
+                {errors.root && <p>{errors.root.message}</p>}
                 <p className="flex my-4 flex-col">
                     <Button text="Login" />
                 </p>

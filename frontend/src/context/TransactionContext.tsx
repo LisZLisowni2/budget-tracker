@@ -1,8 +1,4 @@
-import {
-    createContext,
-    useContext,
-    ReactNode,
-} from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import api from '../api';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
@@ -19,36 +15,38 @@ interface ITransactionContext {
 const TransactionContext = createContext<ITransactionContext | null>(null);
 
 type ChangeMutationArgs = {
-    _id: string,
-    body: object
-}
+    _id: string;
+    body: object;
+};
 
 export function TransactionProvide({ children }: IChildren) {
-    const queryClient = useQueryClient()
-    const queryKey = ['transactions']
+    const queryClient = useQueryClient();
+    const queryKey = ['transactions'];
 
-    const onSuccess = () => queryClient.invalidateQueries({ queryKey })
+    const onSuccess = () => queryClient.invalidateQueries({ queryKey });
 
     const handleAddMutation = useMutation({
         mutationFn: (body: object) => api.post('/transactions/new', body),
-        onSuccess
-    })
+        onSuccess,
+    });
 
     const handleChangeMutation = useMutation({
-        mutationFn: ({_id, body} : ChangeMutationArgs) => api.put(`/transactions/edit/${_id}`, body),
-        onSuccess
-    })
+        mutationFn: ({ _id, body }: ChangeMutationArgs) =>
+            api.put(`/transactions/edit/${_id}`, body),
+        onSuccess,
+    });
 
     const handleDeleteMutation = useMutation({
         mutationFn: (_id: string) => api.delete(`/transactions/delete/${_id}`),
-        onSuccess
-    })
+        onSuccess,
+    });
 
     return (
         <TransactionContext.Provider
             value={{
                 add: (body: object) => handleAddMutation.mutate(body),
-                change: (_id: string, body: object) => handleChangeMutation.mutate({ _id, body }),
+                change: (_id: string, body: object) =>
+                    handleChangeMutation.mutate({ _id, body }),
                 delete: (_id: string) => handleDeleteMutation.mutate(_id),
             }}
         >

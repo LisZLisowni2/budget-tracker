@@ -5,7 +5,7 @@ interface IFormLabel {
     type: string;
     id: string;
     value?: string | number;
-    checked?: boolean
+    checked?: boolean;
     onChange?: ChangeEventHandler;
     children?: ReactNode;
 }

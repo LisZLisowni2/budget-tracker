@@ -1,8 +1,4 @@
-import {
-    createContext,
-    useContext,
-    ReactNode,
-} from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import api from '../api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -20,49 +16,54 @@ interface IGoalContext {
 const GoalContext = createContext<IGoalContext | null>(null);
 
 type ChangeMutationArgs = {
-    _id: string,
-    body: object
-}
+    _id: string;
+    body: object;
+};
 
 export function GoalProvide({ children }: IChildren) {
     const queryClient = useQueryClient();
-    const queryKey = ["goals"]
+    const queryKey = ['goals'];
 
-    const onSuccess = () => queryClient.invalidateQueries({ queryKey })
+    const onSuccess = () => queryClient.invalidateQueries({ queryKey });
 
     const handleAddMutation = useMutation({
         mutationKey: queryKey,
         mutationFn: async (body: object) => await api.post('/goals/new', body),
-        onSuccess
-    })
+        onSuccess,
+    });
 
     const handleDeleteMutation = useMutation({
         mutationKey: queryKey,
-        mutationFn: async (_id: string) => await api.delete(`/goals/delete/${_id}`),
-        onSuccess
+        mutationFn: async (_id: string) =>
+            await api.delete(`/goals/delete/${_id}`),
+        onSuccess,
     });
 
     const handleChangeMutation = useMutation({
         mutationKey: queryKey,
-        mutationFn: async ({_id, body} : ChangeMutationArgs) => {
-            await api.put(`/goals/edit/${_id}`, body)
+        mutationFn: async ({ _id, body }: ChangeMutationArgs) => {
+            await api.put(`/goals/edit/${_id}`, body);
         },
-        onSuccess
+        onSuccess,
     });
 
     const handleFinishMutation = useMutation({
         mutationKey: queryKey,
-        mutationFn: async (_id:string) => await api.put(`/goals/edit/${_id}`, { completed: true }),
-        onSuccess
+        mutationFn: async (_id: string) =>
+            await api.put(`/goals/edit/${_id}`, { completed: true }),
+        onSuccess,
     });
 
     return (
         <GoalContext.Provider
             value={{
                 addMutation: (body: object) => handleAddMutation.mutate(body),
-                deleteMutation: (_id: string) => handleDeleteMutation.mutate(_id),
-                changeMutation: (_id: string, body: object) => handleChangeMutation.mutate({ _id, body }),
-                finishMutation: (_id: string) => handleFinishMutation.mutate(_id),
+                deleteMutation: (_id: string) =>
+                    handleDeleteMutation.mutate(_id),
+                changeMutation: (_id: string, body: object) =>
+                    handleChangeMutation.mutate({ _id, body }),
+                finishMutation: (_id: string) =>
+                    handleFinishMutation.mutate(_id),
             }}
         >
             {children}
