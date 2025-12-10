@@ -43,7 +43,7 @@ module.exports = (config, redis) => {
 
     router.post('/new', Auth.authenticateToken, async (req, res) => {
         try {
-            const { goalname, requiredmoney } = req.body
+            const { name, requiredValue } = req.body
 
             // Fetch user ID
             const { username } = req.user
@@ -51,9 +51,9 @@ module.exports = (config, redis) => {
             const userID = user._id
 
             const newGoal = new Goal({
-                goalname: goalname,
+                name: name,
                 ownedBy: userID,
-                requiredmoney: requiredmoney
+                requiredValue: requiredValue
             })
 
             await newGoal.save()
@@ -78,7 +78,7 @@ module.exports = (config, redis) => {
             if (goal.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
             
             await Goal.findOneAndUpdate({ _id: goalID }, req.body)
-            await Goal.findOneAndUpdate({ _id: goalID }, { 'last-edit-date': Date.now() })
+            await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Goal edited' })
         } catch (error) {
@@ -121,6 +121,7 @@ module.exports = (config, redis) => {
             if (goal.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             await Goal.findOneAndUpdate({ _id: goalID }, { completed: true })
+            await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Goal completed' })
         } catch (error) {

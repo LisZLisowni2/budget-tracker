@@ -80,7 +80,7 @@ module.exports = (config, redis) => {
             if (note.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
             
             await Note.findOneAndUpdate({ _id: noteID }, req.body)
-            await Note.findOneAndUpdate({ _id: noteID }, { 'last-edit-date': Date.now() })
+            await Note.findOneAndUpdate({ _id: noteID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Note edited' })
         } catch (error) {

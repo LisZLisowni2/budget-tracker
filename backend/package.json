@@ -23,6 +23,7 @@
     "redis": "^5.9.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@vitest/coverage-v8": "^4.0.8",
     "mongodb-memory-server": "^10.3.0",
     "supertest": "^7.1.4",

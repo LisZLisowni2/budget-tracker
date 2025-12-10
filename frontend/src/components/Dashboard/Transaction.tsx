@@ -10,7 +10,7 @@ import ErrorData from './ErrorData';
 
 interface FormState {
     name: string;
-    price: number;
+    value: number;
     category: string;
     receiver: boolean;
 }
@@ -26,7 +26,7 @@ type Action =
 
 const initialState: FormState = {
     name: '',
-    price: 0,
+    value: 0,
     category: '',
     receiver: false,
 };
@@ -152,7 +152,7 @@ export default function Transactions() {
                         onChange={handleChange}
                     />
                     <FormField
-                        id="price"
+                        id="value"
                         label="Money quantity"
                         type="number"
                         onChange={handleChange}
@@ -205,9 +205,9 @@ export default function Transactions() {
                         onChange={handleChange}
                     />
                     <FormField
-                        id="price"
+                        id="value"
                         label="Money quantity"
-                        value={state.price}
+                        value={state.value}
                         type="number"
                         onChange={handleChange}
                     />
@@ -257,18 +257,18 @@ export default function Transactions() {
                             <th>Transaction Name</th>
                             <th>Category</th>
                             <th>Receiver?</th>
-                            <th>Quantity</th>
+                            <th>Value</th>
                         </tr>
                     </thead>
                     <tbody className="*:hover:bg-gray-100 *:transition-all">
                         {transactions.map((transaction) => (
                             <tr key={transaction._id}>
-                                <td>{transaction.dateCreation.toString()}</td>
-                                <td>{transaction.dateUpdate.toString()}</td>
+                                <td>{transaction.createdAt.toString()}</td>
+                                <td>{transaction.updatedAt.toString()}</td>
                                 <td>{transaction.name}</td>
                                 <td>{transaction.category}</td>
                                 <td>{transaction.receiver ? 'Yes' : 'No'}</td>
-                                <td>{transaction.price}</td>
+                                <td>{transaction.value}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -43,7 +43,7 @@ module.exports = (config, redis) => {
 
     router.post('/new', Auth.authenticateToken, async (req, res) => {
         try {
-            const { name, price, receiver, category } = req.body
+            const { name, value, receiver, category } = req.body
 
             // Fetch user ID
             const { username } = req.user
@@ -53,7 +53,7 @@ module.exports = (config, redis) => {
             const newTransaction = new Transaction({
                 name: name,
                 ownedBy: userID,
-                price: price,
+                value: value,
                 receiver: receiver,
                 category: category
             })
@@ -80,7 +80,7 @@ module.exports = (config, redis) => {
             if (transaction.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
             
             await Transaction.findOneAndUpdate({ _id: transactionID }, req.body)
-            await Transaction.findOneAndUpdate({ _id: transactionID }, { 'last-edit-date': Date.now() })
+            await Transaction.findOneAndUpdate({ _id: transactionID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Transaction edited' })
         } catch (error) {

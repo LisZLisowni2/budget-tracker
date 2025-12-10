@@ -2,14 +2,6 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const transactionSchema = new mongoose.Schema({
-    'dateCreation': {
-        type: Date,
-        default: Date.now
-    },
-    'dateUpdate': {
-        type: Date,
-        default: Date.now
-    },
     'name': {
         type: String,
         require: true
@@ -18,7 +10,7 @@ const transactionSchema = new mongoose.Schema({
         type: Schema.Types.ObjectID,
         ref: 'User'
     },
-    'price': {
+    'value': {
         type: Number,
         require: true
     },
@@ -30,6 +22,8 @@ const transactionSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     }
+}, {
+    timestamps: true
 })
 
 const Transaction = mongoose.model('Transaction', transactionSchema)

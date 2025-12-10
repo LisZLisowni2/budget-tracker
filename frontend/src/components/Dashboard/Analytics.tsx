@@ -1,5 +1,4 @@
 import useGoalsQuery from '@/hooks/useGoalsQuery';
-import useNotesQuery from '@/hooks/useNotesQuery';
 import useTransactionsQuery from '@/hooks/useTransactionsQuery';
 import useUserQuery from '@/hooks/useUserQuery';
 import {
@@ -13,6 +12,7 @@ import {
     Legend,
     ArcElement,
     Colors,
+    BarElement
 } from 'chart.js';
 
 ChartJS.register(
@@ -24,12 +24,13 @@ ChartJS.register(
     Tooltip,
     Legend,
     ArcElement,
-    Colors
+    Colors,
+    BarElement
 );
 
-import { Pie } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import ErrorData from './ErrorData';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState, useEffect, ReactNode } from 'react';
 import { DataRanges } from '@/types/dataRanges';
 
 export default function Analytics() {
@@ -42,10 +43,14 @@ export default function Analytics() {
     const [selectedRange, setSelectedRange] =
         useState<DataRanges>(getDataRange);
     const { data: user, isLoading: isUserLoading } = useUserQuery();
-    const { data: notes, isLoading: isNotesLoading } = useNotesQuery();
     const { data: goals, isLoading: isGoalsLoading } = useGoalsQuery();
     const { data: transactions, isLoading: isTransactionsLoading } =
         useTransactionsQuery();
+
+    const [comparisonComp, setComparisonComp] = useState<ReactNode>();
+    const [balanceComp, setBalanceComp] = useState<ReactNode>();
+    const [incomeSourceComp, setIncomeSourceComp] = useState<ReactNode>();
+    const [goalsProgressComp, setGoalsProgressComp] = useState<ReactNode>();
 
     const handleRangeChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedRange(event.target.value as DataRanges);
@@ -55,18 +60,278 @@ export default function Analytics() {
         );
     };
 
-    if (
-        isUserLoading ||
-        isGoalsLoading ||
-        isNotesLoading ||
-        isTransactionsLoading
-    ) {
+    const calculateTime = useMemo(() => {
+        const now = new Date();
+        switch (selectedRange) {
+            case DataRanges.ONE_WEEK:
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 7);
+            case DataRanges.ONE_MONTH:
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+            case DataRanges.THREE_MONTHS:
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 90);
+            case DataRanges.SIX_MONTHS:
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 180);
+            case DataRanges.ONE_YEAR:
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 365);
+            case DataRanges.ALL_TIME:
+                return now.setTime(0);
+            default:
+                return now.setTime(0);
+        }
+    }, [selectedRange]);
+
+    const countDays = useMemo(
+        () => Math.round((Date.now() - calculateTime) / 1000 / 60 / 60 / 24),
+        [calculateTime]
+    );
+
+    const dataLabels = useMemo(() => {
+        const startTime = calculateTime;
+        const labels = []
+        const dateOptions: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: 'numeric' };
+
+        for (let i = 0; i < countDays; i++) {
+            const currentDayTime = startTime + 1000 * 60 * 60 * 24 * i;
+            const date = new Date(currentDayTime);
+
+            labels.push(date.toLocaleDateString(undefined, dateOptions));
+        }
+
+        return labels
+    }, [calculateTime, countDays])
+
+    const incomeInTime = useMemo(() => {
+        let income = new Map<number, number>();
+        const startTime = calculateTime;
+
+        for (let i = 0; i < countDays; i++) {
+            let dailyIncome = 0;
+
+            const dayStart = startTime + 1000 * 60 * 60 * 24 * i;
+            const dayEnd = startTime + 1000 * 60 * 60 * 24 * (i + 1);
+
+            (transactions || []).map((transaction) => {
+                const txTime = new Date(transaction.updatedAt).getTime();
+                dailyIncome +=
+                    transaction.receiver &&
+                    txTime >= dayStart &&
+                    txTime < dayEnd
+                        ? transaction.value
+                        : 0;
+            });
+            income.set(i + 1, dailyIncome);
+        }
+
+        return income;
+    }, [transactions, calculateTime]);
+
+    const expenseInTime = useMemo(() => {
+        let expense = new Map<number, number>();
+        const startTime = calculateTime;
+        for (let i = 0; i < countDays; i++) {
+            let dailyExpense = 0;
+
+            const dayStart = startTime + 1000 * 60 * 60 * 24 * i;
+            const dayEnd = startTime + 1000 * 60 * 60 * 24 * (i + 1);
+
+            (transactions || []).map((transaction) => {
+                const txTime = new Date(transaction.updatedAt).getTime();
+                dailyExpense +=
+                    transaction.receiver &&
+                    txTime >= dayStart &&
+                    txTime < dayEnd
+                        ? transaction.value
+                        : 0;
+            });
+            expense.set(i + 1, dailyExpense);
+        }
+
+        return expense;
+    }, [transactions, calculateTime]);
+
+    const balanceInTime = useMemo(() => {
+        let balance = new Map<number, number>();
+        const startTime = calculateTime;
+        
+        for (let i = 0; i < countDays; i++) {
+            let dailyBalance = 0
+
+            const dayStart = startTime + 1000 * 60 * 60 * 24 * i;
+            const dayEnd = startTime + 1000 * 60 * 60 * 24 * (i + 1);
+
+            (transactions || []).map((transaction) => {
+                const txTime = new Date(transaction.updatedAt).getTime();
+                dailyBalance +=
+                    transaction.receiver &&
+                    txTime >= dayStart &&
+                    txTime < dayEnd
+                        ? transaction.value
+                        : 0;
+            });
+            balance.set(i + 1, dailyBalance);
+            }
+
+        return balance;
+    }, [transactions, calculateTime]);
+
+    const incomeSources = useMemo(() => {
+        let sources = new Map<string, number>();
+
+        (transactions || []).map((transaction) => {
+            const txTime = new Date(transaction.updatedAt).getTime();
+            if (txTime >= calculateTime) {
+                sources.set(transaction.category, (sources.get(transaction.category) || 0) + transaction.value);
+            }
+        })
+
+        return sources
+    }, [transactions, calculateTime]);
+
+    const goalsProgress = useMemo(() => {
+        let progress = new Map<string, number>();
+
+        (goals || []).map((goal) => {
+            const goalTime = new Date(goal.updatedAt).getTime();
+            if (goalTime >= calculateTime) {
+                progress.set(goal.name, (progress.get(goal.name) || 0) + goal.requiredValue);
+            }
+        })
+
+        return progress
+    }, [goals, calculateTime])
+
+    useEffect(() => {
+        const data = {
+            labels: dataLabels,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: Array.from(incomeInTime.values()),
+                    fill: true,
+                    tension: 0.4,
+                },
+                {
+                    label: 'Expenses',
+                    data: Array.from(expenseInTime.values()),
+                    fill: true,
+                    tension: 0.4,
+                },
+            ],
+        };
+
+        const options = {
+            responsive: true,
+            plugins: {
+                // legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: 'Income and expanses',
+                },
+                colors: {
+                    forceOverride: true,
+                },
+            },
+        };
+
+        setComparisonComp(<Line data={data} options={options} />);
+    }, [incomeInTime, expenseInTime, dataLabels]);
+
+    useEffect(() => {
+        const data = {
+            labels: dataLabels,
+            datasets: [
+                {
+                    label: 'Balance',
+                    data: Array.from(balanceInTime.values()),
+                    fill: true,
+                    tension: 0.4,
+                },
+            ],
+        };
+
+        const options = {
+            responsive: true,
+            plugins: {
+                // legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: 'Balance',
+                },
+                colors: {
+                    forceOverride: true,
+                },
+            },
+        };
+
+        setBalanceComp(<Line data={data} options={options} />);
+    }, [balanceInTime, dataLabels]);
+
+    useEffect(() => {
+        const data = {
+            labels: Array.from(incomeSources.keys()),
+            datasets: [
+                {
+                    label: 'Sources',
+                    data: Array.from(incomeSources.values()),
+                    fill: true,
+                    tension: 0.4,
+                },
+            ],
+        };
+
+        const options = {
+            responsive: true,
+            plugins: {
+                // legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: 'Income sources',
+                },
+                colors: {
+                    forceOverride: true,
+                },
+            },
+        };
+
+        setIncomeSourceComp(<Bar data={data} options={options} />);
+    }, [incomeSources, dataLabels]);
+
+    useEffect(() => {
+        const data = {
+            labels: Array.from(goalsProgress.keys()),
+            datasets: [
+                {
+                    label: 'Goals',
+                    data: Array.from(goalsProgress.values()),
+                    fill: true,
+                    tension: 0.4,
+                },
+            ],
+        };
+
+        const options = {
+            responsive: true,
+            plugins: {
+                // legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: 'Progress of goals',
+                },
+                colors: {
+                    forceOverride: true,
+                },
+            },
+        };
+
+        setGoalsProgressComp(<Bar data={data} options={options} />);
+    }, [goalsProgress, dataLabels]);
+
+    if (isUserLoading || isGoalsLoading || isTransactionsLoading) {
         return (
             <p>
                 Loading... User: {isUserLoading ? 'Loading' : 'Loaded'}, Goals:
                 {isGoalsLoading ? 'Loading' : 'Loaded'}, Transactions:
                 {isTransactionsLoading ? 'Loading' : 'Loaded'}, Notes:
-                {isNotesLoading ? 'Loading' : 'Loaded'}
             </p>
         );
     }
@@ -78,118 +343,8 @@ export default function Analytics() {
                 message="You are not allowed to access Dashboard. "
             />
         );
-    if (!notes) return <ErrorData dataType="Note" />;
     if (!goals) return <ErrorData dataType="Goals" />;
     if (!transactions) return <ErrorData dataType="Transactions" />;
-
-    const calculateTime = useMemo(() => {
-        const now = new Date();
-        switch (selectedRange) {
-            case DataRanges.ONE_WEEK:
-                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 7);
-            case DataRanges.ONE_MONTH:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 30);
-            case DataRanges.THREE_MONTHS:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 90);
-            case DataRanges.SIX_MONTHS:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 180);
-            case DataRanges.ONE_YEAR:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 365);
-            case DataRanges.ALL_TIME:
-                return now.setTime(0);
-            default:
-                return now.setTime(0);
-        }
-    }, [selectedRange]);
-
-    const latestNotes = 5;
-    const sortedNotes = useMemo(
-        () =>
-            notes
-                .sort((noteA, noteB) => {
-                    const dateA = new Date(noteA.dateUpdate);
-                    const dateB = new Date(noteB.dateUpdate);
-                    return dateA.getTime() - dateB.getTime();
-                })
-                .slice(0, latestNotes),
-        [notes]
-    );
-    const income = useMemo(() => {
-        let result = 0;
-        transactions.map((transaction) => {
-            if (
-                transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
-            )
-                result += transaction.price;
-        });
-
-        return result;
-    }, [transactions, calculateTime]);
-    const expensive = useMemo(() => {
-        let result = 0;
-        transactions.map((transaction) => {
-            if (
-                !transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
-            )
-                result += transaction.price;
-        });
-
-        return result;
-    }, [transactions, calculateTime]);
-    const categories = useMemo(() => {
-        let categories = new Set<string>();
-        transactions.map((transaction) => {
-            if (
-                !transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
-            )
-                categories.add(transaction.category);
-        });
-
-        return Array.from(categories);
-    }, [transactions, calculateTime]);
-    const valuesByCategories = useMemo(() => {
-        let dictionary = new Map<string, number>();
-        categories.map((category) => {
-            let res = 0;
-            transactions.map((transaction) => {
-                res +=
-                    transaction.category === category && !transaction.receiver
-                        ? transaction.price
-                        : 0;
-            });
-            dictionary.set(category, res);
-        });
-        return Array.from(dictionary.values());
-    }, [transactions]);
-
-    const data = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-            {
-                label: 'Sales',
-                data: [100, 300, 200, 100, 500, 300],
-                fill: true,
-                tension: 0.4,
-            },
-        ],
-    };
-
-    const options = {
-        responsive: true,
-        plugins: {
-            // legend: { position: "top" },
-            title: {
-                display: true,
-                text: 'Monthly income and expenses, last 6 months',
-            },
-            colors: {
-                enabled: true,
-            },
-        },
-    };
 
     return (
         <div className="flex flex-col">
@@ -208,24 +363,16 @@ export default function Analytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 h-full max-h-screen gap-4 *:m-auto *:w-full *:h-full *:flex *:justify-center *:p-4 max-lg:overflow-auto">
                 {/* TODO: Update charts to represent data */}
                 <div>
-                    {' '}
-                    {/* TODO: Income and expanses in SELECTED time */}
-                    <Pie data={data} options={options} />
+                    {comparisonComp}
                 </div>
                 <div>
-                    {' '}
-                    {/* TODO: Progression of goals */}
-                    <Pie data={data} options={options} />
+                    {goalsProgressComp}
                 </div>
                 <div>
-                    {' '}
-                    {/* TODO: Comparision of Income and Expanses in SELECTED time */}
-                    <Pie data={data} options={options} />
+                    {balanceComp}
                 </div>
                 <div>
-                    {' '}
-                    {/* TODO: Source of income */}
-                    <Pie data={data} options={options} />
+                    {incomeSourceComp}
                 </div>
             </div>
         </div>

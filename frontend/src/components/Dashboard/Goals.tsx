@@ -8,8 +8,8 @@ import useUserQuery from '@/hooks/useUserQuery';
 import ErrorData from './ErrorData';
 
 interface FormState {
-    goalname: string;
-    requiredmoney: number;
+    name: string;
+    requiredValue: number;
 }
 
 type Action =
@@ -22,8 +22,8 @@ type Action =
     | { type: 'RESET' };
 
 const initialState: FormState = {
-    goalname: '',
-    requiredmoney: 0,
+    name: '',
+    requiredValue: 0,
 };
 
 function formReducer(state: FormState, action: Action): FormState {
@@ -86,7 +86,7 @@ export default function Goals() {
 
     const handleAdd = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (state.goalname === '' || state.goalname === null) return;
+        if (state.name === '' || state.name === null) return;
         addMutation(state);
         dispatch({
             type: 'RESET',
@@ -107,7 +107,7 @@ export default function Goals() {
 
     const handleChangeItem = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (state.goalname === '' || state.goalname === null) return;
+        if (state.name === '' || state.name === null) return;
         if (!selectRef.current) return;
         changeMutation(selectRef.current.value, state);
         dispatch({
@@ -133,13 +133,13 @@ export default function Goals() {
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleAdd}>
                     <FormField
-                        id="goalname"
+                        id="name"
                         label="Goal name"
                         type="text"
                         onChange={handleChange}
                     />
                     <FormField
-                        id="requiredmoney"
+                        id="requiredValue"
                         label="Money quantity"
                         type="number"
                         onChange={handleChange}
@@ -164,23 +164,23 @@ export default function Goals() {
                         </option>
                         {goals.map((goal) => (
                             <option key={goal._id} value={goal._id}>
-                                {goal.goalname}
+                                {goal.name}
                             </option>
                         ))}
                     </select>
                     <FormField
-                        id="goalname"
+                        id="name"
                         label="Goal name"
                         type="text"
                         onChange={handleChange}
-                        value={state.goalname}
+                        value={state.name}
                     />
                     <FormField
-                        id="requiredmoney"
+                        id="requiredValue"
                         label="Money quantity"
                         type="number"
                         onChange={handleChange}
-                        value={state.requiredmoney}
+                        value={state.requiredValue}
                     />
                     <Button text="Update" />
                 </form>
@@ -202,7 +202,7 @@ export default function Goals() {
                         </option>
                         {goals.map((goal) => (
                             <option key={goal._id} value={goal._id}>
-                                {goal.goalname}
+                                {goal.name}
                             </option>
                         ))}
                     </select>
@@ -224,10 +224,10 @@ export default function Goals() {
                     <tbody className="*:hover:bg-gray-100 *:transition-all">
                         {goals.map((goal) => (
                             <tr key={goal._id}>
-                                <td>{goal.dateCreation.toString()}</td>
-                                <td>{goal.dateUpdate.toString()}</td>
-                                <td>{goal.goalname}</td>
-                                <td>{goal.requiredmoney}</td>
+                                <td>{goal.createdAt.toString()}</td>
+                                <td>{goal.updatedAt.toString()}</td>
+                                <td>{goal.name}</td>
+                                <td>{goal.requiredValue}</td>
                                 <td>
                                     {goal.completed
                                         ? 'Completed'

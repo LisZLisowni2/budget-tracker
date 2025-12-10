@@ -90,7 +90,7 @@ function List({ title, data }: INotes) {
                         key={item._id}
                         className="shadow-md p-1 m-2 hover:scale-105 transition-all"
                     >
-                        {'title' in item ? item.title : item.goalname}
+                        {'title' in item ? item.title : item.name}
                     </li>
                 ))}
             </ul>
@@ -139,13 +139,13 @@ export default function Overall() {
             case DataRanges.ONE_WEEK:
                 return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 7);
             case DataRanges.ONE_MONTH:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 30);
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 30);
             case DataRanges.THREE_MONTHS:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 90);
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 90);
             case DataRanges.SIX_MONTHS:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 180);
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 180);
             case DataRanges.ONE_YEAR:
-                return now.setTime(now.getDate() - 1000 * 60 * 60 * 24 * 365);
+                return now.setTime(now.getTime() - 1000 * 60 * 60 * 24 * 365);
             case DataRanges.ALL_TIME:
                 return now.setTime(0);
             default:
@@ -158,8 +158,8 @@ export default function Overall() {
         () =>
             (notes || [])
                 .sort((noteA, noteB) => {
-                    const dateA = new Date(noteA.dateUpdate);
-                    const dateB = new Date(noteB.dateUpdate);
+                    const dateA = new Date(noteA.updatedAt);
+                    const dateB = new Date(noteB.updatedAt);
                     return dateA.getTime() - dateB.getTime();
                 })
                 .slice(0, latestNotes),
@@ -170,8 +170,8 @@ export default function Overall() {
         () =>
             (goals || [])
                 .sort((goalA, goalB) => {
-                    const dateA = new Date(goalA.dateUpdate);
-                    const dateB = new Date(goalB.dateUpdate);
+                    const dateA = new Date(goalA.updatedAt);
+                    const dateB = new Date(goalB.updatedAt);
                     return dateA.getTime() - dateB.getTime();
                 })
                 .slice(0, latestGoals),
@@ -182,9 +182,9 @@ export default function Overall() {
         (transactions || []).map((transaction) => {
             if (
                 transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
+                new Date(transaction.updatedAt).getTime() > calculateTime
             )
-                result += transaction.price;
+                result += transaction.value;
         });
 
         return result;
@@ -194,9 +194,9 @@ export default function Overall() {
         (transactions || []).map((transaction) => {
             if (
                 !transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
+                new Date(transaction.updatedAt).getTime() > calculateTime
             )
-                result += transaction.price;
+                result += transaction.value;
         });
 
         return result;
@@ -206,9 +206,9 @@ export default function Overall() {
         (transactions || []).map((transaction) => {
             if (
                 transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
+                new Date(transaction.updatedAt).getTime() > calculateTime
             )
-                result += transaction.price;
+                result += transaction.value;
         });
 
         return result;
@@ -216,7 +216,7 @@ export default function Overall() {
     const expensiveNoLimit = useMemo(() => {
         let result = 0;
         (transactions || []).map((transaction) => {
-            if (!transaction.receiver) result += transaction.price;
+            if (!transaction.receiver) result += transaction.value;
         });
 
         return result;
@@ -226,7 +226,7 @@ export default function Overall() {
         (transactions || []).map((transaction) => {
             if (
                 !transaction.receiver &&
-                new Date(transaction.dateCreation).getTime() > calculateTime
+                new Date(transaction.updatedAt).getTime() > calculateTime
             )
                 categories.add(transaction.category);
         });
@@ -241,8 +241,8 @@ export default function Overall() {
                 res +=
                     transaction.category === category &&
                     !transaction.receiver &&
-                    new Date(transaction.dateCreation).getTime() > calculateTime
-                        ? transaction.price
+                    new Date(transaction.updatedAt).getTime() > calculateTime
+                        ? transaction.value
                         : 0;
             });
             dictionary.set(category, res);

@@ -2,15 +2,7 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const goalSchema = new mongoose.Schema({
-    'dateCreation': {
-        type: Date,
-        default: Date.now
-    },
-    'dateUpdate': {
-        type: Date,
-        default: Date.now
-    },
-    'goalname': {
+    'name': {
         type: String,
         require: true
     },
@@ -18,15 +10,17 @@ const goalSchema = new mongoose.Schema({
         type: Schema.Types.ObjectID,
         ref: 'User'
     },
-    'requiredmoney': {
+    'requiredValue': {
         type: Number,
         require: true
     },
-    'completed': {
+    'isCompleted': {
         type: Boolean,
         default: false,
         require: true
     }
+}, {
+    timestamps: true
 })
 
 const Goal = mongoose.model('Goal', goalSchema)

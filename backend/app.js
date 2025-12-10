@@ -6,6 +6,7 @@ const redis = require("redis");
 const secretRead = require("./utils/secret");
 const fs = require("fs");
 const https = require("https");
+const { setupSeedRoute } = require("./scripts/seed");
 
 let RedisDB_URI = "redis://redis:6379";
 let MongoDB_URI;
@@ -92,11 +93,12 @@ const intervalUserRouter = setInterval(async () => {
         app.use("/notes", noteRouter);
         app.use("/goals", goalRouter);
         app.use("/transactions", transactionRouter);
-        if (config.NODE_ENV === "test") {
+        if (config.NODE_ENV !== "production") {
             console.log(config);
             console.log("Attaching test router");
             const testRouter = require("./routers/test")();
             app.use("/test", testRouter);
+            setupSeedRoute(app);
         }
         clearInterval(intervalUserRouter);
     } else {
