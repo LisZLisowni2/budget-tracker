@@ -51,7 +51,7 @@ export default function Dashboard({ children }: IChildren) {
         );
 
     return (
-        <section className="w-full lg:max-sm:flex-col lg:flex border-t-8 text-center z-10">
+        <section className="w-full flex flex-col lg:flex-row border-t-8 h-screen text-center z-10">
             <nav className="flex flex-col lg:w-1/5 bg-rose-500 max-md:overflow-auto">
                 <NavOption
                     text="Overall"
@@ -90,7 +90,7 @@ export default function Dashboard({ children }: IChildren) {
                     onClick={() => setSelected('5')}
                 />
             </nav>
-            <div className="lg:w-4/5 text-center text-black bg-white">
+            <div className="lg:w-4/5 max-md:w-full grow text-center text-black bg-white">
                 {children}
             </div>
         </section>

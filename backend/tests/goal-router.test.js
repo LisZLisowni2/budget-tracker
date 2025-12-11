@@ -76,13 +76,13 @@ describe("Goal router", () => {
         // Create a new Goal
         const newGoal = new Goal({
             ownedBy: userID,
-            goalname: "Kotek",
-            requiredmoney: 8000
+            name: "Kotek",
+            requiredValue: 8000
         })
 
         await newGoal.save()
 
-        const goal = await Goal.findOne({ goalname: "Kotek", ownedBy: userID }).select('_id')
+        const goal = await Goal.findOne({ name: "Kotek", ownedBy: userID }).select('_id')
         goalID = goal._id.toString()
     })
     
@@ -96,8 +96,8 @@ describe("Goal router", () => {
                 .set('Authorization', `Bearer ${token}`)
             
             expect(res.statusCode).toBe(200)
-            expect(res.body.goalname).toMatch(/Kotek/)
-            expect(res.body.requiredmoney).toBe(8000)
+            expect(res.body.name).toMatch(/Kotek/)
+            expect(res.body.requiredValue).toBe(8000)
         })
     
         it("Denied access to goal without login", async () => {
@@ -146,8 +146,8 @@ describe("Goal router", () => {
 
     describe("POST /new", () => {
         const body = {
-            goalname: "Komputer",
-            requiredmoney: 7500
+            name: "Komputer",
+            requiredValue: 7500
         }
 
         it("Create a new goal", async () => {
@@ -167,8 +167,8 @@ describe("Goal router", () => {
 
     describe("PUT /edit", () => {
         const body = {
-            goalname: 'Harambe',
-            requiredmoney: 4500
+            name: 'Harambe',
+            requiredValue: 4500
         }
         it("Edit goal", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
@@ -187,8 +187,8 @@ describe("Goal router", () => {
                 .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
-            expect(resOutput.body.goalname).toMatch("Harambe");
-            expect(resOutput.body.requiredmoney).toBe(4500);
+            expect(resOutput.body.name).toMatch("Harambe");
+            expect(resOutput.body.requiredValue).toBe(4500);
         })
 
         it("Unauthoized attempt to edit goal", async () => {
@@ -251,8 +251,8 @@ describe("Goal router", () => {
                 .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
-            expect(resOutput.body.goalname).toMatch("Kotek");
-            expect(resOutput.body.requiredmoney).toBe(8000);
+            console.log(resOutput)
+            expect(resOutput.body.isCompleted).toBe(true);
         })
 
         it("Unauthoized attempt to complete goal", async () => {

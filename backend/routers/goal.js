@@ -16,8 +16,8 @@ module.exports = (config, redis) => {
             const goals = await Goal.find({ ownedBy: user._id })
 
             res.status(200).json(goals)
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -35,8 +35,8 @@ module.exports = (config, redis) => {
             if (goal.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             res.status(200).json(goal)
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -59,8 +59,8 @@ module.exports = (config, redis) => {
             await newGoal.save()
 
             res.status(201).json({ message: 'Goal created' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -81,8 +81,8 @@ module.exports = (config, redis) => {
             await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Goal edited' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -102,8 +102,8 @@ module.exports = (config, redis) => {
             await Goal.findOneAndDelete({ _id: goalID })
 
             res.status(200).json({ message: 'Goal deleted' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -120,12 +120,12 @@ module.exports = (config, redis) => {
             const user = await User.findOne({ username: username }).select('_id')
             if (goal.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
-            await Goal.findOneAndUpdate({ _id: goalID }, { completed: true })
+            await Goal.findOneAndUpdate({ _id: goalID }, { isCompleted: true })
             await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Goal completed' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })

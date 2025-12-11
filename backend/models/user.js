@@ -29,7 +29,7 @@ const userSchema = new Schema({
         require: true,
         default: 'USD'
     },
-    'isVerifed': {
+    'isVerified': {
         type: Boolean,
         default: false
     },

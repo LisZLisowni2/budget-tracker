@@ -31,11 +31,12 @@ module.exports = (config, redis) => {
             
             const sessionID = await generateSessionID()
             await redis.setEx(sessionID, 60 * 60, username)
+            await User.findOneAndUpdate({ username: username }, { lastLogin: new Date() })
             const token = jwt.sign({ username: username, sessionID: sessionID }, config.JWT_Secret, { expiresIn: '1h' })
             res.json({ 'message': 'Login successful', token })
         } catch (err) {
-            console.error(err)
-            res.status(500).json({ 'message': 'Internal server error', 'error': err })
+            if (config.NODE_ENV !== "production") console.error(err)
+            res.status(500).json({ 'message': 'Internal server error' })
         }
     })
 
@@ -57,7 +58,57 @@ module.exports = (config, redis) => {
             await newUser.save()
             res.status(201).json({ 'message': 'Account created' })
         } catch (err) {
-            res.status(500).json({ 'message': 'Internal server error', 'error': err })
+            if (config.NODE_ENV !== "production") console.error(err)
+            res.status(500).json({ 'message': 'Internal server error' })
+        }
+    })
+
+    router.put('/updatePassword', Auth.authenticateToken, async (req, res) => {
+        try {
+            const { username } = req.user
+
+            const { password } = req.body
+            if (!password) return res.status(400).json({ 'message': 'Password not present' })
+
+            const hashedPassword = await bcrypt.hash(password, 10)
+            await User.findOneAndUpdate({ username: username }, { password: hashedPassword })
+            res.json({ 'message': 'Password updated' })
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
+            res.status(500).json({ 'message': 'Internal server error '})
+        }
+    })
+
+    router.put('/update', Auth.authenticateToken, async (req, res) => {
+        try {
+            const { username } = req.user
+            
+            if (req.body.password) return res.status(400).json({ 'message': 'Password cannot be updated. Use /updatePassword instead' })
+            if (req.body.email) {
+                const userByEmail = await User.findOne({ email: req.body.email })
+                if (userByEmail) return res.status(400).json({ 'message': 'User with that email exist' })
+            }
+            if (req.body.username) {
+                const userByUsername = await User.findOne({ username: req.body.username })
+                if (userByUsername) return res.status(400).json({ 'message': 'User with that username exist' })
+            }
+
+            await User.findOneAndUpdate({ username: username }, req.body)
+            res.json({ 'message': 'Account updated' })
+        } catch {
+            if (config.NODE_ENV !== "production") console.error(err)
+            res.status(500).json({ 'message': 'Internal server error '})
+        }
+    })
+
+    router.delete('/delete', Auth.authenticateToken, async (req, res) => {
+        try {
+            const { username } = req.user
+            await User.findOneAndDelete({ username: username })
+            res.json({ 'message': 'Account deleted' })
+        } catch {
+            if (config.NODE_ENV !== "production") console.error(err)
+            res.status(500).json({ 'message': 'Internal server error '})
         }
     })
 
@@ -67,6 +118,7 @@ module.exports = (config, redis) => {
             const userData = await User.findOne({ username: username }).select("-v -_id -password")
             res.json(userData)
         } catch {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ 'message': 'Internal server error' })
         }
     })
@@ -76,6 +128,7 @@ module.exports = (config, redis) => {
             await redis.del(req.user.sessionID)
             res.json({ 'message': 'Logout successful' })
         } catch {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ 'message': 'Internal server error '})
         }
     })

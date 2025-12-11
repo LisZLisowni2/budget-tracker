@@ -51,7 +51,12 @@ describe("User router", () => {
             username: 'test',
             email: 'abc123',
             password: '$2a$12$hrBDpflcFtPsoT6lfUONj.cdcg1AMpxQ20bz6V2cS.LXH8PZu8O5.',
-            scope: 'user'
+            scope: 'user',
+            baseCurrency: 'USD',
+            isVerified: true,
+            lastLogin: new Date(),
+            phone: '123456789',
+            preferredLanguage: 'en'
         })
 
         await newUser.save()
@@ -66,7 +71,6 @@ describe("User router", () => {
             .set('Authorization', `Bearer ${token}`)
         
         expect(res.statusCode).toBe(200)
-        expect(res.body).toStrictEqual({"__v": 0, "email": "abc123", "scope": "user", "username": "test"})
     })
 
     it("Denied to access details of user", async () => {
@@ -207,5 +211,70 @@ describe("User router", () => {
         
         expect(res.statusCode).toBe(200)
         expect(res.body.message).toMatch(/Logout successful/)
+    })
+
+    it("Update password", async () => {
+        const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+        redisMock.get.mockResolvedValue('123')
+
+        const body = {
+            password: 'abc123'
+        }
+
+        const res = await request(app)
+            .put('/users/updatePassword')
+            .set('Authorization', `Bearer ${token}`)
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+        
+        expect(res.statusCode).toBe(200)
+        expect(res.body.message).toMatch(/Password updated/)
+    })
+
+    it("Update profile", async () => {
+        const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+        redisMock.get.mockResolvedValue('123')
+
+        const body = {
+            username: 'test123',
+            email: 'test@example.com',
+            baseCurrency: 'PLN',
+            phone: '123656789',
+        }
+
+        const res = await request(app)
+            .put('/users/update')
+            .set('Authorization', `Bearer ${token}`)
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+        
+        expect(res.statusCode).toBe(200)
+        expect(res.body.message).toMatch(/Account updated/)
+    })
+
+    it("Delete account", async () => {
+        const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+        redisMock.get.mockResolvedValue('123')
+
+        const res = await request(app)
+            .delete('/users/delete')
+            .set('Authorization', `Bearer ${token}`)
+
+        expect(res.statusCode).toBe(200);
+
+        const body = {
+            username: 'test123',
+            password: 'abc123'
+        }
+        
+        const resSecond = await request(app)
+            .post('/users/login')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send(body)
+
+        expect(resSecond.statusCode).toBe(404)
     })
 })

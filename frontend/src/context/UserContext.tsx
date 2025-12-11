@@ -18,6 +18,18 @@ interface IUserContext {
         object | undefined,
         unknown
     >;
+    updatePassword: UseMutationResult<
+        AxiosResponse<any, any, {}>,
+        AxiosError<any, any>,
+        string | undefined,
+        unknown
+    >;
+    deleteAccount: UseMutationResult<
+        AxiosResponse<any, any, {}>,
+        AxiosError<any, any>,
+        null,
+        unknown
+    >;
     logoutMutation: () => void;
 }
 
@@ -46,6 +58,27 @@ export function UserProvide({ children }: IChildren) {
         },
     });
 
+    const handlePasswordUpdate = useMutation<
+        AxiosResponse<any, any>,
+        AxiosError<any, any>,
+        string | undefined,
+        unknown
+    >({
+        mutationFn: (password?: string) =>
+            api.put('/users/updatePassword', { password: password }),
+        onSuccess,
+    });
+
+    const handleAccountDeletion = useMutation<
+        AxiosResponse<any, any>,
+        AxiosError<any, any>,
+        null,
+        unknown
+    >({
+        mutationFn: () => api.delete('/users/delete'),
+        onSuccess,
+    });
+
     const handleLogout = useMutation({
         mutationFn: () => api.get('/users/logout'),
         onSuccess,
@@ -55,6 +88,8 @@ export function UserProvide({ children }: IChildren) {
         <UserContext.Provider
             value={{
                 loginMutate: handleLogin,
+                deleteAccount: handleAccountDeletion,
+                updatePassword: handlePasswordUpdate,
                 logoutMutation: () => handleLogout.mutate(),
             }}
         >

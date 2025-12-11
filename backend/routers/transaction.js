@@ -16,8 +16,8 @@ module.exports = (config, redis) => {
             const transactions = await Transaction.find({ ownedBy: user._id })
 
             res.status(200).json(transactions)
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -35,8 +35,8 @@ module.exports = (config, redis) => {
             if (transaction.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             res.status(200).json(transaction)
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -61,8 +61,8 @@ module.exports = (config, redis) => {
             await newTransaction.save()
 
             res.status(201).json({ message: 'Transaction created' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -83,8 +83,8 @@ module.exports = (config, redis) => {
             await Transaction.findOneAndUpdate({ _id: transactionID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Transaction edited' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -104,8 +104,8 @@ module.exports = (config, redis) => {
             await Transaction.findOneAndDelete({ _id: transactionID })
 
             res.status(200).json({ message: 'Transaction deleted' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })

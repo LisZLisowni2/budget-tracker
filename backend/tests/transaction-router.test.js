@@ -77,7 +77,7 @@ describe("Transaction router", () => {
         const newTransaction = new Transaction({
             ownedBy: userID,
             name: "Test",
-            price: 34.99,
+            value: 34.99,
             receiver: false
         })
 
@@ -98,7 +98,7 @@ describe("Transaction router", () => {
             
             expect(res.statusCode).toBe(200)
             expect(res.body.name).toMatch(/Test/)
-            expect(res.body.price).toBe(34.99)
+            expect(res.body.value).toBe(34.99)
         })
     
         it("Denied access to transaction without login", async () => {
@@ -148,7 +148,7 @@ describe("Transaction router", () => {
     describe("POST /new", () => {
         const body = {
             name: "Wypłata",
-            price: 4299.99,
+            value: 4299.99,
             receiver: true
         }
 
@@ -170,7 +170,7 @@ describe("Transaction router", () => {
     describe("PUT /edit", () => {
         const body = {
             name: "Zakupy",
-            price: 49.99
+            value: 49.99
         }
         it("Edit transaction", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
@@ -190,7 +190,7 @@ describe("Transaction router", () => {
                 .set('Authorization', `Bearer ${token}`)
             
             expect(resOutput.body.name).toMatch("Zakupy");
-            expect(resOutput.body.price).toBe(49.99);
+            expect(resOutput.body.value).toBe(49.99);
         })
 
         it("Unauthoized attempt to edit transaction", async () => {

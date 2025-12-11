@@ -16,8 +16,8 @@ module.exports = (config, redis) => {
             const notes = await Note.find({ ownedBy: user._id })
 
             res.status(200).json(notes)
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -35,8 +35,8 @@ module.exports = (config, redis) => {
             if (note.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             res.status(200).json(note)
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -61,8 +61,8 @@ module.exports = (config, redis) => {
             await newNote.save()
 
             res.status(201).json({ message: 'Note created' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -83,8 +83,8 @@ module.exports = (config, redis) => {
             await Note.findOneAndUpdate({ _id: noteID }, { 'updatedAt': Date.now() })
 
             res.status(200).json({ message: 'Note edited' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
@@ -104,8 +104,8 @@ module.exports = (config, redis) => {
             await Note.findOneAndDelete({ _id: noteID })
 
             res.status(200).json({ message: 'Note deleted' })
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            if (config.NODE_ENV !== "production") console.error(err)
             res.status(500).json({ message: 'Internal server error' })
         }
     })
