@@ -24,6 +24,12 @@ interface IUserContext {
         string | undefined,
         unknown
     >;
+    updateAccountDetails: UseMutationResult<
+        AxiosResponse<any, any, {}>,
+        AxiosError<any, any>,
+        object | undefined,
+        unknown
+    >;
     deleteAccount: UseMutationResult<
         AxiosResponse<any, any, {}>,
         AxiosError<any, any>,
@@ -79,6 +85,15 @@ export function UserProvide({ children }: IChildren) {
         onSuccess,
     });
 
+    const handleAccountUpdate = useMutation<
+        AxiosResponse<any, any>,
+        AxiosError<any, any>,
+        object | undefined,
+        unknown>({
+            mutationFn: (body?: object) => api.put('/users/update', body),
+            onSuccess,
+        })
+
     const handleLogout = useMutation({
         mutationFn: () => api.get('/users/logout'),
         onSuccess,
@@ -90,6 +105,7 @@ export function UserProvide({ children }: IChildren) {
                 loginMutate: handleLogin,
                 deleteAccount: handleAccountDeletion,
                 updatePassword: handlePasswordUpdate,
+                updateAccountDetails: handleAccountUpdate,
                 logoutMutation: () => handleLogout.mutate(),
             }}
         >
