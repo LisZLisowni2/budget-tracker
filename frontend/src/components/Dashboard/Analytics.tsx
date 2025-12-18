@@ -360,7 +360,7 @@ export default function Analytics() {
                 <option value="1Y">Year</option>
                 <option value="ALL">All time</option>
             </select>
-            <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 max-h-screen gap-4 *:m-auto *:w-full *:h-full *:flex *:justify-center *:p-4 max-lg:overflow-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 *:m-auto *:w-full *:h-full *:flex *:justify-center *:p-4">
                 {/* TODO: Update charts to represent data */}
                 <div>
                     {comparisonComp}

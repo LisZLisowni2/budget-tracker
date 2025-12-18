@@ -104,8 +104,8 @@ export default function Notes() {
     };
 
     return (
-        <div className="flex flex-1 max-md:flex-col overflow-hidden items-center justify-between flex-row max-lg:overflow-auto">
-            <div className="max-md:w-full w-1/3 max-md:h-64 h-screen overflow-y-auto transition-all shadow-sm md:shadow-2xl border-r-2">
+        <div className="flex flex-1 max-md:flex-col lg:overflow-hidden items-center justify-between flex-row">
+            <div className="max-md:w-full w-1/3 lg:h-screen overflow-y-auto transition-all shadow-sm md:shadow-2xl border-r-2">
                 <div className="max-md:p-4 md:h-1/16 sticky top-0 bg-white border-b">
                     <div className="flex justify-evenly items-center h-full *:cursor-pointer *:hover:scale-125 *:hover:text-gray-400 *:transition-all">
                         <Plus onClick={createNewNote} />

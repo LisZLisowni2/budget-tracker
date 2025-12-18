@@ -12,9 +12,8 @@ RUN npm run build
 
 FROM nginx:alpine AS deploy
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
-
-COPY nginx/nginx.crt nginx/nginx.key /etc/nginx/certs/
+ARG ENV=production
+COPY nginx/nginx.{ENV}.conf /etc/nginx/nginx.conf
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 

@@ -309,7 +309,7 @@ export default function Overall() {
     if (!transactions) return <ErrorData dataType="Transactions" />;
 
     return (
-        <div className="grid grid-rows-4 grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 *:justify-self-center *:self-center p-10 max-h-screen">
+        <div className="grid grid-rows-4 grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 *:justify-self-center *:self-center p-10">
             <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full h-full">
                 <StatsItem
                     title="Total income"

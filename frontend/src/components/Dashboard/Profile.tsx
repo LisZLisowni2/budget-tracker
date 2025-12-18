@@ -174,7 +174,7 @@ export default function Profile() {
 
     // FIXME: Background of section only white, not gradient gray.
     return (
-        <div className="flex justify-center items-center flex-col h-full max-md:overflow-auto *:p-4">
+        <div className="flex justify-center items-center flex-col h-full *:p-4">
             <Modal
                 header="Change Password Form"
                 activator={isPasswordChangeModalOpen}

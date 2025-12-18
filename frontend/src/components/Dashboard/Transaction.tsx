@@ -132,7 +132,7 @@ export default function Transactions() {
     };
 
     return (
-        <div className="flex items-center justify-between flex-col h-full *:p-4 max-lg:overflow-auto">
+        <div className="flex items-center justify-between flex-col h-full *:p-4">
             <Modal
                 activator={isAddForm}
                 header="Add transaction form"
