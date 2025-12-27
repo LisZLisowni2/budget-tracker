@@ -130,6 +130,7 @@ export default function Goals() {
                 activator={isAddForm}
                 header="Add goal form"
                 onClick={() => setStateAddForm(!isAddForm)}
+                id='addForm'
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleAdd}>
                     <FormField
@@ -151,6 +152,7 @@ export default function Goals() {
                 activator={isChangeForm}
                 header="Update goal form"
                 onClick={() => setStateChangeForm(!isChangeForm)}
+                id='changeForm'
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleChangeItem}>
                     <h1 className="text-3xl">Select Item</h1>
@@ -189,6 +191,7 @@ export default function Goals() {
                 activator={isDeleteForm}
                 header="Delete goal form"
                 onClick={() => setStateDeleteForm(!isDeleteForm)}
+                id='deleteForm'
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleDeleteItem}>
                     <h1 className="text-3xl">Select Item</h1>
@@ -253,14 +256,17 @@ export default function Goals() {
             <div className="text-white flex max-md:flex-col justify-evenly w-full h-1/3 items-center">
                 <Button
                     text="Add new goal"
+                    id='add'
                     onClick={() => setStateAddForm(!isAddForm)}
                 />
                 <Button
                     text="Change goal details"
+                    id='change'
                     onClick={() => setStateChangeForm(!isChangeForm)}
                 />
                 <Button
                     text="Delete goal"
+                    id='delete'
                     onClick={() => setStateDeleteForm(!isDeleteForm)}
                 />
             </div>

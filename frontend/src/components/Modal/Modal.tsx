@@ -6,6 +6,7 @@ interface IModal {
     children?: ReactNode;
     activator: boolean;
     onClick: () => void;
+    id?: string
 }
 
 export default function Modal({
@@ -13,10 +14,12 @@ export default function Modal({
     children,
     activator,
     onClick,
+    id
 }: IModal) {
     return (
         <div
             className={`${!activator ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'} fixed top-0 left-0 z-10 w-full h-full overflow-auto bg-black/40 m-0 p-0`}
+            id={id}
         >
             <div
                 className={`flex-col max-w-3/5 min-w-1/6 mt-4 mb-auto ml-auto mr-auto bg-amber-50 hover:scale-105 duration-300 transition-all ${!activator ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}

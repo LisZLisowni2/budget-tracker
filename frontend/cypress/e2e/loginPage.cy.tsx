@@ -41,7 +41,7 @@ describe("Login page", () => {
         cy.get("input[id=\"login\"").type("test")
         cy.get("input[id=\"password\"").type("def456")
         cy.get("button").click()
-        cy.get("#status").invoke("text").should('match', /^Error while logging:.*$/i) 
+        cy.get("#passwordError").invoke("text").should('match', /^Wrong password$/i) 
     })
 
     it("Input data with incorrect login", () => {
@@ -49,6 +49,6 @@ describe("Login page", () => {
         cy.get("input[id=\"login\"").type("anotherTest")
         cy.get("input[id=\"password\"").type("abc123")
         cy.get("button").click()
-        cy.get("#status").invoke("text").should('match', /^Error while logging:.*$/i) 
+        cy.get("#usernameError").invoke("text").should('match', /^That username doesn't exist$/i) 
     })
 })
