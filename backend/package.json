@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it --rm backend-bt-testing",
+    "test:action": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run --rm backend-bt-testing",
     "test:coverage": "docker build -f Dockerfile-test -t backend-bt-testing . && docker run -it --rm backend-bt-testing npx vitest --run --coverage"
   },
   "keywords": [],
