@@ -16,7 +16,7 @@ jobs:
             
             - name: Install dependencies
               run: |
-                sudo apt update -y && apt upgrade -y
+                sudo apt update -y && sudo apt upgrade -y
                 sudo apt install docker
 
             - name: Run tests
