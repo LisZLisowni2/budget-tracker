@@ -38,7 +38,7 @@ services:
       - NODE_ENV=test
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "--tries=1", "--no-check-certificate", "https://127.0.0.1:3000/health"]
-      interval: 15s
+      interval: 5s
       timeout: 10s
       retries: 5
       start_period: 1m
