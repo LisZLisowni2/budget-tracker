@@ -14,6 +14,7 @@ module.exports = (config, redis) => {
             const user = await User.findOne({ username: username }).select('_id')
             
             const transactions = await Transaction.find({ ownedBy: user._id })
+            await redis.setEx(`ALL-TRANSACTIONS-${user._id}`, 60 * 60, transactions)
 
             res.status(200).json(transactions)
         } catch (err) {
@@ -59,6 +60,7 @@ module.exports = (config, redis) => {
             })
 
             await newTransaction.save()
+            await redis.del(`ALL-TRANSACTIONS-${userID}`)
 
             res.status(201).json({ message: 'Transaction created' })
         } catch (err) {
@@ -81,6 +83,7 @@ module.exports = (config, redis) => {
             
             await Transaction.findOneAndUpdate({ _id: transactionID }, req.body)
             await Transaction.findOneAndUpdate({ _id: transactionID }, { 'updatedAt': Date.now() })
+            await redis.del(`ALL-TRANSACTIONS-${user._id}`)
 
             res.status(200).json({ message: 'Transaction edited' })
         } catch (err) {
@@ -102,6 +105,7 @@ module.exports = (config, redis) => {
             if (transaction.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             await Transaction.findOneAndDelete({ _id: transactionID })
+            await redis.del(`ALL-TRANSACTIONS-${user._id}`)
 
             res.status(200).json({ message: 'Transaction deleted' })
         } catch (err) {

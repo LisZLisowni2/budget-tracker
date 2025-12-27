@@ -1,0 +1,25 @@
+name: Backend Tests
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    backend_tests:
+        runs-on: ubuntu-latest
+        env:
+            NODE_ENV: test
+        steps:
+            - name: Checkout 
+              uses: actions/checkout@v3
+            
+            - name: Install dependencies
+              run: |
+                apt update -y && apt upgrade -y
+                apt install docker
+            
+            - name: Run tests
+              run: |
+                cd ./backend
+                npm run test
