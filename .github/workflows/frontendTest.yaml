@@ -62,6 +62,7 @@ jobs:
                 docker service ls
                 sleep 15
                 docker service ls
+                docker service logs testStack_database
             
             - name: Cypress tests
               run: |
