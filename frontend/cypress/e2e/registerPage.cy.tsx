@@ -20,8 +20,10 @@ describe("Register page", () => {
     it("Test without any data", () => {
         cy.visit("/register")
         cy.get("button").click()
-        cy.get('#status')
-            .should('contain.text', 'Username, email, password or second password not present')
+        cy.get("#usernameError").should('contain.text', 'Username too short')
+        cy.get("#emailError").should('contain.text', 'Invalid email pattern')
+        cy.get("#passwordError").should('contain.text', 'Password too short')
+        cy.get("#passwordSecondError").should('contain.text', 'Password too short')
     })
 
     it("Input data and send data", () => {
@@ -42,7 +44,7 @@ describe("Register page", () => {
         cy.get("input[id=\"password\"").type("abc123")
         cy.get("input[id=\"passwordSecond\"").type("abc124")
         cy.get("button").click()
-        cy.get("#status").should('contain.text', 'Passwords are not the same') 
+        cy.get("#passwordSecondError").should('contain.text', 'Passwords are not the same') 
     })
 
     it("Input data with uncorrect email", () => {
@@ -52,7 +54,7 @@ describe("Register page", () => {
         cy.get("input[id=\"password\"").type("abc124")
         cy.get("input[id=\"passwordSecond\"").type("abc124")
         cy.get("button").click()
-        cy.get("#status").invoke("text").should('match', /Email format isn't correct/i) 
+        cy.get("#emailError").invoke("text").should('match', /Invalid email pattern/i) 
     })
 
     it("Try create account with existed email", () => {
@@ -62,7 +64,7 @@ describe("Register page", () => {
         cy.get("input[id=\"password\"").type("abc125")
         cy.get("input[id=\"passwordSecond\"").type("abc125")
         cy.get("button").click()
-        cy.get("#status").invoke("text").should('match', /^Error while registering:.*$/i) 
+        cy.get("#emailError").invoke("text").should('match', /^Email already in use*$/i) 
     })
 
     it("Try create account with existed username", () => {
@@ -72,6 +74,6 @@ describe("Register page", () => {
         cy.get("input[id=\"password\"").type("abc125")
         cy.get("input[id=\"passwordSecond\"").type("abc125")
         cy.get("button").click()
-        cy.get("#status").invoke("text").should('match', /^Error while registering:.*$/i) 
+        cy.get("#usernameError").invoke("text").should('match', /^Username already in use$/i) 
     })
 })

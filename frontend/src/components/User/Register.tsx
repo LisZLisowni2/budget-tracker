@@ -122,7 +122,7 @@ export default function Register() {
                                         {...field}
                                     />
                                     {errors.username && (
-                                        <FieldError
+                                        <FieldError id='usernameError'
                                             message={errors.username.message}
                                         />
                                     )}
@@ -141,7 +141,7 @@ export default function Register() {
                                         {...field}
                                     />
                                     {errors.email && (
-                                        <FieldError
+                                        <FieldError id='emailError'
                                             message={errors.email.message}
                                         />
                                     )}
@@ -168,7 +168,7 @@ export default function Register() {
                                         </span>
                                     </FormField>
                                     {errors.password && (
-                                        <FieldError
+                                        <FieldError id='passwordError'
                                             message={errors.password.message}
                                         />
                                     )}
@@ -193,7 +193,7 @@ export default function Register() {
                                         </span>
                                     </FormField>
                                     {errors.passwordVerify && (
-                                        <FieldError
+                                        <FieldError id='passwordSecondError'
                                             message={
                                                 errors.passwordVerify.message
                                             }
@@ -207,7 +207,7 @@ export default function Register() {
                 <p className="flex my-4 flex-col">
                     <Button text="Register" />
                 </p>
-                {errors.root && <p>{errors.root.message}</p>}
+                {errors.root && <p id="status">{errors.root.message}</p>}
                 <p>
                     <Link
                         to="/login"
