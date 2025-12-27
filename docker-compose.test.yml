@@ -112,8 +112,9 @@ volumes:
 
 secrets:
   db_password:
-    file: dbPassword.local
+    external: true
   redis_password:
-    file: redisPassword.local
+    external: true
   jwt_token:
-    file: JWTToken.local
+    external: true
+
