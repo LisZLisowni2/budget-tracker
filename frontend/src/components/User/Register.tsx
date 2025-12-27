@@ -17,7 +17,7 @@ const UserRegisterSchema = z.object({
         .regex(/^[a-zA-Z0-9]+$/, {
             error: 'Username contains forbidden characters',
         }),
-    email: z.email({ error: 'Invalid email pattern ' }),
+    email: z.email({ error: 'Invalid email pattern' }),
     password: z.string().min(3, { error: 'Password too short' }),
     passwordVerify: z.string().min(3, { error: 'Password too short' }),
 });

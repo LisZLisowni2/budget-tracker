@@ -24,6 +24,7 @@ jobs:
             - name: Run vitest
               run: |
                 cd ./frontend
+                npm install
                 npm run test
 
             - name: Install docker
