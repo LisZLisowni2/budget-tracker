@@ -7,6 +7,7 @@ const secretRead = require("./utils/secret");
 const fs = require("fs");
 const https = require("https");
 const { setupSeedRoute } = require("./scripts/seed");
+const { specs, swaggerUi } = require('./swagger')
 
 let RedisDB_URI = "redis://redis:6379";
 let MongoDB_URI;
@@ -17,6 +18,9 @@ const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || "0.0.0.0";
 const NODE_ENV = process.env.NODE_ENV || "production";
+
+app.use("/api-docs", swaggerUi.serve)
+app.get("/api-docs", swaggerUi.setup(specs));
 
 secretRead("db_password")
     .then(async (res) => {
