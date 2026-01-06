@@ -60,5 +60,7 @@ jobs:
               run: |
                 cd ./frontend
                 docker service ls
+                sleep 120
+                docker service ls
                 # npx wait-on https://localhost:3000/health --timeout 120000 
                 npx cypress run
