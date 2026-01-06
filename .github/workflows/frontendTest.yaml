@@ -62,5 +62,6 @@ jobs:
                 docker service ls
                 sleep 120
                 docker service ls
+                docker service ps testStack_backend --no-trunc
                 # npx wait-on https://localhost:3000/health --timeout 120000 
                 npx cypress run
