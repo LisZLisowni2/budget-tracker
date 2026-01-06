@@ -1,6 +1,10 @@
 /// <reference types="cypress"/>
 
 describe("Register page", () => {
+    before(() => {
+        cy.clearDB()
+    })
+    
     after(() => {
         cy.clearDB()
     })
@@ -64,7 +68,7 @@ describe("Register page", () => {
         cy.get("input[id=\"password\"").type("abc125")
         cy.get("input[id=\"passwordSecond\"").type("abc125")
         cy.get("button").click()
-        cy.get("#emailError").invoke("text").should('match', /^Email already in use*$/i) 
+        cy.get("#emailError").invoke("text").should('match', /^Email already in use$/i) 
     })
 
     it("Try create account with existed username", () => {

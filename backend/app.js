@@ -135,6 +135,33 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
 };
+
+const client = require('prom-client')
+const collectDefaultMetrics = client.collectDefaultMetrics
+
+collectDefaultMetrics({ register: client.register })
+
+const httpRequestCouter = new client.Counter({
+    name: 'budget_tracker_http_requests_total',
+    help: 'Całkowita liczba zapytań HTTP',
+    labelNames: ['method', 'status', 'version'] // 'version' jest kluczowa dla Canary!
+})
+
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        httpRequestCouter.inc({
+            method: req.method,
+            status: res.statusCode,
+            version: process.env.APP_VERSION || 'v1'
+        })
+    })
+    next()
+})
+app.get('/metrics', async (req, res) => {
+    res.send('Content-type', client.register.contentType)
+    res.end(await client.register.metrics())
+})
+
 app.use(cors(corsOptions));
 app.get("/health", async (req, res) => {
     try {

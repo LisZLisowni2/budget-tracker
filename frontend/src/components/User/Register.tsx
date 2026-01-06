@@ -74,6 +74,18 @@ export default function Register() {
                             message: 'There are empty fields',
                         });
                         break;
+                    case 400:
+                        const responseData = err.response.data.message
+                        if (responseData.includes('username')) {
+                            setError('username', {
+                                message: 'Username already in use',
+                            });
+                        } else if (responseData.includes('email')) {
+                            setError('email', {
+                                message: 'Email already in use',
+                            });
+                        }
+                        break;
                     default:
                         setError('root', {
                             message: 'Internal server error.',

@@ -55,6 +55,7 @@ export default function Goals() {
 
     const [state, dispatch] = useReducer(formReducer, initialState);
     const selectRef = useRef<HTMLSelectElement>(null);
+    const selectRef2 = useRef<HTMLSelectElement>(null);
 
     if (isUserLoading || isGoalsLoading) {
         return (
@@ -117,8 +118,8 @@ export default function Goals() {
 
     const handleDeleteItem = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!selectRef.current) return;
-        deleteMutation(selectRef.current.value);
+        if (!selectRef2.current) return;
+        deleteMutation(selectRef2.current.value);
         dispatch({
             type: 'RESET',
         });
@@ -145,7 +146,7 @@ export default function Goals() {
                         type="number"
                         onChange={handleChange}
                     />
-                    <Button text="Send" />
+                    <Button id='submit' text="Send" />
                 </form>
             </Modal>
             <Modal
@@ -157,11 +158,12 @@ export default function Goals() {
                 <form className="p-8 m-4 *:w-full" onSubmit={handleChangeItem}>
                     <h1 className="text-3xl">Select Item</h1>
                     <select
+                        id='select'
                         ref={selectRef}
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={'-1'}>
+                        <option defaultValue={'-1'}>
                             Select one of these
                         </option>
                         {goals.map((goal) => (
@@ -171,20 +173,20 @@ export default function Goals() {
                         ))}
                     </select>
                     <FormField
-                        id="name"
+                        id="name2"
                         label="Goal name"
                         type="text"
                         onChange={handleChange}
-                        value={state.name}
+                        defaultValue={state.name}
                     />
                     <FormField
-                        id="requiredValue"
+                        id="requiredValue2"
                         label="Money quantity"
                         type="number"
                         onChange={handleChange}
-                        value={state.requiredValue}
+                        defaultValue={state.requiredValue}
                     />
-                    <Button text="Update" />
+                    <Button id='submit2' text="Update" />
                 </form>
             </Modal>
             <Modal
@@ -196,11 +198,12 @@ export default function Goals() {
                 <form className="p-8 m-4 *:w-full" onSubmit={handleDeleteItem}>
                     <h1 className="text-3xl">Select Item</h1>
                     <select
-                        ref={selectRef}
+                        id='select2'
+                        ref={selectRef2}
                         onChange={handleSelect}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={'-1'}>
+                        <option defaultValue={'-1'}>
                             Select one of these
                         </option>
                         {goals.map((goal) => (
@@ -209,7 +212,7 @@ export default function Goals() {
                             </option>
                         ))}
                     </select>
-                    <Button text="Delete" />
+                    <Button id='submit3' text="Delete" />
                 </form>
             </Modal>
             <div className="bg-white w-4/5 shadow-2xl rounded-4xl max-h-150 m-8 overflow-auto">
