@@ -59,6 +59,6 @@ jobs:
             - name: Cypress tests
               run: |
                 cd ./frontend
-                docker service logs testStack_backend
+                docker service ls
                 # npx wait-on https://localhost:3000/health --timeout 120000 
                 npx cypress run
