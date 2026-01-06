@@ -45,6 +45,12 @@ jobs:
                 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             - name: Run application
               run: |
+                sudo apt install -y mkcert
+                mkcert -install
+                mkdir -p ./backend/cert
+                cd ./backend/cert
+                mkcert localhost 127.0.0.1 backend
+                cd ../../
                 docker swarm init
                 docker service create --name registry --publish mode=host,target=5000,published=5000,protocol=tcp registry:2
                 echo $DB_PASSWORD | docker secret create db_password -
