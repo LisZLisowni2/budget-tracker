@@ -31,8 +31,8 @@ services:
       restart_policy:
         condition: on-failure
     ports:
-      - target: 5173
-        published: 5173
+      - target: 3000
+        published: 3000
         protocol: tcp
     environment:
       - Port=3000
