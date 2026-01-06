@@ -1,0 +1,73 @@
+name: Frontend Tests
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    frontend_tests:
+        runs-on: ubuntu-latest
+        env:
+            NODE_ENV: test
+            REDIS_PASSWORD: test123
+            DB_PASSWORD: test123
+            JWT_TOKEN: token
+        steps:
+            - name: Checkout 
+              uses: actions/checkout@v3
+                
+            - name: Run vitest
+              run: |
+                cd ./frontend
+                npm install
+                npm run test
+
+            - name: Install docker
+              run: |
+                # Add Docker's official GPG key:
+                sudo apt update -y
+                sudo apt install ca-certificates curl
+                sudo install -m 0755 -d /etc/apt/keyrings
+                sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+                sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+                # Add the repository to Apt sources:
+                sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+                Types: deb
+                URIs: https://download.docker.com/linux/ubuntu
+                Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+                Components: stable
+                Signed-By: /etc/apt/keyrings/docker.asc
+                EOF
+
+                sudo apt update -y
+                sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            - name: Run application
+              run: |
+                sudo apt install -y mkcert
+                mkcert -install
+                mkdir -p ./backend/cert
+                cd ./backend/cert
+                mkcert localhost 127.0.0.1 backend
+                cd ../../
+                docker swarm init
+                docker service create --name registry --publish mode=host,target=5000,published=5000,protocol=tcp registry:2
+                echo $DB_PASSWORD | docker secret create db_password -
+                echo $JWT_TOKEN | docker secret create jwt_token -
+                echo $REDIS_PASSWORD | docker secret create redis_password -
+                docker build -t 127.0.0.1:5000/budget-tracker-frontend-dev:latest -f ./frontend/Dockerfile.dev ./frontend
+                docker build -t 127.0.0.1:5000/budget-tracker-backend:latest ./backend
+                docker push 127.0.0.1:5000/budget-tracker-frontend-dev:latest
+                docker push 127.0.0.1:5000/budget-tracker-backend:latest 
+                docker stack deploy -c docker-compose.test.yml testStack
+            
+            - name: Cypress tests
+              run: |
+                cd ./frontend
+                docker service ls
+                sleep 60
+                docker service ls
+                docker service ps testStack_backend --no-trunc
+                # npx wait-on https://localhost:3000/health --timeout 120000 
+                npx cypress run

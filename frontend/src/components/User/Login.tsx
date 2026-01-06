@@ -47,6 +47,12 @@ export default function Login() {
     };
 
     const handleLogin = async (data: TUserSchema) => {
+        if (data.username === '' || data.password === '') {
+            setError('root', {
+                message: 'Username or password not present',
+            });
+            return;
+        }
         mutate(data, {
             onSuccess: (res) => {
                 localStorage.setItem('token', res.data.token);
@@ -113,7 +119,7 @@ export default function Login() {
                                 {...field}
                             />
                             {errors.username && (
-                                <FieldError message={errors.username.message} />
+                                <FieldError id="usernameError" message={errors.username.message} />
                             )}
                         </>
                     )}
@@ -134,12 +140,12 @@ export default function Login() {
                                 </span>
                             </FormField>
                             {errors.password && (
-                                <FieldError message={errors.password.message} />
+                                <FieldError id="passwordError" message={errors.password.message} />
                             )}
                         </>
                     )}
                 />
-                {errors.root && <p>{errors.root.message}</p>}
+                {errors.root && <p id='status'>{errors.root.message}</p>}
                 <p className="flex my-4 flex-col">
                     <Button text="Login" />
                 </p>

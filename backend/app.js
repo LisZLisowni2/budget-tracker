@@ -7,6 +7,7 @@ const secretRead = require("./utils/secret");
 const fs = require("fs");
 const https = require("https");
 const { setupSeedRoute } = require("./scripts/seed");
+const { specs, swaggerUi } = require('./swagger')
 
 let RedisDB_URI = "redis://redis:6379";
 let MongoDB_URI;
@@ -17,6 +18,9 @@ const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || "0.0.0.0";
 const NODE_ENV = process.env.NODE_ENV || "production";
+
+app.use("/api-docs", swaggerUi.serve)
+app.get("/api-docs", swaggerUi.setup(specs));
 
 secretRead("db_password")
     .then(async (res) => {
@@ -131,6 +135,33 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
 };
+
+const client = require('prom-client')
+const collectDefaultMetrics = client.collectDefaultMetrics
+
+collectDefaultMetrics({ register: client.register })
+
+const httpRequestCouter = new client.Counter({
+    name: 'budget_tracker_http_requests_total',
+    help: 'Całkowita liczba zapytań HTTP',
+    labelNames: ['method', 'status', 'version'] // 'version' jest kluczowa dla Canary!
+})
+
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        httpRequestCouter.inc({
+            method: req.method,
+            status: res.statusCode,
+            version: process.env.APP_VERSION || 'v1'
+        })
+    })
+    next()
+})
+app.get('/metrics', async (req, res) => {
+    res.send('Content-type', client.register.contentType)
+    res.end(await client.register.metrics())
+})
+
 app.use(cors(corsOptions));
 app.get("/health", async (req, res) => {
     try {

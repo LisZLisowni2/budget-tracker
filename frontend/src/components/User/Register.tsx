@@ -17,7 +17,7 @@ const UserRegisterSchema = z.object({
         .regex(/^[a-zA-Z0-9]+$/, {
             error: 'Username contains forbidden characters',
         }),
-    email: z.email({ error: 'Invalid email pattern ' }),
+    email: z.email({ error: 'Invalid email pattern' }),
     password: z.string().min(3, { error: 'Password too short' }),
     passwordVerify: z.string().min(3, { error: 'Password too short' }),
 });
@@ -74,6 +74,18 @@ export default function Register() {
                             message: 'There are empty fields',
                         });
                         break;
+                    case 400:
+                        const responseData = err.response.data.message
+                        if (responseData.includes('username')) {
+                            setError('username', {
+                                message: 'Username already in use',
+                            });
+                        } else if (responseData.includes('email')) {
+                            setError('email', {
+                                message: 'Email already in use',
+                            });
+                        }
+                        break;
                     default:
                         setError('root', {
                             message: 'Internal server error.',
@@ -122,7 +134,7 @@ export default function Register() {
                                         {...field}
                                     />
                                     {errors.username && (
-                                        <FieldError
+                                        <FieldError id='usernameError'
                                             message={errors.username.message}
                                         />
                                     )}
@@ -141,7 +153,7 @@ export default function Register() {
                                         {...field}
                                     />
                                     {errors.email && (
-                                        <FieldError
+                                        <FieldError id='emailError'
                                             message={errors.email.message}
                                         />
                                     )}
@@ -168,7 +180,7 @@ export default function Register() {
                                         </span>
                                     </FormField>
                                     {errors.password && (
-                                        <FieldError
+                                        <FieldError id='passwordError'
                                             message={errors.password.message}
                                         />
                                     )}
@@ -193,7 +205,7 @@ export default function Register() {
                                         </span>
                                     </FormField>
                                     {errors.passwordVerify && (
-                                        <FieldError
+                                        <FieldError id='passwordSecondError'
                                             message={
                                                 errors.passwordVerify.message
                                             }
@@ -207,7 +219,7 @@ export default function Register() {
                 <p className="flex my-4 flex-col">
                     <Button text="Register" />
                 </p>
-                {errors.root && <p>{errors.root.message}</p>}
+                {errors.root && <p id="status">{errors.root.message}</p>}
                 <p>
                     <Link
                         to="/login"

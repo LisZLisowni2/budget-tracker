@@ -31,14 +31,16 @@ services:
       restart_policy:
         condition: on-failure
     ports:
-      - "3000:3000"
+      - target: 3000
+        published: 3000
+        protocol: tcp
     environment:
       - Port=3000
       - Address=0.0.0.0
       - NODE_ENV=test
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "--tries=1", "--no-check-certificate", "https://127.0.0.1:3000/health"]
-      interval: 15s
+      interval: 5s
       timeout: 10s
       retries: 5
       start_period: 1m
@@ -112,8 +114,9 @@ volumes:
 
 secrets:
   db_password:
-    file: dbPassword.local
+    external: true
   redis_password:
-    file: redisPassword.local
+    external: true
   jwt_token:
-    file: JWTToken.local
+    external: true
+
