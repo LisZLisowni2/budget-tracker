@@ -7,5 +7,6 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add("clearDB", () => {
-    cy.request('POST', 'https://localhost:3000/test/cleanup')
+    const apiUrl = Cypress.env('apiUrl')
+    cy.request('POST', `${apiUrl}/test/cleanup`)
 })

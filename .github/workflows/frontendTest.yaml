@@ -59,10 +59,9 @@ jobs:
                 docker push 127.0.0.1:5000/budget-tracker-frontend-dev:latest
                 docker push 127.0.0.1:5000/budget-tracker-backend:latest 
                 docker stack deploy -c docker-compose.test.yml testStack
-                sleep 180
-                docker service logs testStack_backend
             
             - name: Cypress tests
               run: |
                 cd ./frontend
+                npx wait-on https://localhost:3000/health --timeout 120000
                 npx cypress run
