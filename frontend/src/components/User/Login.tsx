@@ -47,12 +47,6 @@ export default function Login() {
     };
 
     const handleLogin = async (data: TUserSchema) => {
-        if (data.username === '' || data.password === '') {
-            setError('root', {
-                message: 'Username or password not present',
-            });
-            return;
-        }
         mutate(data, {
             onSuccess: (res) => {
                 localStorage.setItem('token', res.data.token);

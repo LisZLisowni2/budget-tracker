@@ -21,11 +21,11 @@ module.exports = (config, redis) => {
 
     /**
      * @swagger
-     * /api/login:
+     * /api/users/login:
      *   post:
      *     summary: Login user
      *     tags:
-     *       - Authentication
+     *       - User
      *     requestBody:
      *       required: true
      *       content:
@@ -134,6 +134,76 @@ module.exports = (config, redis) => {
         }
     });
 
+        /**
+     * @swagger
+     * /api/users/register:
+     *   post:
+     *     summary: Register user
+     *     tags:
+     *       - User
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required:
+     *               - username
+     *               - email
+     *               - password
+     *             properties:
+     *               username:
+     *                 type: string
+     *                 example: johndoe
+     *               email:
+     *                 type: string
+     *                 example: foo@example.com
+     *               password:
+     *                 type: string
+     *                 format: password
+     *                 example: mySecurePassword123
+     *     responses:
+     *       201:
+     *         description: Reigster successful
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Account created
+     *       404:
+     *         description: Username, email or password not present
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Username, email or password not present
+     *       400:
+     *         description: User with that username or email exist
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: User with that username exist
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.post("/register", async (req, res) => {
         try {
             const { username, email, password } = req.body;
@@ -169,6 +239,83 @@ module.exports = (config, redis) => {
         }
     });
 
+      /**
+     * @swagger
+     * /api/users/updatePassword:
+     *   put:
+     *     summary: Update user's password
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     tags:
+     *       - User
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required:
+     *               - password
+     *             properties:
+     *               password:
+     *                  type: string
+     *                  format: password
+     *                  example: mySecurePassword123
+     *     responses:
+     *       200:
+     *         description: Password update successful
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Account created
+     *       400:
+     *         description: User with that username or email exist
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: User with that username exist
+     *       401:
+     *         description: Unauthorized access
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Token missing, access denied
+     *       403:
+     *         description: Invalid token
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Invalid token
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.put("/updatePassword", Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user;
@@ -190,10 +337,111 @@ module.exports = (config, redis) => {
             res.status(500).json({ message: "Internal server error " });
         }
     });
-
+      /**
+     * @swagger
+     * /api/users/update:
+     *   put:
+     *     summary: Update user
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     tags:
+     *       - User
+     *     requestBody:
+     *       required: false
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             optional:
+     *               - username
+     *               - email
+     *               - phone
+     *               - baseCurrency
+     *               - preferredLanguage
+     *             properties:
+     *               username:
+     *                  type: string
+     *                  example: joe
+     *               email:
+     *                  type: string
+     *                  example: joe@example.com
+     *               phone:
+     *                  type: string
+     *                  example: 1234567890
+     *               baseCurrency:
+     *                  type: string
+     *                  example: USD
+     *               preferredLanguage:
+     *                  type: string
+     *                  example: en
+     *     responses:
+     *       200:
+     *         description: Update successful
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Update successful
+     *       400:
+     *         description: Wrong request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: User with that username exist
+     *       401:
+     *         description: Unauthorized access
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Token missing, access denied
+     *       403:
+     *         description: Invalid token
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Invalid token
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.put("/update", Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user;
+
+            if (req.body.scope)
+                return res
+                    .status(401)
+                    .json({ message: "Your scope cannot be updated" });
+            
+            if (req.body.isVerified)
+                return res
+                    .status(401)
+                    .json({ message: "Your isVerified cannot be updated" });
 
             if (req.body.password)
                 return res
@@ -229,6 +477,70 @@ module.exports = (config, redis) => {
         }
     });
 
+          /**
+     * @swagger
+     * /api/users/delete:
+     *   delete:
+     *     summary: Delete user
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     tags:
+     *       - User
+     *     responses:
+     *       200:
+     *         description: Password update successful
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Delete successful
+     *       400:
+     *         description: User with that username or email exist
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: User with that username exist
+     *       401:
+     *         description: Unauthorized access
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Token missing, access denied
+     *       403:
+     *         description: Invalid token
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Invalid token
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.delete("/delete", Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user;
@@ -240,6 +552,60 @@ module.exports = (config, redis) => {
         }
     });
 
+          /**
+     * @swagger
+     * /api/users/me:
+     *   get:
+     *     summary: Retrieve user data
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     tags:
+     *       - User
+     *     responses:
+     *       200:
+     *         description: Retrieve user data
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Data retrieved
+     *       401:
+     *         description: Unauthorized access
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Token missing, access denied
+     *       403:
+     *         description: Invalid token
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Invalid token
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.get("/me", Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user;
@@ -253,6 +619,60 @@ module.exports = (config, redis) => {
         }
     });
 
+    /**
+     * @swagger
+     * /api/users/logout:
+     *   get:
+     *     summary: Logout user
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     tags:
+     *       - User
+     *     responses:
+     *       200:
+     *         description: Logout user
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Logout successful
+     *       401:
+     *         description: Unauthorized access
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Token missing, access denied
+     *       403:
+     *         description: Invalid token
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Invalid token
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.get("/logout", Auth.authenticateToken, async (req, res) => {
         try {
             await redis.del(req.user.sessionID);

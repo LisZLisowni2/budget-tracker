@@ -13,6 +13,11 @@ module.exports = (config, redis) => {
             const { username } = req.user
             const user = await User.findOne({ username: username }).select('_id')
             
+            if (await redis.get(`ALL-TRANSACTIONS-${user._id}`)) {
+                const transactions = await redis.get(`ALL-TRANSACTIONS-${user._id}`)
+                return res.status(200).json(transactions)
+            }
+
             const transactions = await Transaction.find({ ownedBy: user._id })
             await redis.setEx(`ALL-TRANSACTIONS-${user._id}`, 60 * 60, transactions)
 
