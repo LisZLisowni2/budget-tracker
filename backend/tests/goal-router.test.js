@@ -22,15 +22,24 @@ describe("Goal router", () => {
 
         await mongoose.connect(mongoURI)
 
-        // Create app and configuration
-        app = express()
-        app.use(express.json())
-
         redisMock = {
             get: vi.fn(),
             setEx: vi.fn(),
             del: vi.fn()
         }
+
+        redisMock.get.mockImplementation(async (key) => {
+            if (key === `ALL_GOALS-${userID}`) {
+                return JSON.stringify([{ _id: '1234', name: 'Test Goal' }])
+            } else if (key === '123' || key === '1267') {
+                return key
+            }
+            return null
+        })
+
+        // Create app and configuration
+        app = express()
+        app.use(express.json())
         
         config = {
             JWT_Secret: 'jwt_secret'
@@ -71,6 +80,7 @@ describe("Goal router", () => {
     })
 
     beforeEach(async () => {
+        vi.clearAllMocks()
         await Goal.deleteMany({})
         
         // Create a new Goal
@@ -133,7 +143,40 @@ describe("Goal router", () => {
     describe("GET /all", () => {
         it("All goals", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
-            redisMock.get.mockResolvedValue('123')
+            redisMock.get.mockImplementation(async (key) => {
+                if (key === '123') {
+                    return key
+                }
+                return null
+            })
+    
+            const res = await request(app)
+                .get(`/goals/all`)
+                .set('Authorization', `Bearer ${token}`)
+            
+            expect(res.statusCode).toBe(200)
+            expect(res.body.length).toBe(1)
+        })
+    })
+
+    describe("GET /all Cached", () => {
+        it("All goals", async () => {
+            const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+            redisMock.get.mockImplementation(async (key) => {
+                if (key === `ALL_GOALS-${userID}`) {
+                    return JSON.stringify([
+                        {
+                            _id: '1234',
+                            userID: userID,
+                            name: 'Test Goal',
+                            description: 'Test Goal Description',
+                        }
+                    ])
+                } else if (key === '123') {
+                    return key
+                }
+                return null
+            })
     
             const res = await request(app)
                 .get(`/goals/all`)
@@ -251,7 +294,6 @@ describe("Goal router", () => {
                 .get(`/goals/${goalID}`)
                 .set('Authorization', `Bearer ${token}`)
             
-            console.log(resOutput)
             expect(resOutput.body.isCompleted).toBe(true);
         })
 

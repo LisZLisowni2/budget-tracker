@@ -24,9 +24,8 @@ interface INoteViewer {
 function NoteElement({ title, content, onClick, selected }: INoteElement) {
     return (
         <button
-            id={`note`}
             onClick={onClick}
-            className={`${selected ? 'bg-rose-100' : ''} shadow-sm md:shadow-lg w-4/5 md:rounded-4xl md:m-4 md:mx-12 md:hover:scale-105 transition-all cursor-pointer`}
+            className={`note ${selected ? 'bg-rose-100' : ''} shadow-sm md:shadow-lg w-4/5 md:rounded-4xl md:m-4 md:mx-12 md:hover:scale-105 transition-all cursor-pointer`}
         >
             <div className="flex flex-col justify-start text-left p-2 md:m-4">
                 <h1 className="text-3xl break-words max-h-10 overflow-hidden">
@@ -42,7 +41,7 @@ function NoteElement({ title, content, onClick, selected }: INoteElement) {
 
 function NoteViewer({ content }: INoteViewer) {
     return (
-        <div className="prose max-w-none p-4">
+        <div id='contentView' className="prose max-w-none p-4">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {content?.replace(/\\n/g, '\n')}
             </ReactMarkdown>
@@ -108,9 +107,9 @@ export default function Notes() {
             <div className="max-md:w-full w-1/3 lg:h-screen overflow-y-auto transition-all shadow-sm md:shadow-2xl border-r-2">
                 <div className="max-md:p-4 md:h-1/16 sticky top-0 bg-white border-b">
                     <div className="flex justify-evenly items-center h-full *:cursor-pointer *:hover:scale-125 *:hover:text-gray-400 *:transition-all">
-                        <Plus onClick={createNewNote} />
-                        <Minus onClick={deleteNote} />
-                        <Copy onClick={copyNote} />
+                        <Plus id='plusBtn' onClick={createNewNote} />
+                        <Minus id='minusBtn' onClick={deleteNote} />
+                        <Copy id='copyBtn' onClick={copyNote} />
                     </div>
                 </div>
                 {notes.map((note) => {
@@ -151,6 +150,7 @@ export default function Notes() {
                                 />
                                 <Button
                                     text={isEditor ? 'Preview' : 'Edit'}
+                                    id='editPreviewBtn'
                                     onClick={() => setIsEditor(!isEditor)}
                                 />
                             </div>
@@ -173,7 +173,7 @@ export default function Notes() {
                             </div>
                         </section>
                     ) : (
-                        <h1 className="text-3xl">Choose a note</h1>
+                        <h1 id='message' className="text-3xl">Choose a note</h1>
                     )}
                 </div>
             </div>

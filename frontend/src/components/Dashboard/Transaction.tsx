@@ -137,6 +137,7 @@ export default function Transactions() {
                 activator={isAddForm}
                 header="Add transaction form"
                 onClick={() => setStateAddForm(!isAddForm)}
+                id='addForm'
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleAdd}>
                     <FormField
@@ -163,22 +164,25 @@ export default function Transactions() {
                         type="checkbox"
                         onChange={handleChange}
                     />
-                    <Button text="Send" />
+                    <Button id='submit1' text="Send" />
                 </form>
             </Modal>
             <Modal
                 activator={isChangeForm}
                 header="Update transaction form"
                 onClick={() => setStateChangeForm(!isChangeForm)}
+                id='changeForm'
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleChangeItem}>
                     <h1 className="text-3xl">Select Item</h1>
                     <select
                         ref={selectRef}
                         onChange={handleSelect}
+                        defaultValue={'-1'}
+                        id='select'
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option selected value={'-1'}>
+                        <option selected>
                             Select one of these
                         </option>
                         {transactions.map((transaction) => (
@@ -191,49 +195,52 @@ export default function Transactions() {
                         ))}
                     </select>
                     <FormField
-                        id="name"
+                        id="name2"
                         label="Transaction name"
-                        value={state.name}
+                        defaultValue={state.name}
                         type="text"
                         onChange={handleChange}
                     />
                     <FormField
-                        id="category"
+                        id="category2"
                         label="Category"
-                        value={state.category}
+                        defaultValue={state.category}
                         type="text"
                         onChange={handleChange}
                     />
                     <FormField
-                        id="value"
+                        id="value2"
                         label="Money quantity"
-                        value={state.value}
+                        defaultValue={state.value}
                         type="number"
                         onChange={handleChange}
                     />
                     <FormField
-                        id="receiver"
+                        id="receiver2"
                         label="Is receiving?"
                         checked={state.receiver}
                         type="checkbox"
                         onChange={handleChange}
                     />
-                    <Button text="Update" />
+                    <Button id='submit2' text="Update" />
                 </form>
             </Modal>
             <Modal
                 activator={isDeleteForm}
                 header="Delete transaction form"
                 onClick={() => setStateDeleteForm(!isDeleteForm)}
+                id='deleteForm'
             >
                 <form className="p-8 m-4 *:w-full" onSubmit={handleDeleteItem}>
                     <h1 className="text-3xl">Select Item</h1>
                     <select
                         ref={selectRef}
                         onChange={handleSelect}
+                        defaultValue={'-1'}
                         className="bg-white rounded-2xl p-4 my-6"
+                        id='select2'
                     >
-                        <option selected value={'-1'}>
+                        <option selected>
                             Select one of these
                         </option>
                         {transactions.map((transaction) => (
@@ -245,7 +252,7 @@ export default function Transactions() {
                             </option>
                         ))}
                     </select>
-                    <Button text="Delete" />
+                    <Button id='submit3' text="Delete" />
                 </form>
             </Modal>
             <div className="bg-white w-4/5 shadow-2xl rounded-4xl max-h-150 m-8 overflow-auto">
@@ -277,14 +284,17 @@ export default function Transactions() {
             <div className="text-white flex max-md:flex-col justify-evenly w-full h-1/3 items-center">
                 <Button
                     text="Add new transaction"
+                    id='add'
                     onClick={() => setStateAddForm(!isAddForm)}
                 />
                 <Button
                     text="Change transaction details"
+                    id='change'
                     onClick={() => setStateChangeForm(!isChangeForm)}
                 />
                 <Button
                     text="Delete transactions"
+                    id='delete'
                     onClick={() => setStateDeleteForm(!isDeleteForm)}
                 />
             </div>

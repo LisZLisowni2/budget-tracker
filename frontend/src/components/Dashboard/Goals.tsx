@@ -201,9 +201,10 @@ export default function Goals() {
                         id='select2'
                         ref={selectRef2}
                         onChange={handleSelect}
+                        defaultValue={'-1'}
                         className="bg-white rounded-2xl p-4 my-6"
                     >
-                        <option defaultValue={'-1'}>
+                        <option selected>
                             Select one of these
                         </option>
                         {goals.map((goal) => (

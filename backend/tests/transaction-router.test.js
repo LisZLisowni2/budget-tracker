@@ -134,7 +134,33 @@ describe("Transaction router", () => {
     describe("GET /all", () => {
         it("All transactions", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
-            redisMock.get.mockResolvedValue('123')
+            redisMock.get.mockImplementation(async (key) => {
+                if (key === '123') {
+                    return key
+                }
+                return null
+            })
+    
+            const res = await request(app)
+                .get(`/transactions/all`)
+                .set('Authorization', `Bearer ${token}`)
+            
+            expect(res.statusCode).toBe(200)
+            expect(res.body.length).toBe(1)
+        })
+    })
+
+    describe("GET /all Cached", () => {
+        it("All transactions", async () => {
+            const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+            redisMock.get.mockImplementation(async (key) => {
+                if (key === `ALL_TRANSACTIONS-${userID}`) {
+                    return JSON.stringify([{ _id: '1234', name: 'Test Note', value: 1700, receiver: true }])
+                } else if (key === '123') {
+                    return key
+                }
+                return null
+            })
     
             const res = await request(app)
                 .get(`/transactions/all`)

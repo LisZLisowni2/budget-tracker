@@ -13,7 +13,12 @@ module.exports = (config, redis) => {
             const { username } = req.user
             const user = await User.findOne({ username: username }).select('_id')
             
+            if (await redis.get(`ALL-GOALS-${user._id.toString()}`)) {
+                const goals = await redis.get(`ALL-GOALS-${user._id.toString()}`)
+                return res.status(200).json(JSON.parse(goals))
+            }
             const goals = await Goal.find({ ownedBy: user._id })
+            await redis.setEx(`ALL-GOALS-${user._id.toString()}`, 60 * 60, JSON.stringify(goals))
 
             res.status(200).json(goals)
         } catch (err) {
@@ -57,6 +62,7 @@ module.exports = (config, redis) => {
             })
 
             await newGoal.save()
+            await redis.del(`ALL-GOALS-${userID.toString()}`)
 
             res.status(201).json({ message: 'Goal created' })
         } catch (err) {
@@ -79,6 +85,7 @@ module.exports = (config, redis) => {
             
             await Goal.findOneAndUpdate({ _id: goalID }, req.body)
             await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
+            await redis.del(`ALL-GOALS-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Goal edited' })
         } catch (err) {
@@ -100,6 +107,7 @@ module.exports = (config, redis) => {
             if (goal.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             await Goal.findOneAndDelete({ _id: goalID })
+            await redis.del(`ALL-GOALS-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Goal deleted' })
         } catch (err) {
@@ -122,6 +130,7 @@ module.exports = (config, redis) => {
 
             await Goal.findOneAndUpdate({ _id: goalID }, { isCompleted: true })
             await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
+            await redis.del(`ALL-GOALS-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Goal completed' })
         } catch (err) {
