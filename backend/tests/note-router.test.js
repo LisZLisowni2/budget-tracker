@@ -31,6 +31,15 @@ describe("Note router", () => {
             setEx: vi.fn(),
             del: vi.fn()
         }
+
+        redisMock.get.mockImplementation(async (key) => {
+            if (key === `ALL_NOTES-${userID}`) {
+                return JSON.stringify([{ _id: '1234', name: 'Test Note' }])
+            } else if (key === '123' || key === '1267') {
+                return key
+            }
+            return null
+        })
         
         config = {
             JWT_Secret: 'jwt_secret'
@@ -71,6 +80,7 @@ describe("Note router", () => {
     })
 
     beforeEach(async () => {
+        vi.clearAllMocks()
         await Note.deleteMany({})
         
         // Create a new Note
@@ -131,9 +141,35 @@ describe("Note router", () => {
     })
 
     describe("GET /all", () => {
+        it("All notes", async () => {
+            const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
+            redisMock.get.mockImplementation(async (key) => {
+                if (key === '123') {
+                    return key
+                }
+                return null
+            })
+    
+            const res = await request(app)
+                .get(`/notes/all`)
+                .set('Authorization', `Bearer ${token}`)
+            
+            expect(res.statusCode).toBe(200)
+            expect(res.body.length).toBe(1)
+        })
+    })
+
+    describe("GET /all Cached", () => {
         it("All note", async () => {
             const token = jwt.sign({ username: 'test', sessionID: '123' }, config.JWT_Secret)
-            redisMock.get.mockResolvedValue('123')
+            redisMock.get.mockImplementation(async (key) => {
+                if (key === `ALL_NOTES-${userID}`) {
+                    return JSON.stringify([{ _id: '1234', name: 'Test Note', content: 'HAHAHA beka' }])
+                } else if (key === '123') {
+                    return key
+                }
+                return null
+            })
     
             const res = await request(app)
                 .get(`/notes/all`)

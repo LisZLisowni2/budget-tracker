@@ -85,7 +85,7 @@ module.exports = (config, redis) => {
             
             await Goal.findOneAndUpdate({ _id: goalID }, req.body)
             await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
-            await redis.del(`ALL-GOALS-${userID.toString()}`)
+            await redis.del(`ALL-GOALS-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Goal edited' })
         } catch (err) {
@@ -107,7 +107,7 @@ module.exports = (config, redis) => {
             if (goal.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             await Goal.findOneAndDelete({ _id: goalID })
-            await redis.del(`ALL-GOALS-${userID.toString()}`)
+            await redis.del(`ALL-GOALS-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Goal deleted' })
         } catch (err) {
@@ -130,7 +130,7 @@ module.exports = (config, redis) => {
 
             await Goal.findOneAndUpdate({ _id: goalID }, { isCompleted: true })
             await Goal.findOneAndUpdate({ _id: goalID }, { 'updatedAt': Date.now() })
-            await redis.del(`ALL-GOALS-${userID.toString()}`)
+            await redis.del(`ALL-GOALS-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Goal completed' })
         } catch (err) {
