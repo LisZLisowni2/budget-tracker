@@ -284,14 +284,17 @@ export default function Transactions() {
             <div className="text-white flex max-md:flex-col justify-evenly w-full h-1/3 items-center">
                 <Button
                     text="Add new transaction"
+                    id='add'
                     onClick={() => setStateAddForm(!isAddForm)}
                 />
                 <Button
                     text="Change transaction details"
+                    id='change'
                     onClick={() => setStateChangeForm(!isChangeForm)}
                 />
                 <Button
                     text="Delete transactions"
+                    id='delete'
                     onClick={() => setStateDeleteForm(!isDeleteForm)}
                 />
             </div>

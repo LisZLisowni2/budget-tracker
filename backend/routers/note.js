@@ -13,13 +13,13 @@ module.exports = (config, redis) => {
             const { username } = req.user
             const user = await User.findOne({ username: username }).select('_id')
             
-            if (await redis.get(`ALL-NOTES-${user._id}`)) {
-                const notes = await redis.get(`ALL-NOTES-${user._id}`)
-                return res.status(200).json(notes)
+            if (await redis.get(`ALL-NOTES-${user._id.toString()}`)) {
+                const notes = await redis.get(`ALL-NOTES-${user._id.toString()}`)
+                return res.status(200).json(JSON.parse(notes))
             }
 
             const notes = await Note.find({ ownedBy: user._id })
-            await redis.setEx(`ALL-NOTES-${user._id}`, 60 * 60, notes)
+            await redis.setEx(`ALL-NOTES-${user._id.toString()}`, 60 * 60, JSON.stringify(notes))
 
             res.status(200).json(notes)
         } catch (err) {
@@ -65,7 +65,7 @@ module.exports = (config, redis) => {
             })
 
             await newNote.save()
-            await redis.del(`ALL-NOTES-${userID}`)
+            await redis.del(`ALL-NOTES-${user._id.toString()}`)
 
             res.status(201).json({ message: 'Note created' })
         } catch (err) {
@@ -88,7 +88,7 @@ module.exports = (config, redis) => {
             
             await Note.findOneAndUpdate({ _id: noteID }, req.body)
             await Note.findOneAndUpdate({ _id: noteID }, { 'updatedAt': Date.now() })
-            await redis.del(`ALL-NOTES-${userID}`)
+            await redis.del(`ALL-NOTES-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Note edited' })
         } catch (err) {
@@ -110,7 +110,7 @@ module.exports = (config, redis) => {
             if (note.ownedBy.toString() !== user._id.toString()) return res.status(401).json({ message: 'Unauthorized access' })
 
             await Note.findOneAndDelete({ _id: noteID })
-            await redis.del(`ALL-NOTES-${userID}`)
+            await redis.del(`ALL-NOTES-${user._id.toString()}`)
 
             res.status(200).json({ message: 'Note deleted' })
         } catch (err) {

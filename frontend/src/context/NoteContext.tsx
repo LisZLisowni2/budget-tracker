@@ -35,8 +35,10 @@ export function NoteProvide({ children }: IChildren) {
     const onSuccess = () => queryClient.invalidateQueries({ queryKey });
 
     const handleAddNote = useMutation({
-        mutationFn: async () =>
-            await api.post('/notes/new', { title: '', content: '' }),
+        mutationFn: async () => {
+            console.log("Add mutation")
+            return await api.post('/notes/new', { title: '', content: '' })
+        },
         mutationKey: queryKey,
         onSuccess,
     });
@@ -72,7 +74,7 @@ export function NoteProvide({ children }: IChildren) {
     return (
         <NoteContext.Provider
             value={{
-                addMutation: () => handleAddNote,
+                addMutation: () => handleAddNote.mutate(),
                 changeMutation: (_id: string, body: object) =>
                     handleChangeNote.mutate({ _id, body }),
                 copyMutation: (_id: string) => handleCopyNote.mutate(_id),
