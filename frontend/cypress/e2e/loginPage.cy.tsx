@@ -3,8 +3,8 @@
 describe("Login page", () => {
     const apiUrl = Cypress.env("apiUrl")
 
-    beforeEach(() => {
-        cy.clearDB()
+    beforeEach(async () => {
+        await cy.clearDB()
         cy.request("POST", `${apiUrl}/users/register`, { username: "test", email: "test@example.com", password: "abc123" })
         cy.visit("/login")
     })

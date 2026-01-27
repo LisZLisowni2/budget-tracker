@@ -50,7 +50,7 @@ export function GoalProvide({ children }: IChildren) {
     const handleFinishMutation = useMutation({
         mutationKey: queryKey,
         mutationFn: async (_id: string) =>
-            await api.put(`/goals/edit/${_id}`, { completed: true }),
+            await api.put(`/goals/complete/${_id}`),
         onSuccess,
     });
 

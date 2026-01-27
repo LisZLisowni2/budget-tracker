@@ -4,8 +4,8 @@ describe("transaction page", () => {
     const apiUrl = Cypress.env("apiUrl")
 
     beforeEach(() => {
-        cy.session("login-test-user", () => {
-            cy.clearDB()
+        cy.session("login-test-user", async () => {
+            await cy.clearDB()
             cy.request("POST", `${apiUrl}/users/register`, { username: "test", email: "test@example.com", password: "abc123" })
             .then(() => {
                 return cy.request("POST", `${apiUrl}/users/login`, { username: "test", password: "abc123" })

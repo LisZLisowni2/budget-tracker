@@ -236,12 +236,12 @@ export default function Goals() {
                                 <td>{goal.name}</td>
                                 <td>{goal.requiredValue}</td>
                                 <td>
-                                    {goal.completed
+                                    {goal.isCompleted
                                         ? 'Completed'
                                         : 'In progress'}
                                 </td>
                                 <td>
-                                    {!goal.completed ? (
+                                    {!goal.isCompleted ? (
                                         <Button
                                             text="Finish"
                                             onClick={() =>
