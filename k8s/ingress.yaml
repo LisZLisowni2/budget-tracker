@@ -4,22 +4,15 @@ metadata:
   name: budget-tracker-ingress
   namespace: budget-tracker
   labels:
-    app.kubernetes.io/name: budget-tracker-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "https"
-    nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  # annotations:
+  #   nginx.ingress.kubernetes.io/backend-protocol: "https"
+  #   nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
 spec:
   rules:
   - host: budget-tracker.local
     http:
       paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: frontend
-            port: 
-              number: 443
       - pathType: Prefix
         path: "/api"
         backend:
@@ -27,3 +20,10 @@ spec:
             name: backend
             port: 
               number: 3000
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: frontend
+            port: 
+              number: 443
