@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: backend
 spec:
+  type: LoadBalancer
   selector:
     app: backend-app
   ports:
@@ -16,6 +17,7 @@ kind: Service
 metadata:
   name: frontend
 spec:
+  type: LoadBalancer
   selector:
     app: frontend-app
   ports:
