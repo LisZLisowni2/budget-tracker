@@ -45,11 +45,11 @@ spec:
       - name: backend
         image: liszlisowni/budget-tracker-backend:latest
         env:
-          - name: jwt-token
+          - name: JWT_TOKEN
             valueFrom:
               secretKeyRef:
                 name: jwt-token
-                key: token
+                key: password
         resources:
           requests:
             memory: "128Mi"
