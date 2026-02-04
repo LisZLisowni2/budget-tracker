@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: budget-tracker-ingress
+  namespace: budget-tracker
   labels:
     app.kubernetes.io/name: budget-tracker-ingress
 spec:
