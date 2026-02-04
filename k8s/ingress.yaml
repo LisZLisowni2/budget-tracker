@@ -5,6 +5,9 @@ metadata:
   namespace: budget-tracker
   labels:
     app.kubernetes.io/name: budget-tracker-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
 spec:
   rules:
   - host: budget-tracker.local
