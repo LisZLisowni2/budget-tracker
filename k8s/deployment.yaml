@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-app
   namespace: budget-tracker
 spec:
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-app
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-app
     spec:
       containers:
-      - name: frontend
+      - name: frontend-app
         image: liszlisowni/budget-tracker-frontend:latest
         resources:
           requests:
@@ -30,19 +30,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-app
   namespace: budget-tracker
 spec:
   selector:
     matchLabels:
-      app: backend
+      app: backend-app
   template:
     metadata:
       labels:
-        app: backend
+        app: backend-app
     spec:
       containers:
-      - name: backend
+      - name: backend-app
         image: liszlisowni/budget-tracker-backend:latest
         env:
           - name: JWT_TOKEN
