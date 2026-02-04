@@ -157,12 +157,54 @@ app.use((req, res, next) => {
     })
     next()
 })
+/**
+ * @swagger
+ * /metrics:
+ *   get:
+ *     summary: Promotheus metrics
+ *     tags:
+ *       - Other
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 app.get('/metrics', async (req, res) => {
     res.send('Content-type', client.register.contentType)
     res.end(await client.register.metrics())
 })
 
 app.use(cors(corsOptions));
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Check healthcare of the server
+ *     tags:
+ *       - Other
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *       503:
+ *         description: Failed checkup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unhealthy
+ */
 app.get("/health", async (req, res) => {
     try {
         await mongodbClient.db.admin().ping();
