@@ -102,7 +102,7 @@ module.exports = (config, redis) => {
 
     /**
      * @swagger
-     * /api/notes/:id:
+     * /api/notes/{id}:
      *   get:
      *     summary: Get note by ID
      *     tags:
@@ -124,25 +124,25 @@ module.exports = (config, redis) => {
      *             schema:
      *               type: object
      *               properties:
-     *                       _id:
-     *                         type: string
-     *                         example: 5f1f1f1f1f1f1f1f1f1f1f1f
-     *                       title:
-     *                         type: string
-     *                         example: Note 1
-     *                       content:
-     *                         type: string
-     *                         example: Note description
-     *                       createdAt:
-     *                         type: string
-     *                         example: 2020-01-01T00:00:00.000Z
-     *                       updatedAt:
-     *                         type: string
-     *                         example: 2020-01-01T00:00:00.000Z
-     *                       ownedBy:
-     *                         type: string
-     *                         example: 5f1f1f1f1f1f1f1f1f1f1f1f
-     *            400:
+     *                 _id:
+     *                   type: string
+     *                   example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *                 title:
+     *                   type: string
+     *                   example: Note 1
+     *                 content:
+     *                   type: string
+     *                   example: Note description
+     *                 createdAt:
+     *                   type: string
+     *                   example: 2020-01-01T00:00:00.000Z
+     *                 updatedAt:
+     *                   type: string
+     *                   example: 2020-01-01T00:00:00.000Z
+     *                 ownedBy:
+     *                   type: string
+     *                   example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *       400:
      *         description: Bad request
      *         content:
      *           application/json:
@@ -152,7 +152,7 @@ module.exports = (config, redis) => {
      *                 message:
      *                   type: string
      *                   example: Bad request
-     *            404:
+     *       404:
      *         description: Note not found
      *         content:
      *           application/json:
@@ -209,7 +209,7 @@ module.exports = (config, redis) => {
     /**
      * @swagger
      * /api/notes/new/:
-     *   POST:
+     *   post:
      *     summary: Create new note
      *     tags:
      *       - Note
@@ -218,19 +218,19 @@ module.exports = (config, redis) => {
      *         name: Authorization
      *         required: true
      *         type: string
-     *      requestBody:
-     *        required: true
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                title:
-     *                  type: string
-     *                  example: Note 1
-     *                content:
-     *                  type: string
-     *                  example: Note description
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               title:
+     *                 type: string
+     *                 example: Note 1
+     *               content:
+     *                 type: string
+     *                 example: Note description
      *     responses:
      *       201:
      *         description: New note created
@@ -242,7 +242,7 @@ module.exports = (config, redis) => {
      *                 message:
      *                   type: string
      *                   example: Note created
-     *            400:
+     *       400:
      *         description: Bad request
      *         content:
      *           application/json:
@@ -310,8 +310,8 @@ module.exports = (config, redis) => {
 
     /**
      * @swagger
-     * /api/notes/edit/:id:
-     *   PUT:
+     * /api/notes/edit/{id}:
+     *   put:
      *     summary: Edit note
      *     tags:
      *       - Note
@@ -324,19 +324,19 @@ module.exports = (config, redis) => {
      *         name: id
      *         required: true
      *         type: string
-     *      requestBody:
-     *        required: false
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                title:
-     *                  type: string
-     *                  example: Note 1
-     *                content:
-     *                  type: string
-     *                  example: Note description
+     *     requestBody:
+     *       required: false
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               title:
+     *                 type: string
+     *                 example: Note 1
+     *               content:
+     *                 type: string
+     *                 example: Note description
      *     responses:
      *       200:
      *         description: Note updated
@@ -411,8 +411,8 @@ module.exports = (config, redis) => {
 
     /**
      * @swagger
-     * /api/notes/delete/:id:
-     *   DELETE:
+     * /api/notes/delete/{id}:
+     *   delete:
      *     summary: Edit note
      *     tags:
      *       - Note
