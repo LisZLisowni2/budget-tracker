@@ -7,6 +7,40 @@ const Goal = require('../models/goal')
 const router = express.Router()
 
 module.exports = () => {
+    /**
+     * @swagger
+     * /api/cleanup/:
+     *   get:
+     *     summary: Cleanup database
+     *     tags:
+     *       - Other
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: Database cleared
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message: 
+     *                   type: string
+     *                   example: Database cleared
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.post('/cleanup', async (req, res) => {
         try {
             await User.deleteMany({})

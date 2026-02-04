@@ -8,6 +8,72 @@ const router = express.Router()
 module.exports = (config, redis) => {
     const Auth = authorization(config, redis)
 
+    /**
+     * @swagger
+     * /api/goals/:
+     *   get:
+     *     summary: List of goals
+     *     tags:
+     *       - Goal
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: List of goals for user
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 goals:
+     *                   type: array
+     *                   items:
+     *                     type: object
+     *                     properties:
+     *                       _id:
+     *                         type: string
+     *                         example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *                       name:
+     *                         type: string
+     *                         example: Goal 1
+     *                       requiredValue:
+     *                         type: number
+     *                         example: 1300
+     *                       isCompleted:
+     *                         type: boolean
+     *                       createdAt:
+     *                         type: string
+     *                         example: 2020-01-01T00:00:00.000Z
+     *                       updatedAt:
+     *                         type: string
+     *                         example: 2020-01-01T00:00:00.000Z
+     *                       ownedBy:
+     *                         type: string
+     *                         example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.get('/all', Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user
@@ -27,6 +93,75 @@ module.exports = (config, redis) => {
         }
     })
 
+        /**
+     * @swagger
+     * /api/goals/{id}:
+     *   get:
+     *     summary: Certain goal
+     *     tags:
+     *       - Goal
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: query
+     *         name: id
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: List of goals for user
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 goal:
+     *                   type: object
+     *                   properties:
+     *                     _id:
+     *                       type: string
+     *                       example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *                     name:
+     *                       type: string
+     *                       example: Goal 1
+     *                     requiredValue:
+     *                       type: number
+     *                       example: 1300
+     *                     isCompleted:
+     *                       type: boolean
+     *                       example: false
+     *                     createdAt:
+     *                       type: string
+     *                       example: 2020-01-01T00:00:00.000Z
+     *                     updatedAt:
+     *                       type: string
+     *                       example: 2020-01-01T00:00:00.000Z
+     *                     ownedBy:
+     *                       type: string
+     *                       example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.get('/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const goalID = req.params.id
@@ -45,7 +180,73 @@ module.exports = (config, redis) => {
             res.status(500).json({ message: 'Internal server error' })
         }
     })
-
+    /**
+     * @swagger
+     * /api/goals/new/:
+     *   post:
+     *     summary: Create new goal
+     *     tags:
+     *       - Goal
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *                 example: Goal 1
+     *               requiredValue:
+     *                 type: number
+     *                 example: 1300
+     *     responses:
+     *       201:
+     *         description: New goal created
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Goal created
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.post('/new', Auth.authenticateToken, async (req, res) => {
         try {
             const { name, requiredValue } = req.body
@@ -71,6 +272,77 @@ module.exports = (config, redis) => {
         }
     })
 
+        /**
+     * @swagger
+     * /api/goals/edit/{id}:
+     *   put:
+     *     summary: Update goal
+     *     tags:
+     *       - Goal
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: query
+     *         name: id
+     *         required: true
+     *         type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *                 example: Goal 1
+     *               requiredValue:
+     *                 type: number
+     *                 example: 1300
+     *     responses:
+     *       200:
+     *         description: Goal updated
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Goal created
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.put('/edit/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const goalID = req.params.id
@@ -94,6 +366,64 @@ module.exports = (config, redis) => {
         }
     })
 
+        /**
+     * @swagger
+     * /api/goals/delete/{id}:
+     *   delete:
+     *     summary: Delete goal
+     *     tags:
+     *       - Goal
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: query
+     *         name: id
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: Goal deleted
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Goal deleted
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.delete('/delete/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const goalID = req.params.id
@@ -116,6 +446,64 @@ module.exports = (config, redis) => {
         }
     })
 
+        /**
+     * @swagger
+     * /api/goals/complete/{id}:
+     *   put:
+     *     summary: Complete the goal
+     *     tags:
+     *       - Goal
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: query
+     *         name: id
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: Goal completed
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Goal completed
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.put('/complete/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const goalID = req.params.id
