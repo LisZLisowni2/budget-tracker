@@ -20,6 +20,8 @@ jobs:
             - name: Build
               run: |
                 docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}-frontend:latest ./frontend
+                echo "${{ secrets.CERT_KEY_BASE64 }}" | base64 --decode > ./backend/cert/localhost+2-key.pem
+                echo "${{ secrets.CERT_BASE64 }}" | base64 --decode > ./backend/cert/localhost+2.pem
                 docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}-backend:latest ./backend
             
             - name: Push
