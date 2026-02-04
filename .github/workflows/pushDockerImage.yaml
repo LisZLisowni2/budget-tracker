@@ -2,7 +2,7 @@ name: Build and deploy
 
 on:
     push:
-        branches: ["Main"]
+        branches: ["main"]
 
 jobs:
     build-and-push:
