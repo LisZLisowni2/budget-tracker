@@ -44,6 +44,12 @@ spec:
       containers:
       - name: backend
         image: liszlisowni/budget-tracker-backend:latest
+        env:
+          - name: JWT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: jwt-token
+                key: token
         resources:
           requests:
             memory: "128Mi"
@@ -124,3 +130,18 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 6379
+
+---
+
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: jwt_token
+  namespace: budget-tracker
+spec:
+  encryptedData:
+    token: AgARvejdUGIWSaulsDNEcTLuOnOwb4SVN+v5v3ErIfMAQlWIXwJook10LeSwVvm++uxEpoTLxM++XBUsaV/faKyo+0ztm3mTReyNQguNNNhg+gWxk8k7cJwLnIHolBHQ/Y4ONszwxKZlHjOrQDV3AfAPZ7Uom0o0BfDUND+QPo7kp9owduFORM+ydx+EZ2M6HqZ8Omp8tw0lsHN8mTV75gR26wzKB2gpL48xdqroMTFTzt6XwwV3xIVf9oNHo4QduMbohbTSNrlotMNuH9hWy5TqeukL7w7o5mvwUZsFcuT87dUiwCJGtC90k3/jeD3o6IrGDg2pNq6GySFk3TK0vdAQDo/BjPfO5JIDJQTbOC3r0DArfYheeFUwr81qgErtuBb8y1gOUKMCVB+K05J8OUzyRa/Guyd+6AWB9q1PbGwg+POrUT8zZdfkkFxmWZGk7xaS6EdaFexVvg1KXDfxVF2qTVlqWxgh9nIdUs24QYOhKkjaWO9yZZDg/GCNEm8KLJwPvaMRXLaTkRyvS5RWozOkjE7bnhWyfP9qLQ+U7Gmq2Jk+12rrzx+xf3tNO2xnvqZFqgZGpgkMRZoD91FVSUanyf8CxW2G3BlFbeCbOKsqKWDkEgC0g/551C7i2904NoK6rLfWwmG9/EESnFTuE5RrAC1YS1vZVFDFkuAxzqUmHKjmZiUu1atVTCFUvLmPDn8yUjdcxEm9T+v+55U5I+swX0BXQoa90baESGYDt2xmikx9mqZBh5/4O8Hv
+  template:
+    metadata:
+      name: jwt_token
+      namespace: default
