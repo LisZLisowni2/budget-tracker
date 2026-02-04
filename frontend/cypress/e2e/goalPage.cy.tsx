@@ -4,8 +4,8 @@ describe("Goal page", () => {
     const apiUrl = Cypress.env("apiUrl")
 
     beforeEach(() => {
-        cy.session("login-test-user", () => {
-            cy.clearDB()
+        cy.session("login-test-user", async () => {
+            await cy.clearDB()
             cy.request("POST", `${apiUrl}/users/register`, { username: "test", email: "test@example.com", password: "abc123" })
             .then(() => {
                 return cy.request("POST", `${apiUrl}/users/login`, { username: "test", password: "abc123" })
@@ -64,5 +64,18 @@ describe("Goal page", () => {
         cy.get("#submit3").click()
         cy.reload()
         cy.get('table tbody tr').should('have.length.at.most', 1)
+    })
+
+    it("Complete goal", () => {
+        cy.get("#add").click()
+        cy.get("#addForm form").should('exist')
+        cy.get("#name").should("exist")
+        cy.get("#name").type("test goal 4")
+        cy.get("#requiredValue").type("3000")
+        cy.get("#addForm button").click()
+        cy.reload()
+        cy.get('table tbody tr:last-child td:last-child').find("button").click()
+        cy.reload()
+        cy.get('table tbody tr:last-child td:nth-last-child(2)').invoke('text').should('match', /Completed/i)
     })
 })

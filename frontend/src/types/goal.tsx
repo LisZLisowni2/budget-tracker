@@ -4,5 +4,5 @@ export interface IGoal {
     createdAt: Date;
     updatedAt: Date;
     requiredValue: number;
-    completed: boolean;
+    isCompleted: boolean;
 }
