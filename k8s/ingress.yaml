@@ -10,16 +10,9 @@ metadata:
   #   nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
 spec:
   rules:
-  - host: budget-tracker.local
+  - host: budget-tracker.local.com
     http:
       paths:
-      - pathType: Prefix
-        path: "/api"
-        backend:
-          service:
-            name: backend
-            port: 
-              number: 3000
       - pathType: Prefix
         path: "/"
         backend:
