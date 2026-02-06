@@ -289,7 +289,7 @@ module.exports = (config, redis) => {
         /**
      * @swagger
      * /api/transactions/edit/{id}:
-     *   post:
+     *   put:
      *     summary: Create new transaction
      *     tags:
      *       - Transaction
@@ -388,7 +388,7 @@ module.exports = (config, redis) => {
             /**
      * @swagger
      * /api/transactions/delete/{id}:
-     *   post:
+     *   delete:
      *     summary: Create new transaction
      *     tags:
      *       - Transaction

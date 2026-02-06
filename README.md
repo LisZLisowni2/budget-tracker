@@ -35,11 +35,13 @@ A expanded personal finance management application that helps you track expenses
 
 ## Installation
 
-### Prerequisites
+### Docker Swarm
+
+#### Prerequisites
 - Docker
 - Docker Swarm
 
-### Config
+#### Config
 ```sh
 # Clone the repository
 git clone https://github.com/LisZLisowni2/budget-tracker 
@@ -56,7 +58,7 @@ echo "<input your jwt_token>" | docker secret create jwt_token -
 docker service create --name registry --publish mode=host,target=5000,published=5000,protocol=tcp registry:2
 ```
 
-### Build 
+#### Build 
 ```sh
 # Build frontend 
 docker build -t 127.0.0.1:5000/budget-tracker-frontend:latest -f ./frontend/Dockerfile ./frontend
@@ -69,10 +71,14 @@ docker push 127.0.0.1:5000/budget-tracker-frontend-dev:latest
 docker push 127.0.0.1:5000/budget-tracker-backend:latest 
 ```
 
-### Run
+#### Run
 ```sh
 docker stack deploy -c docker-compose.yml BudgetTrackerStack
 ```
+
+### K8s Cluster
+
+Replace JWT-TOKEN Sealed Secret with own using kubeseal.
 
 ## References
 - API Docs: 
