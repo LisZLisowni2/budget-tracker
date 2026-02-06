@@ -8,6 +8,75 @@ const router = express.Router()
 module.exports = (config, redis) => {
     const Auth = authorization(config, redis)
 
+    /**
+     * @swagger
+     * /api/transactions/:
+     *   get:
+     *     summary: List of transactions
+     *     tags:
+     *       - Transaction
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: List of transactions for user
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 transactions:
+     *                   type: array
+     *                   items:
+     *                     type: object
+     *                     properties:
+     *                       _id:
+     *                         type: string
+     *                         example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *                       name:
+     *                         type: string
+     *                         example: transaction 1
+     *                       value:
+     *                         type: number
+     *                         example: 1300
+     *                       category:  
+     *                         type: string
+     *                         example: Entertainment
+     *                       receiver:
+     *                         type: boolean
+     *                       createdAt:
+     *                         type: string
+     *                         example: 2020-01-01T00:00:00.000Z
+     *                       updatedAt:
+     *                         type: string
+     *                         example: 2020-01-01T00:00:00.000Z
+     *                       ownedBy:
+     *                         type: string
+     *                         example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.get('/all', Auth.authenticateToken, async (req, res) => {
         try {
             const { username } = req.user
@@ -28,6 +97,77 @@ module.exports = (config, redis) => {
         }
     })
 
+        /**
+     * @swagger
+     * /api/transactions/{id}:
+     *   get:
+     *     summary: List of transactions
+     *     tags:
+     *       - Transaction
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: List of transactions for user
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 transaction:
+     *                   type: object
+     *                   properties:
+     *                     _id:
+     *                       type: string
+     *                       example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *                     name:
+     *                       type: string
+     *                       example: transaction 1
+     *                     value:
+     *                       type: number
+     *                       example: 1300
+     *                     category:  
+     *                       type: string
+     *                       example: Entertainment
+     *                     receiver:
+     *                       type: boolean
+     *                     createdAt:
+     *                       type: string
+     *                       example: 2020-01-01T00:00:00.000Z
+     *                     updatedAt:
+     *                       type: string
+     *                       example: 2020-01-01T00:00:00.000Z
+     *                     ownedBy:
+     *                       type: string
+     *                       example: 5f1f1f1f1f1f1f1f1f1f1f1f
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.get('/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const transactionID = req.params.id
@@ -47,6 +187,78 @@ module.exports = (config, redis) => {
         }
     })
 
+    /**
+     * @swagger
+     * /api/transactions/new/:
+     *   post:
+     *     summary: Create new transaction
+     *     tags:
+     *       - Transaction
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *                 example: transaction 1
+     *               value:
+     *                 type: number
+     *                 example: 1300
+     *               category:  
+     *                 type: string
+     *                 example: Entertainment
+     *               receiver:
+     *                 type: boolean
+     *     responses:
+     *       201:
+     *         description: New transaction created
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Transaction created
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.post('/new', Auth.authenticateToken, async (req, res) => {
         try {
             const { name, value, receiver, category } = req.body
@@ -74,6 +286,82 @@ module.exports = (config, redis) => {
         }
     })
 
+        /**
+     * @swagger
+     * /api/transactions/edit/{id}:
+     *   post:
+     *     summary: Create new transaction
+     *     tags:
+     *       - Transaction
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         type: string
+     *     requestBody:
+     *       required: false
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *                 example: transaction 1
+     *               value:
+     *                 type: number
+     *                 example: 1300
+     *               category:  
+     *                 type: string
+     *                 example: Entertainment
+     *               receiver:
+     *                 type: boolean
+     *     responses:
+     *       201:
+     *         description: Updated transaction
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Transaction edited
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.put('/edit/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const transactionID = req.params.id
@@ -97,6 +385,64 @@ module.exports = (config, redis) => {
         }
     })
 
+            /**
+     * @swagger
+     * /api/transactions/delete/{id}:
+     *   post:
+     *     summary: Create new transaction
+     *     tags:
+     *       - Transaction
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         required: true
+     *         type: string
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         type: string
+     *     responses:
+     *       201:
+     *         description: Deleted transaction
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Transaction deleted
+     *       400:
+     *         description: Bad request
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Bad request
+     *       401:
+     *         description: Unauthorized
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: Internal server error
+     */
     router.delete('/delete/:id', Auth.authenticateToken, async (req, res) => {
         try {
             const transactionID = req.params.id
