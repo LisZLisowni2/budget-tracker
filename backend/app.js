@@ -23,7 +23,7 @@ const ORCHESTRATOR = process.env.ORCHESTRATOR || "docker-swarm";
 app.use("/api-docs", swaggerUi.serve)
 app.get("/api-docs", swaggerUi.setup(specs));
 
-if (ORCHESTRATOR === "docker-swarm") {
+if (ORCHESTRATOR === "docker-swarm" || ORCHESTRATOR === "docker-compose") {
     secretRead("db_password")
         .then(async (res) => {
             MongoDB_URI = `mongodb://root:${res}@database:27017/myapp?authSource=admin`;
@@ -69,6 +69,7 @@ if (ORCHESTRATOR === "docker-swarm") {
     const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
 
     (async () => {
+        console.log("Trying to connect to MongoDB");
         MongoDB_URI = `mongodb://root:${DB_PASSWORD}@database-svc:27017/myapp?authSource=admin`;
         await mongoose.connect(MongoDB_URI);
         const db = mongoose.connection;
@@ -84,6 +85,7 @@ if (ORCHESTRATOR === "docker-swarm") {
     })()
 
     (async () => {
+        console.log("Trying to connect to Redis");
         RedisDB_URI = `redis://default:${REDIS_PASSWORD}@redis-svc:6379`;
         redisClient = redis.createClient({
             url: RedisDB_URI,
