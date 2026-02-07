@@ -1,6 +1,3 @@
-// TODO: Add more info about User like: Currency,
-// TODO: Enable change details about account and it deletion.
-
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -182,6 +179,7 @@ export default function Profile() {
             >
                 <form
                     className="p-8 m-4 *:w-full"
+                    id="passwordChangeForm"
                     onSubmit={handleSubmit(handlePasswordChange)}
                 >
                     <Controller
@@ -235,6 +233,7 @@ export default function Profile() {
             >
                 <form
                     className="p-8 m-4 *:w-full"
+                    id="accountDetailsChangeForm"
                     onSubmit={handleSubmitAccountDetails(handleAccountDetailsUpdate)}
                 >
                     <Controller
@@ -357,7 +356,7 @@ export default function Profile() {
                     </div>
                 </div>
             </Modal>
-            <h1 className="text-6xl">{user?.username} </h1>
+            <h1 id='usernameHeadline' className="text-6xl">{user?.username} </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-8">
                 <div className="flex flex-col *:font-bold *:text-xl *:m-2 *:p-3 *:border *:rounded-4xl *:shadow-xl *:hover:scale-105 *:transition-all">
                     <p>Email: {user.email}</p>
@@ -366,13 +365,15 @@ export default function Profile() {
                     <p>Preferred language: {user.preferredLanguage}</p>
                 </div>
                 <div className="flex flex-col *:m-4">
-                    <Button text="Logout" onClick={handleLogout} />
+                    <Button text="Logout" id='logoutBtn' onClick={handleLogout} />
                     <Button
                         text="Change Password"
+                        id='changePasswordBtn'
                         onClick={() => setIsPasswordChangeModalOpen(true)}
                     />
                     <Button
                         text="Change Account Details"
+                        id='changeAccountDetailsBtn'
                         onClick={() => setIsAccountDetailsChangeModalOpen(true)}
                     />
                     <Button
