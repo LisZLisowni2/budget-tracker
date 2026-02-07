@@ -10,6 +10,7 @@ import ErrorData from './ErrorData';
 import Modal from '../Modal/Modal';
 import FormField from '../FormUtils/FormField';
 import FieldError from '../FormUtils/FieldError';
+import { useNavigate } from 'react-router';
 
 const PasswordSchema = z.object({
     password: z.string().min(3, { error: 'Password too short' }),
@@ -31,6 +32,7 @@ type TAccounDetailsSchema = z.infer<typeof AccountDetailsSchema>;
 export default function Profile() {
     sessionStorage.setItem('selectedDashboard', '5');
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const { data: user, isLoading: isUserLoading } = useUserQuery();
     const { logoutMutation, updatePassword, deleteAccount, updateAccountDetails } = useUser();
     const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] =
@@ -85,7 +87,13 @@ export default function Profile() {
         },
     });
     const handleLogout = () => {
-        logoutMutation();
+        logoutMutation.mutate(null, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['user'] });
+                localStorage.removeItem('token');
+                navigate("/login");
+            }
+        });
     };
 
     const handlePasswordChange = async (data: TPassword) => {
@@ -134,9 +142,13 @@ export default function Profile() {
         const obj = Object.fromEntries(finalData)
         handleUpdateAccountDetails.mutate(obj, {
             onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['user'] });
                 setErrorAccountDetails('root', {
                     message: 'Account details have changed',
                 });
+                if (data.username !== user.username) {
+                    navigate("/login")
+                }
             },
             onError: (err) => {
                 switch (err.status) {

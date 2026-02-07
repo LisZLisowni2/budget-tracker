@@ -36,7 +36,12 @@ interface IUserContext {
         null,
         unknown
     >;
-    logoutMutation: () => void;
+    logoutMutation: UseMutationResult<
+        AxiosResponse<any, any, {}>,
+        AxiosError<any, any>,
+        null,
+        unknown
+    >;
 }
 
 const UserContext = createContext<IUserContext | null>(null);
@@ -94,7 +99,11 @@ export function UserProvide({ children }: IChildren) {
             onSuccess,
         })
 
-    const handleLogout = useMutation({
+    const handleLogout = useMutation<
+        AxiosResponse<any, any>,
+        AxiosError<any, any>,
+        null,
+        unknown>({
         mutationFn: () => api.get('/users/logout'),
         onSuccess,
     });
@@ -106,7 +115,7 @@ export function UserProvide({ children }: IChildren) {
                 deleteAccount: handleAccountDeletion,
                 updatePassword: handlePasswordUpdate,
                 updateAccountDetails: handleAccountUpdate,
-                logoutMutation: () => handleLogout.mutate(),
+                logoutMutation: handleLogout,
             }}
         >
             {children}
