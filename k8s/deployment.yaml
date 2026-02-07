@@ -45,11 +45,23 @@ spec:
       - name: backend-app
         image: liszlisowni/budget-tracker-backend:latest
         env:
+          - name: ORCHESTRATOR
+            value: kubernetes
           - name: JWT_TOKEN
             valueFrom:
               secretKeyRef:
                 name: jwt-token
                 key: token
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-password
+                key: password
+          - name: REDIS_PASSWORDD
+            valueFrom:
+              secretKeyRef:
+                name: redis-password
+                key: password
         resources:
           requests:
             memory: "128Mi"
@@ -70,22 +82,32 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: database
-  serviceName: database-svc
+      app: database-pod
+  serviceName: database
   replicas: 1
   template:
     metadata:
       labels:
-        app: database
+        app: database-pod
     spec:
       containers:
-      - name: database
+      - name: database-pod
         image: mongo:latest
         ports:
         - containerPort: 27017
         volumeMounts:
         - name: database-data
           mountPath: /data/db
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: myapp
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-password
+              key: password
         resources:
           requests:
             memory: "128Mi"
@@ -121,6 +143,16 @@ spec:
       containers:
       - name: redis
         image: redis:latest
+        env:
+          - name: REDIS_PASSWORDD
+            valueFrom:
+              secretKeyRef:
+                name: redis-password
+                key: password
+        command:
+          - sh
+          - -c
+          - "redis-server --requirepass \"$REDIS_PASSWORD\""
         resources:
           requests:
             memory: "128Mi"

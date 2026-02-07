@@ -18,13 +18,58 @@ const app = express();
 const PORT = process.env.Port || 3000;
 const ADDRESS = process.env.Address || "0.0.0.0";
 const NODE_ENV = process.env.NODE_ENV || "production";
+const ORCHESTRATOR = process.env.ORCHESTRATOR || "docker-swarm";
 
 app.use("/api-docs", swaggerUi.serve)
 app.get("/api-docs", swaggerUi.setup(specs));
 
-secretRead("db_password")
-    .then(async (res) => {
-        MongoDB_URI = `mongodb://root:${res}@database:27017/myapp?authSource=admin`;
+if (ORCHESTRATOR === "docker-swarm") {
+    secretRead("db_password")
+        .then(async (res) => {
+            MongoDB_URI = `mongodb://root:${res}@database:27017/myapp?authSource=admin`;
+            await mongoose.connect(MongoDB_URI);
+            const db = mongoose.connection;
+            db.on("error", (error) => {
+                console.error.bind(error, "Error: ");
+            });
+            db.on("open", () => {
+                console.log("Connected to MongoDB");
+            });
+            db.on("disconnected", () => {
+                console.log("Disconnected from MongoDB");
+            });
+
+            mongodbClient = db;
+        })
+        .catch((err) => {
+            console.error.bind(err, "Error: ");
+        });
+
+    secretRead("redis_password")
+        .then(async (res) => {
+            RedisDB_URI = `redis://default:${res}@redis:6379`;
+            redisClient = redis.createClient({
+                url: RedisDB_URI,
+            });
+
+            redisClient.on("error", (error) => {
+                console.error(`Error: ${error}`);
+                console.error(`URI: ${RedisDB_URI}`);
+            });
+
+            await redisClient.connect();
+
+            console.log("Connected to RedisDB");
+        })
+        .catch((err) => {
+            console.error.bind(err, "Error: ");
+        });
+} else if (ORCHESTRATOR === "kubernetes") {
+    const DB_PASSWORD = process.env.DB_PASSWORD;
+    const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
+
+    (async () => {
+        MongoDB_URI = `mongodb://root:${DB_PASSWORD}@database-svc:27017/myapp?authSource=admin`;
         await mongoose.connect(MongoDB_URI);
         const db = mongoose.connection;
         db.on("error", (error) => {
@@ -36,16 +81,10 @@ secretRead("db_password")
         db.on("disconnected", () => {
             console.log("Disconnected from MongoDB");
         });
+    })()
 
-        mongodbClient = db;
-    })
-    .catch((err) => {
-        console.error.bind(err, "Error: ");
-    });
-
-secretRead("redis_password")
-    .then(async (res) => {
-        RedisDB_URI = `redis://default:${res}@redis:6379`;
+    (async () => {
+        RedisDB_URI = `redis://default:${REDIS_PASSWORD}@redis-svc:6379`;
         redisClient = redis.createClient({
             url: RedisDB_URI,
         });
@@ -58,10 +97,10 @@ secretRead("redis_password")
         await redisClient.connect();
 
         console.log("Connected to RedisDB");
-    })
-    .catch((err) => {
-        console.error.bind(err, "Error: ");
-    });
+    })()
+
+    mongodbClient = db;
+}
 
 let attempts = 60;
 const intervalUserRouter = setInterval(async () => {
