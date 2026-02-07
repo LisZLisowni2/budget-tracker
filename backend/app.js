@@ -82,7 +82,9 @@ if (ORCHESTRATOR === "docker-swarm" || ORCHESTRATOR === "docker-compose") {
         db.on("disconnected", () => {
             console.log("Disconnected from MongoDB");
         });
-    })()
+
+        mongodbClient = db;
+    })();
 
     (async () => {
         console.log("Trying to connect to Redis");
@@ -99,9 +101,7 @@ if (ORCHESTRATOR === "docker-swarm" || ORCHESTRATOR === "docker-compose") {
         await redisClient.connect();
 
         console.log("Connected to RedisDB");
-    })()
-
-    mongodbClient = db;
+    })();
 }
 
 let attempts = 60;
