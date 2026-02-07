@@ -70,7 +70,7 @@ if (ORCHESTRATOR === "docker-swarm" || ORCHESTRATOR === "docker-compose") {
 
     (async () => {
         console.log("Trying to connect to MongoDB");
-        MongoDB_URI = `mongodb://root:${DB_PASSWORD}@database-svc:27017/myapp?authSource=admin`;
+        MongoDB_URI = `mongodb://root:${encodeURIComponent(DB_PASSWORD)}@database-svc.budget-tracker.svc.cluster.local:27017/myapp?authSource=admin`;
         await mongoose.connect(MongoDB_URI);
         const db = mongoose.connection;
         db.on("error", (error) => {
@@ -88,7 +88,7 @@ if (ORCHESTRATOR === "docker-swarm" || ORCHESTRATOR === "docker-compose") {
 
     (async () => {
         console.log("Trying to connect to Redis");
-        RedisDB_URI = `redis://default:${REDIS_PASSWORD}@redis-svc:6379`;
+        RedisDB_URI = `redis://default:${encodeURIComponent(REDIS_PASSWORD)}@redis-svc.budget-tracker.svc.cluster.local:6379`;
         redisClient = redis.createClient({
             url: RedisDB_URI,
         });
