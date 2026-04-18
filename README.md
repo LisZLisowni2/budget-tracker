@@ -14,6 +14,38 @@ This project is designed to demonstrate modern DevOps practices, including conta
 * **Orchestration:** Docker Swarm & Kubernetes (K8s).
 * **Security:** JWT Authentication & Sealed Secrets.
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Frontend
+    participant B as Backend
+    participant R as Redis
+    participant D as Database
+
+    U->>F: Enter /dashboard/
+    
+    par Data Loading
+        F->>B: GET /api/transactions/all
+        F->>B: GET /api/notes/all
+        F->>B: GET /api/goals/all
+    end
+
+    Note over B,R: Check if data is cached
+    B->>R: GET cached_data
+    
+    alt Cache Hit
+        R-->>B: Return Data
+    else Cache Miss
+        R-->>B: Null/Empty
+        B->>D: SELECT * FROM transactions...
+        D-->>B: Return Raw Data
+        B->>R: SET data in cache
+    end
+
+    B-->>F: Sends JSON Response
+    F-->>U: Displays Recharts chart
+```
+
 ## Key Features
 
 * **Financial Tracking:** Log revenues/expenses with categorized breakdowns.
