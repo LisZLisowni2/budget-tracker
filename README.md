@@ -1,37 +1,26 @@
-# Budget tracker - Muli-Service App
-<a href='https://roadmap.sh/projects/multiservice-docker'>Link to the task</a>
+# Budget tracker - Multi-Service App
+[![Link to Task](https://img.shields.io/badge/Roadmap.sh-Project-blue)](https://roadmap.sh/projects/multiservice-docker)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A expanded personal finance management application that helps you track expenses, monitor budgets and visualize data, so it help you manage own finance habits. 
+A expanded personal finance management application that helps you track expenses, monitor budgets and visualize data, so it help you manage your finance habits. 
 
-## Features
+## Architecture & Tech Stack
 
-### Transactions tracking
-- Log revenues and expenses
-- Categories in your at your disposal
-- Easy-to-use dashboard
+This project is designed to demonstrate modern DevOps practices, including container orchestration and secret management.
 
-### Goals
-- Set your goals in dashboard
-- Monitor progress of goals
-- Easy-to-use dashboard 
+* **Frontend:** React / Next.js with **Recharts** for data visualization.
+* **Backend:** Node.js (Express.JS) with REST API.
+* **Database:** MongoDB & Redis for caching.
+* **Orchestration:** Docker Swarm & Kubernetes (K8s).
+* **Security:** JWT Authentication & Sealed Secrets.
 
-### Notes
-- Write notes about goals, transaction or anything you want
-- Format Markdown
-- Easy to copy note
+## Key Features
 
-### Analytics
-- Visual charts and graphs showing spending patterns
-- Custome date range filtering
-- Category-wise breakdown of expenses
-
-### Security & Privacy
-- Secure authentication with password protection
-- Usage of JWT tokens for the most impenetrable security is possible
-
-### User Experience
-- Intuitive interface
-- Own currency setting available
+* **Financial Tracking:** Log revenues/expenses with categorized breakdowns.
+* **Goal Management:** Set, monitor, and achieve financial milestones.
+* **Smart Notes:** Markdown-supported notes for every transaction or goal.
+* **Advanced Analytics:** Interactive charts with custom date filtering.
+* **Security First:** Secure authentication with JWT and robust secret management via Docker Secrets/Sealed Secrets.
 
 ## Installation
 
@@ -78,14 +67,11 @@ docker stack deploy -c docker-compose.yml BudgetTrackerStack
 
 ### K8s Cluster
 
-Replace JWT-TOKEN Sealed Secret with own using kubeseal.
+The project contains K8s manifests. Remember to replace JWT-TOKEN Sealed Secret with own using kubeseal.
 
 ## References
 - API Docs: 
     - `127.0.0.1:3000/api-docs` (after running application)
     - Endpoints API document
-- Reasons of choosing that technology
-- License:
-
-## Acknowledgments
+- License: MIT License
 - Chart library by Recharts
