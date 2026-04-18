@@ -88,7 +88,7 @@ docker build -t 127.0.0.1:5000/budget-tracker-frontend:latest -f ./frontend/Dock
 docker build -t 127.0.0.1:5000/budget-tracker-backend:latest ./backend
 
 # Push images
-docker push 127.0.0.1:5000/budget-tracker-frontend-dev:latest
+docker push 127.0.0.1:5000/budget-tracker-frontend:latest
 docker push 127.0.0.1:5000/budget-tracker-backend:latest 
 ```
 
